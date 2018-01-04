@@ -11,7 +11,7 @@ function psi = getStartupState(N)
         end
         psi(i).data = {1};
         tag1 = strcat(int2str(i - 1), 'a');
-        tag2 = strcat(int2str(i), 's', '*');
+        tag2 = strcat(int2str(i), 's');
         tag3 = strcat(int2str(i), 'a', '*');
         psi(i).info.itags = {tag1, tag2, tag3};
         psi(i).info.qtype = '';

@@ -6,7 +6,7 @@ function H = getH(N, h, JPM, JZ)
     
     [S,IS]=getLocalSpace('Spin',0.5,'-A');
     for i = 1 : length(S)
-        S(i).info.itags = {'s', 's*', 'm*'};
+        S(i).info.itags = {'s*', 's', 'm*'};
     end
     
     SZ_single  = S(1);
