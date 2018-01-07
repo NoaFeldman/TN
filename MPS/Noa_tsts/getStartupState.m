@@ -19,7 +19,7 @@ function psi = getStartupState(N)
     end
     % Get the rightmost site to mixed canonical form.
     psi(N).Q{3} = -1 * psi(N).Q{3};
-    psi(N).info.itags{3} = strcat('a', int2str(N));
+    psi(N).info.itags{3} = strcat(int2str(N), 'a');
     
 %     % chop the legs of the rightmost and leftmost sites
 %     psi(1).Q = psi(1).Q(2:3);

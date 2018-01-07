@@ -1,4 +1,4 @@
-function T = getTridiagonal(HL, HR, H, k, psi, dir)
+function [T, base] = getTridiagonal(HL, HR, H, k, psi)
     % Uses the Lanczos algorithm to compute a tridiagonal matrix based on
     % H.
     % HL, HR represent the two blocks of <H> from both sides, H(k) and
@@ -14,24 +14,26 @@ function T = getTridiagonal(HL, HR, H, k, psi, dir)
     % |  |                     |  |
     % |  |  ___|___  __|_____  |  |
     % |__|-|psi(k)|-|psi(k+1)|-|__|
-    % T is returned as an array of {alpha1, beta1; alpha2, beta2; ...}
-    
-    n = 4;
-    T = double(n, 2);
-    
-    vcurr = contract(psi(k), 3, psi(k+1), 1);
-    vprev = QSpace;
-    beta = 1;
-    for i = 1 : n
-        w = apllyH(HR, HL, H, k, vcurr);
-        alpha = contract(w, '1234*', vcurr, '1234').data{1};
-        w = w - alpha * vcurr - beta*vprev;
-        beta = contract(w, '1234*', w, '1234').data{1};
-        T(i, 1) = alpha;
-        T(i, 2) = beta;
-        vprev = vcurr;
-        vcurr = w / beta;
+    accuarcy = 0.001;
+    v = contract(psi(k), 3, psi(k+1), 1);
+    base(1) = v;
+    Hv = applyH(HR, HL, H, v, k);
+    alpha = contract(v, '1234', Hv, '1234*');
+    T(1, 1) = alpha.data{1};
+    w = Hv - alpha.data{1} * v;
+    beta = contract(w, '1234', w, '1234*');
+    counter = 1;
+    while beta.data{1} > accuarcy 
+        T(counter, counter+1) = beta.data{1};
+        T(counter+1, counter) = beta.data{1};
+        counter = counter + 1;
+        v = w / beta.data{1};
+        base(counter) = v;
+        Hv = applyH(HR, HL, H, v, k);
+        alpha = contract(v, '1234', Hv, '1234*');
+        T(counter, counter) = alpha.data{1};
+        w = Hv - alpha.data{1} * v;
+        beta = contract(w, '1234', w, '1234*');
     end
 
-    function w = apllyH(HR, HL, H, k, v)
         

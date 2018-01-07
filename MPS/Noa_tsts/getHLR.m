@@ -21,10 +21,11 @@ function HLR = getHLR(H, psi, l, dir, HLR)
     %   H.l2r(1) x H.r2l(2) x I ...  (two degree tensor)
     % HLR.openOp is I x I x ... x H(l).l2r  (three degree tensor)
     if (strcmp(dir, '>>'))
-        if (l == 1)
+        if (l == 0)
             HLR.identityChain = getIdentity(psi(1), 1, [2, 1]);
             HLR.opSum = QSpace;
             HLR.openOp = QSpace;
+            return;
         end
         % TODO document with drawings
         thisSiteHSingle = contract(contract(H.single(l), 1, psi(l), 2), 1, psi(l), '2*');
@@ -43,10 +44,11 @@ function HLR = getHLR(H, psi, l, dir, HLR)
         HLR.identityChain = contract(HLR.identityChain, '12', thisSiteIdentity, '13'); 
     end
     if (strcmp(dir, '<<'))
-        if (l == length(psi))
-            HLR.identityChain = getIdentity(psi(l), 3, [2, 1]);
+        if (l == length(psi) + 1)
+            HLR.identityChain = getIdentity(psi(length(psi)), 3, [2, 1]);
             HLR.opSum = QSpace;
             HLR.openOp = QSpace;
+            return;
         end
         % TODO document with drawings
         thisSiteHSingle = contract(contract(H.single(l), 1, psi(l), 2), 1, psi(l), '2*');
