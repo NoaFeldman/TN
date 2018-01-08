@@ -11,4 +11,4 @@ function [HL, HR, psi] = dmrgSweep(HL, HR, H, psi, dir, Nkeep)
         end
     end
 
-            
+          
