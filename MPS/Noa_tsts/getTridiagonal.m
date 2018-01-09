@@ -25,8 +25,7 @@ function [T, base] = getTridiagonal(HL, HR, H, k, psi)
     w = Hv - alpha * v;
     beta = sqrt(getscalar(contract(w, '1234', w, '1234*')));
     counter = 1;
-    while beta > accuarcy 
-        disp(['k = ', num2str(k) , ', beta = ', num2str(beta)]);
+    while beta > accuarcy & counter <= 10
         T(counter, counter+1) = beta;
         T(counter+1, counter) = beta;
         counter = counter + 1;
