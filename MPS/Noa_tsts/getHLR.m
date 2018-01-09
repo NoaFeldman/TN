@@ -52,18 +52,31 @@ function HLR = getHLR(H, psi, l, dir, HLR)
         end
         % TODO document with drawings
         thisSiteHSingle = contract(contract(H.single(l), 1, psi(l), 2), 1, psi(l), '2*');
-        thisSiteHSingle = contract(HLR.identityChain, '12', thisSiteHSingle, '42');
+        thisSiteHSingle = contract(HLR.identityChain, '12', thisSiteHSingle, '24');
         thisSiteIdentity = contract(contract(H.identity(l), 1, psi(l), 2), 1, psi(l), '2*');
         if (l ~= length(psi))
-            HLR.opSum = contract(HLR.opSum, '12', thisSiteIdentity, '42');
+            HLR.opSum = contract(HLR.opSum, '12', thisSiteIdentity, '24');
             thisSiteHL2R = contract(contract(H.l2r(l), 1, psi(l), 2), 1, psi(l), '2*');
             HLR.opSum  = HLR.opSum + ...
                 contract(HLR.openOp, '123', thisSiteHL2R, '135');
         end
         thisSiteHR2L = contract(contract(H.r2l(l), 1, psi(l), 2), 1, psi(l), '2*');
-        HLR.openOp = contract(HLR.identityChain , '12', thisSiteHR2L, '53');
+        HLR.openOp = contract(HLR.identityChain , '12', thisSiteHR2L, '35');
         HLR.opSum = HLR.opSum + thisSiteHSingle;
-        HLR.identityChain = contract(HLR.identityChain, '12', thisSiteIdentity, '42'); 
+        HLR.identityChain = contract(HLR.identityChain, '12', thisSiteIdentity, '24'); 
     end
+    if (strcmp(dir, '^'))
+        if (l == 1)
+            psiPsi = contract(psi(l), 1, psi(l), '1*');
+            HLR.openOp = contract(H.l2r(l), '12', psiPsi, '13');
+            HLR.opSum = contract(H.single(l), '12', psiPsi, '13');
+        end
+        if (l == length(psi))
+            psiPsi = contract(psi(l), 3, psi(l), '3*');
+            HLR.openOp = contract(H.r2l(l), '12', psiPsi, '24');
+            HLR.opSum = contract(H.single(l), '12', psiPsi, '24');
+        end
+    end
+            
     
     

@@ -18,22 +18,22 @@ function [T, base] = getTridiagonal(HL, HR, H, k, psi)
     v = contract(psi(k), 3, psi(k+1), 1);
     base(1) = v;
     Hv = applyHToM(HR, HL, H, v, k);
-    alpha = contract(v, '1234', Hv, '1234*');
-    T(1, 1) = alpha.data{1};
-    w = Hv - alpha.data{1} * v;
-    beta = contract(w, '1234', w, '1234*');
+    alpha = getscalar(contract(v, '1234', Hv, '1234*'));
+    T(1, 1) = alpha;
+    w = Hv - alpha * v;
+    beta = sqrt(getscalar(contract(w, '1234', w, '1234*')));
     counter = 1;
-    while beta.data{1} > accuarcy 
-        T(counter, counter+1) = beta.data{1};
-        T(counter+1, counter) = beta.data{1};
+    while beta > accuarcy 
+        T(counter, counter+1) = beta;
+        T(counter+1, counter) = beta;
         counter = counter + 1;
-        v = w / beta.data{1};
+        v = w / beta;
         base(counter) = v;
         Hv = applyHToM(HR, HL, H, v, k);
-        alpha = contract(v, '1234', Hv, '1234*');
-        T(counter, counter) = alpha.data{1};
-        w = Hv - alpha.data{1} * v;
-        beta = contract(w, '1234', w, '1234*');
+        alpha = getscalar(contract(v, '1234', Hv, '1234*'));
+        T(counter, counter) = alpha;
+        w = Hv - alpha * v - beta * base(counter - 1);
+        beta = sqrt(getscalar(contract(w, '1234', w, '1234*')));
     end
 
         
