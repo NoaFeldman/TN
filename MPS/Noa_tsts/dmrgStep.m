@@ -15,7 +15,6 @@ function [HL, HR, psi, k] = dmrgStep(HL, HR, H, psi, k, dir, Nkeep)
     [psi(k1), psi(k2)] = orthoQS(M, [1, 2], dir, 'Nkeep', Nkeep);
     psi(k1).info.itags(3) = strcat(int2str(k1), 'a', psi(k1).info.itags(3));
     psi(k2).info.itags(1) = strcat(int2str(k1), 'a', psi(k2).info.itags(1));
-    getscalar(norm)
     if (strcmp(dir, '>>'))
         HL(k+1) =  getHLR(H, psi, k, '>>', HL(k));
         k = k+1;

@@ -1,9 +1,13 @@
-function                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+function [HL, HR, psi, E] = dmrgSweep(HL, HR, H, psi, dir, Nkeep)
     if (strcmp(dir, '>>'))
         k = 1;
         while(k < length(psi))
             [HL, HR, psi, k] = dmrgStep(HL, HR, H, psi, k, dir, Nkeep);
         end
+        HR(length(psi)) = getHLR(H, psi, length(psi), '^');
+        E = getscalar( ...
+            contract(getIdentity(HR(length(psi)).opSum, 1), '12', HR(length(psi)).opSum, '12'));
+        E = E + 
     else
         k = length(psi);
         while(k > 1)
@@ -11,4 +15,4 @@ function
         end
     end
 
-            
+          
