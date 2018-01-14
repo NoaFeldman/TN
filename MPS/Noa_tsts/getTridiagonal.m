@@ -14,7 +14,7 @@ function [T, base] = getTridiagonal(HL, HR, H, k, psi)
     % |  |                     |  |
     % |  |  ___|___  __|_____  |  |
     % |__|-|psi(k)|-|psi(k+1)|-|__|
-    accuarcy = 0.001;
+    accuarcy = 1e-12;
     v = contract(psi(k), 3, psi(k+1), 1);
     % Small innaccuracies ruin everything!
     v = v / sqrt(getscalar(contract(v, '1234', v, '1234*')));
@@ -25,7 +25,7 @@ function [T, base] = getTridiagonal(HL, HR, H, k, psi)
     w = Hv - alpha * v;
     beta = sqrt(getscalar(contract(w, '1234', w, '1234*')));
     counter = 1;
-    while beta > accuarcy & counter <= 10
+    while beta > accuarcy & counter <= 100
         T(counter, counter+1) = beta;
         T(counter+1, counter) = beta;
         counter = counter + 1;
@@ -37,5 +37,7 @@ function [T, base] = getTridiagonal(HL, HR, H, k, psi)
         w = Hv - alpha * v - beta * base(counter - 1);
         beta = sqrt(getscalar(contract(w, '1234', w, '1234*')));
     end
+end
+    
 
         

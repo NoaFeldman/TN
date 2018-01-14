@@ -38,7 +38,7 @@ function H = getH(N, h, JPM, JZ)
         end
         l2r.info.itags(3) = strcat(int2str(i), l2r.info.itags(3));
         r2l.info.itags(3) = strcat(int2str(i-1), r2l.info.itags(3));
-        H.single(i) = single;
+        H.single(i) = single * -1 * h;
         H.identity(i) = id;
         if (i ~= 1) 
             H.r2l(i) = r2l;

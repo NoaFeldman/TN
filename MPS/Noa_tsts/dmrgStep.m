@@ -1,4 +1,4 @@
-function [HL, HR, psi, k] = dmrgStep(HL, HR, H, psi, k, dir, Nkeep)
+function [HL, HR, psi, E0, k] = dmrgStep(HL, HR, H, psi, k, dir, Nkeep)
     % Perform a single DMRG step:
     % 1. Contracts psi(k) and psi(k + dir) to get M.
     % 2. Performs lancsoz and get a new contracted M.
@@ -11,10 +11,12 @@ function [HL, HR, psi, k] = dmrgStep(HL, HR, H, psi, k, dir, Nkeep)
         k1 = k -1;
         k2 = k;
     end
-    M = lanczos(HL(k1), HR(k2), H, k1, psi);
-    [psi(k1), psi(k2)] = orthoQS(M, [1, 2], dir, 'Nkeep', Nkeep);
-    psi(k1).info.itags(3) = strcat(int2str(k1), 'a', psi(k1).info.itags(3));
-    psi(k2).info.itags(1) = strcat(int2str(k1), 'a', psi(k2).info.itags(1));
+    [M, E0] = lanczos(HL(k1), HR(k2), H, k1, psi);
+%     [psi(k1), psi(k2)] = orthoQS(M, [1, 2], dir, 'Nkeep', Nkeep);
+%     psi(k1).info.itags(3) = strcat(int2str(k1), 'a', psi(k1).info.itags(3));
+%     psi(k2).info.itags(1) = strcat(int2str(k1), 'a', psi(k2).info.itags(1));
+    opts = {'Nkeep', Nkeep};
+    psi = decomposeAndTruncate(M, k1, psi, dir, opts);
     if (strcmp(dir, '>>'))
         HL(k+1) =  getHLR(H, psi, k, '>>', HL(k));
         k = k+1;

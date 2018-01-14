@@ -86,10 +86,14 @@ function HLR = getHLR(H, psi, l, dir, HLR)
         if (l == 1)
             HLR.opSum = contract(H.single(l), '12', contract(psi(l), 1, psi(l), '1*'), '13');
             HLR.openOp = contract(H.l2r(l), '12', contract(psi(l), 1, psi(l), '1*'), '13');
-        end
-        if (l == length(psi))
+        elseif (l == length(psi))
             HLR.opSum = contract(H.single(l), '12', contract(psi(l), 3, psi(l), '3*'), '24');
             HLR.openOp = contract(H.r2l(l), '12', contract(psi(l), 3, psi(l), '3*'), '24');
+        else
+            HLR.l2r = contract(H.l2r(l), 1, psi(l), 2);
+            HLR.l2r = contract(HLR.l2r, 1, psi(l), '2*');
+            HLR.r2l = contract(H.r2l(l), 1, psi(l), 2);
+            HLR.r2l = contract(HLR.r2l, 1, psi(l), '2*');
         end
     end
             

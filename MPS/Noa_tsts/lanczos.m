@@ -1,4 +1,4 @@
-function M = lanczos(HL, HR, H, k, psi)
+function [M, E0] = lanczos(HL, HR, H, k, psi)
     %TODO verify normalized.
     [T, base] = getTridiagonal(HL, HR, H, k, psi);
     [V, E] = eig(T);
