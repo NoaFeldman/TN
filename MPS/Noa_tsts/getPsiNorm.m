@@ -8,5 +8,5 @@ function n = getPsiNorm(psi, k)
     for i = length(psi):-1:k+1
         nRight =  contract(contract(nRight, 1, psi(i), 3), '13', psi(i), '32*');
     end
-    n = contract(nLeft, '12', nRight, '12');
+    n = getscalar(contract(nLeft, '12', nRight, '12'));
 end
