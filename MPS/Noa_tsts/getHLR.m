@@ -39,7 +39,7 @@ function HLR = getHLR(H, psi, l, dir, HLR)
         % HLR.openOp with H.r2l(l).
         HLR.opSum  = HLR.opSum + contract( ...
             contract(contract(HLR.openOp, 2, psi(l), 1), 2, psi(l), '1*'), '124', ...
-            H.r2l(l), '312');
+            H.r2l(l), '321');
         % psiPsi = 
         %     ___ 
         %  --(___)--
@@ -48,8 +48,8 @@ function HLR = getHLR(H, psi, l, dir, HLR)
         % |   _|_
         %  --(___)--
         psiPsi = contract(psi(l), 1, psi(l), '1*');
-        HLR.opSum  = HLR.opSum + contract(H.single(l), '12', psiPsi, '13');
-        HLR.openOp = contract(H.l2r(l), '12', psiPsi, '13');   
+        HLR.opSum  = HLR.opSum + contract(H.single(l), '21', psiPsi, '13');
+        HLR.openOp = contract(H.l2r(l), '21', psiPsi, '13');   
     end
     if (strcmp(dir, '<<'))
               if (l == length(psi)+1)
@@ -70,7 +70,7 @@ function HLR = getHLR(H, psi, l, dir, HLR)
         % HLR.openOp with H.l2r(l).
         HLR.opSum  = HLR.opSum + contract( ...
             contract(contract(HLR.openOp, 2, psi(l), 3), 2, psi(l), '3*'), '135', ...
-            H.l2r(l), '312');
+            H.l2r(l), '321');
         % psiPsi = 
         %     ___ 
         %  --(___)--
@@ -79,20 +79,20 @@ function HLR = getHLR(H, psi, l, dir, HLR)
         %     _|_   |
         %  --(___)--
         psiPsi = contract(psi(l), 3, psi(l), '3*');
-        HLR.opSum  = HLR.opSum + contract(H.single(l), '12', psiPsi, '24');
-        HLR.openOp = contract(H.r2l(l), '12', psiPsi, '24');   
+        HLR.opSum  = HLR.opSum + contract(H.single(l), '21', psiPsi, '24');
+        HLR.openOp = contract(H.r2l(l), '21', psiPsi, '24');   
     end
     if (strcmp(dir, '^'))
         if (l == 1)
-            HLR.opSum = contract(H.single(l), '12', contract(psi(l), 1, psi(l), '1*'), '13');
-            HLR.openOp = contract(H.l2r(l), '12', contract(psi(l), 1, psi(l), '1*'), '13');
+            HLR.opSum = contract(H.single(l), '21', contract(psi(l), 1, psi(l), '1*'), '13');
+            HLR.openOp = contract(H.l2r(l), '21', contract(psi(l), 1, psi(l), '1*'), '13');
         elseif (l == length(psi))
-            HLR.opSum = contract(H.single(l), '12', contract(psi(l), 3, psi(l), '3*'), '24');
-            HLR.openOp = contract(H.r2l(l), '12', contract(psi(l), 3, psi(l), '3*'), '24');
+            HLR.opSum = contract(H.single(l), '21', contract(psi(l), 3, psi(l), '3*'), '24');
+            HLR.openOp = contract(H.r2l(l), '21', contract(psi(l), 3, psi(l), '3*'), '24');
         else
-            HLR.l2r = contract(H.l2r(l), 1, psi(l), 2);
+            HLR.l2r = contract(H.l2r(l), 2, psi(l), 2);
             HLR.l2r = contract(HLR.l2r, 1, psi(l), '2*');
-            HLR.r2l = contract(H.r2l(l), 1, psi(l), 2);
+            HLR.r2l = contract(H.r2l(l), 2, psi(l), 2);
             HLR.r2l = contract(HLR.r2l, 1, psi(l), '2*');
         end
     end
