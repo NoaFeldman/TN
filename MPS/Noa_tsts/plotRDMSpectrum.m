@@ -1,4 +1,7 @@
 function plotRDMSpectrum(N, Delta)
+    path(path, [pwd, '/MPSPACK_v3.0']);
+    path(path, [pwd, '/Noa_tsts']);
+    startup;
     tic;
     % Recreate plot fFig.2 from https://arxiv.org/pdf/1407.3779.pdf
     [psi, H, HR, HL] = myStartup(N, 0, 1, Delta);
