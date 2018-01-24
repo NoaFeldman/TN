@@ -5,9 +5,9 @@ function psi = getStartupState(N)
     for i = 1:N
         psi(i) = QSpace;
         if (mod(i, 2) == 0)
-            psi(i).Q = {[-1], [-1], [0]};
+            psi(i).Q = {[1], [-1], [0]};
         else
-            psi(i).Q = {[0], [1], [-1]};
+            psi(i).Q = {[0], [1], [1]};
         end
         psi(i).data = {1};
         tag1 = strcat(int2str(i - 1), 'a');

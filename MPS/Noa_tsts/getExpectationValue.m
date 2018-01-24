@@ -11,7 +11,7 @@ function exp = getExpectationValue(psi, op, k)
             opSumL = contract(contract(opSumL, 1, psi(i), 1), '12', psi(i), '12*');
             opSumL = opSumL + contract(opPsi, '13', psi(i), '12*');
         end
-        exp = getscalar(contract(opSumL, '12', getIdentity(opSumL, 1), '12'));
+        exp = getscalar(contract(opSumL, '12', getIdentity(opSumL, 1), '21'));
     else
         % TODO
     end

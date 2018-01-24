@@ -25,12 +25,12 @@ function trotterGates = getTrotterGates(H, dtReal, dtIm)
         IDPair.info.itags{3} = ...
             strcat(int2str(k), int2str(k+1), 's', IDPair.info.itags{3});
         pairOp = contract(H.l2r(k), 3, H.r2l(k+1), 3);
-        trotterGates(k) = contract(pairOp, '13', IDPair, '12');
+        trotterGates(k) = contract(pairOp, '24', IDPair, '12');
         trotterGates(k) = trotterGates(k) + ...
-            contract(H.single(k), 1, IDPair, 1);
+            contract(H.single(k), 2, IDPair, 1);
         if (k == N - 1)
         trotterGates(k) = trotterGates(k) + ...
-            contract(H.single(k+1), 1, IDPair, 2, [2 1 3]);
+            contract(H.single(k+1), 2, IDPair, 2, [2 1 3]);
         end
         trotterGates(k) = contract(trotterGates(k), '12', IDPair, '12*');
         % exponentiate
