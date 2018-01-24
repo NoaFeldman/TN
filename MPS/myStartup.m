@@ -12,5 +12,4 @@ function [psi, H, HR, HL] = myStartup(N, h, JPM, JZ)
     for l = 1 : N-2
         HL(l+1) = getHLR(H, psi, l, '>>', HL(l));
     end
-    save('psi_', 'psi', 'H');
 end
