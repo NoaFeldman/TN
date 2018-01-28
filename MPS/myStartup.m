@@ -1,8 +1,8 @@
-function [psi, H, HR, HL] = myStartup(N, h, JPM, JZ)
+function [psi, H, HR, HL] = myStartup(N, h, JPM, JZ, m)
     path(path, [pwd, '/MPSPACK_v3.0']);
     path(path, [pwd, '/Noa_tsts']);
     startup;
-    psi = getStartupState(N);
+    psi = getStartupState(N, m);
 %     % Get the N-1 site to be the working site
 %     [psi, workingSiteIndex] = shiftWorkingSite(psi, N, '<<');
     H = getH(N, h, JPM, JZ);
