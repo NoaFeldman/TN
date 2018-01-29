@@ -6,7 +6,7 @@ function saveRDMSpectrum(N, Delta)
     [psi, H, HR, HL] = myStartup(N, 0, 1, Delta, 0);
     % Find ground state
     ECurr = 0;
-    opts = {'Nkeep', 100};
+    opts = {'Nkeep', 512, 'stol', 1e-5};
     for i=1:100
         EForm = ECurr;
         [HL, HR, psi, ~] = dmrgSweep(HL, HR, H, psi, '<<', opts);
