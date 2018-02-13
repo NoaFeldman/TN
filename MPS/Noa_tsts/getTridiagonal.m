@@ -14,7 +14,7 @@ function [T, base] = getTridiagonal(HL, HR, H, k, psi)
     % |  |                     |  |
     % |  |  ___|___  __|_____  |  |
     % |__|-|psi(k)|-|psi(k+1)|-|__|
-    accuarcy = 1e-12;
+    accuarcy = 1e-10; % 1e-12;
     v = contract(psi(k), 3, psi(k+1), 1);
     % Small innaccuracies ruin everything!
     v = v / sqrt(getscalar(contract(v, '1234', v, '1234*')));
