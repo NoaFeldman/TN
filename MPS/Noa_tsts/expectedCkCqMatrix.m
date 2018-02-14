@@ -1,11 +1,11 @@
-function At = expectedCkCqMatrix(psi, A, t)
-    At = A;
+function At = expectedCkCqMatrix(psi0, A0, t)
+    At = A0;
     for k = 1 : length(At)
         for q = k : length(At)
             At(k, q) = At(k, q) * ...
-                exp(j * t * (getEk(length(psi), q) - getEk(length(psi), k)));
+                exp(j * t * (getEk(length(psi0), k) - getEk(length(psi0), q)));
             At(q, k) = At(q, k) * ...
-                exp(j * t * (getEk(length(psi), q) - getEk(length(psi), k)));
+                exp(j * t * (getEk(length(psi0), q) - getEk(length(psi0), k)));
         end
     end
 end

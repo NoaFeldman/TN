@@ -1,6 +1,6 @@
 function trotterGates = getTrotterGates(H, dtReal, dtIm)
     % returns the building blocks for a trotter step.
-    % trotterGates(k) = 
+    % pairOp: 
     %     s_k,k+1
     %   _____|_____
     %  |    H_k    |
@@ -8,7 +8,7 @@ function trotterGates = getTrotterGates(H, dtReal, dtIm)
     %        |
     %    s_k,k+1
     % 
-    % IDPairs(k)
+    % IDPair:
     %   s_k     s_k+1
     %   _|_______|_
     %  |  I_k,k+1  |
@@ -16,8 +16,6 @@ function trotterGates = getTrotterGates(H, dtReal, dtIm)
     %        |
     %      s_k,k+1
     % 
-    % We keep trotterGates in a 2-rank tensor form so we can use expm() for
-    % the matrix.
     N = length(H.single);
     trotterGates = QSpace(N - 1);
     for k = 1 : N - 1
@@ -33,10 +31,13 @@ function trotterGates = getTrotterGates(H, dtReal, dtIm)
             contract(H.single(k+1), 2, IDPair, 2, [2 1 3]);
         end
         trotterGates(k) = contract(trotterGates(k), '12', IDPair, '12*');
-        % exponentiate
+        IDPairKronned = contract(IDPair, '12', IDPair, '12*');
+        trotterGates(k) = trotterGates(k) + IDPairKronned * 1e-25;
+         % exponentiate
         for l=1:length(trotterGates(k).data)
             trotterGates(k).data{l} = ...
                 expm(-0.5j * complex(dtReal, dtIm).* trotterGates(k).data{l});
+            
         end
         % bring to 4 rank tensor form again
         trotterGates(k) = contract( ...

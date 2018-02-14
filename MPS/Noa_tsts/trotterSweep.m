@@ -8,4 +8,3 @@ function psi = trotterSweep(psi, dtReal, dtIm, H, orthoOpts)
         psi = applyHPair(trotterGates, k, psi, '>>', orthoOpts);
     end
 end
-    

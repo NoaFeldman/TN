@@ -3,23 +3,9 @@ function saveRDMSpectrum(N, Delta)
     % the half-system's spin.
     tic;
 
-    [psi, H, HR, HL] = myStartup(N, 0, 1, Delta, 0);
-    % Find ground state
-    ECurr = 0;
-    opts = {'Nkeep', 512, 'stol', 1e-5};
-    for i=1:100
-        EForm = ECurr;
-        [HL, HR, psi, ~] = dmrgSweep(HL, HR, H, psi, '<<', opts);
-        [HL, HR, psi, ECurr] = dmrgSweep(HL, HR, H, psi, '>>', opts);
-        if (abs(ECurr - EForm)/abs(ECurr) < 1e-5)
-            break;
-        end
-        if (i == 100)
-            disp(['Sweeped 100 times and still not converted, Deta = ' ...
-                num2str(Delta) ', ECurr = ' num2str(ECurr) ...
-                ', EForm = ' num2str(EForm)]);
-        end
-    end
+    opts = {'Nkeep', 1024, 'stol', 1e-5};
+    [psi, H, HR, HL] = getGroundState(N, 0, 1, Delta, 0, opts);
+    
     % Sweep to mid chain 
     i = length(psi);
     while(i > length(psi)/2)
@@ -45,7 +31,7 @@ function saveRDMSpectrum(N, Delta)
     end
     disp(strcat('Finished calculating GS and spectrum for lambda = ', num2str(Delta)));
     toc;
-    save(strcat('spectrumN', int2str(N), 'D', num2str(Delta), '.mat'), 'spectrum');
+    save(strcat('spectrumN', int2str(N), 'D', abs(num2str(Delta)), '.mat'), 'spectrum');
 end
     
 function projected = project(M, m)

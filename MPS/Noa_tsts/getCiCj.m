@@ -1,12 +1,8 @@
 function cicj = getCiCj(i, j , psi) 
     % Assuming j >= i
-    CStates = QSpace(length(psi), length(psi));
-    for n = 1 : length(CStates)
-        CStates(n, :) = applyCn(psi, n);
-    end
     res = QSpace;
-    CiStates = CStates(i, :);
-    CjStates = CStates(j, :);
+    CiStates = applyCn(psi, i);
+    CjStates = applyCn(psi, j);
     if (i < j)
         res = contract(CjStates(i), '12', CiStates(i), '12*');
         for n = i+1 : j-1
@@ -22,5 +18,9 @@ function cicj = getCiCj(i, j , psi)
         res = contract(contract(res, 1, CjStates(n), 1), '12', ...
             CiStates(n), '12*');
     end
-    cicj = getscalar(contract(res, '12', getIdentity(res, 1), '21'));
+    if (isempty(res))
+        cicj = 0;
+    else
+        cicj = getscalar(contract(res, '12', getIdentity(res, 1), '21'));
+    end
 end         

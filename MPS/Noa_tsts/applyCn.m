@@ -12,7 +12,7 @@ function cnPsi = applyCn(psi, n)
         cnPsi(i) = contract(signOp, 2, psi(i), 2, [2 1 3]);
         cnPsi(i).info.itags{2} = strcat(int2str(i), 's');
     end
-    s = S(2);
+    s = sqrt(2) * S(2);
     s.info.itags = {strcat(int2str(n), 's'), strcat(int2str(n), 's*'), 'm*'};
     cnPsi(n) =  contract(s, 2, psi(n), 2, [3 1 4 2]);
     for i = n + 1 : length(psi)
