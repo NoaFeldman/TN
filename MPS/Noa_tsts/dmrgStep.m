@@ -12,9 +12,10 @@ function [HL, HR, psi, E0, k, M] = dmrgStep(HL, HR, H, psi, k, dir, opts)
         k2 = k;
     end
     [M, E0] = lanczos(HL(k1), HR(k2), H, k1, psi);
-%     [psi(k1), psi(k2)] = orthoQS(M, [1, 2], dir, 'Nkeep', Nkeep);
-%     psi(k1).info.itags(3) = strcat(int2str(k1), 'a', psi(k1).info.itags(3));
-%     psi(k2).info.itags(1) = strcat(int2str(k1), 'a', psi(k2).info.itags(1));
+    disp('HL');
+    HL(k1)
+    disp('HR');
+    HR(k2)
     psi = decomposeAndTruncate(M, k1, psi, dir, opts);
     if (strcmp(dir, '>>'))
         HL(k+1) =  getHLR(H, psi, k, '>>', HL(k));
