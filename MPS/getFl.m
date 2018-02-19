@@ -7,15 +7,22 @@ function getFl(L, h, JPM, JZ, m, dt, tStep, tStepsNum)
     % Every t = tStep * dt we calculate <Ci^dagger * Cj> and diagonalize.
     % h, JPM, JZ - Heisenberg hamiltonian parameters.
     % m = initial spin of state (assumed spin of g.s) for the L / 2 chain.
+    tic;
     opts = {'Nkeep', 2048, 'stol', 1e-5};
     [gs, ~, ~, ~] = getGroundState(L / 2, h, JPM, JZ, m, opts);
+    disp('Found ground state for L/2');
+    toc
     [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     psi = coupleStates(gs, gs);
     for step = 1: tStepsNum
         for t = 1 : tStep
            psi = trotterSweep(psi, dt, 0, H, opts);
+           disp(strcat('t = ', int2str(t + (step-1)*tStep) , ' * ', num2str(dt)));
+           toc
         end
         M = getCiCjMatrix(psi, L / 2);
+        disp('M');
+        toc
         [~, F] = eig(M);
         f = zeros(1, length(F));
         for i = 1 : length(F)
