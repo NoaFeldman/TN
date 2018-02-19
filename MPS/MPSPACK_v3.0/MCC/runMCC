@@ -1,0 +1,142 @@
+# Submit job via ----------------------------------------------------- #
+#
+#    rsync2proj.pl --mcc
+#    qsub [-t 1-28] ./runMCC $MCC/bina64/myMCCprog arg1 arg2 ...
+#
+#    NB! ensure that $PROJECT is up-to-date!
+#
+# Examples:
+#
+#    rsync2proj.pl --mcc
+#    qsub -t 1-6 ./runMCC spinladder
+#
+# To run script locally (e.g. instead of mbatch)
+#
+#    runMCC bina64/rhb_quella wsys=4 L=32 &
+#
+# Wb,May21,08
+# -------------------------------------------------------------------- #
+
+#$ -N mainQS
+#$ -cwd
+#$ -j yes
+#$ -m beas
+#$ -M Andreas.Weichselbaum@lmu.de
+
+## -q DOLLY,AMD64,GHOLA
+## -q TH-CL-DOLLY,TH-CL-I7,TH-WS-I7S,TH-WS-I7
+#$ -q TH-CL-I7,TH-CL-I7S,TH-CL-E5,TH-CL-E5S
+
+#$ -R y
+#$ -pe PE 8
+
+#$ -l s_rt=24:0:0
+
+## h_vmem is per core!
+#$ -l h_vmem=4G
+
+## stack required for MatLab to launch !?!
+#$ -l h_stack=32M
+
+  make_lma # also checks /data/$USER/bin
+
+  export OMP_NUM_THREADS=8
+  export CG_VERBOSE=8
+
+  if [ $# -eq 0 ]; then
+  printf '\nUsage: runSGE <input_file>\n'; fi
+
+  while [ 1 ]; do
+    case $1 in
+      -id) export JOB_ID=$2; shift 2;;
+        *) break
+    esac
+  done
+
+  if [ ! $JOB_ID ]; then JOB_ID="$(hostid.pl -pid)"; fi
+
+# PROG=mainQS
+  PROG=$1; shift 1
+
+# Wb,Dec14,07
+  if [ $SGE_TASK_ID ]; then
+     ISUB=$(printf "_%02d" $SGE_TASK_ID)
+     LBIN=/data/$USER/bin/$JOB_ID.${ISUB:1}
+
+   # sleep $(perl -e 'printf("%.4g",rand())')
+   # ns=$(perl -e "print 5*$SGE_TASK_ID % 61;") # prime number
+   # printf "\n# sleep $ns seconds (TID=$SGE_TASK_ID) ...\n"
+   # sleep $ns
+  else
+     unset ISUB
+     LBIN=/data/$USER/bin/$JOB_ID
+  fi
+
+  DIR=$(dirname $PROG); if [ -z "$DIR" ]; then DIR='.'; fi
+  PROG=$(basename $PROG)
+
+  cd $DIR ; if [ ! $? -eq 0 ]; then exit $?; fi
+
+# NB! does not copy reference directories specified with PROG
+  if [[ $PROG == run_*.sh ]]; then
+     printf "\n  ERR use program name <prog> to run run_<prog>.sh\n";
+     exit 1
+  fi
+
+# Matlab 2014 documentation says: When files are included, the absolute
+# path for the DLL and header files is changed. The files are placed in
+# the .\exe_mcr\ folder when the CTF file is expanded. 
+# ==> *_mcr directory created upon running the program!
+  rsync -rptva *$PROG* $LBIN/
+
+  cd $LBIN ; if [ ! $? -eq 0 ]; then exit $?; fi
+
+# PROG=./PROG
+  PROG=./run_${PROG}.sh # Wb,Apr19,14
+
+# make sure PROG has stripped off all path
+# otherwise $LMA/$PROG may look for a non-existing directory!
+
+  LOG="./$(basename $PROG).sge_${JOB_ID}${ISUB}.log"
+  # $(wbstamp.pl)_ qstat not defined on dolly's !??
+
+# ----------------------------------------------------------------------
+{ printf "\n$(strrep - 72)\n\nSTARTING ...\n\n"
+  printf   "  LOCATION: $(hostname)/$(pwd)\n"
+  printf   "  THREADS : OMP_NUM_THREADS=$OMP_NUM_THREADS\n"
+  printf   "  PROGRAM : $PROG\n"
+  printf   "  LOGFILE : $LOG\n\n"
+# printf   "See logfile: $LOG\n\n"
+# ----------------------------------------------------------------------
+} | tee $LOG
+
+# printf "\nTST PARALLEL ENVIRONMENT PE=$PE; PE_HOSTFILE=$PE_HOSTFILE\n\n"
+# both variables are empty
+
+# also defines SGE_HIST = ~/.sge_hist
+  module matlab -v # -F -ld
+# NB! use matlab's launch script: run_<prog>.sh // Wb,Apr19,14
+
+  # RUN PROGRAM AND SYNCHRONIZE DATA
+  # cto mcc
+  { printf "\nStart: $(date)\n\n"
+
+    module matlab -v  # for logging only
+
+  # printf "\n\n=== set === \n\n" ; set ; printf "\n\n===\n\n"
+    which $PROG  ; inl 1
+    /bin/ls -ort ; inl 2 ; df.pl ; inl 2
+
+    echo "  cmd: " $PROG "$@"; inl 1
+
+    $PROG $WHICH_MATLAB "$@" 2>&1
+
+    printf "\nDone : $(date)\n"
+
+  # sge_sync $F
+
+  } >> $LOG 2>&1
+
+# -------------------------------------------------------------------- #
+# -------------------------------------------------------------------- #
+
