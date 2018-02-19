@@ -5,7 +5,7 @@ function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, m, opts)
     for i=1:100
         disp(strcat('sweep num = ', int2str(i)));
         psi(length(psi) - 1)
-        psi(length(psi)
+        psi(length(psi))
         EForm = ECurr;
         [HL, HR, psi, ~] = dmrgSweep(HL, HR, H, psi, '<<', opts);
         [HL, HR, psi, ECurr] = dmrgSweep(HL, HR, H, psi, '>>', opts);
