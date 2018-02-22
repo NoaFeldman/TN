@@ -28,10 +28,9 @@ function getFl(L, h, JPM, JZ, m, dt, tStep, tStepsNum)
         for i = 1 : length(F)
             f(i) = F(i, i);
         end
-        res.(strcat('flT', num2str(step))) = f;
+        save(strcat('fL', int2str(L), 'JPM', abs(num2str(JPM)), ...
+                'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), 'step', int2str(step), '.mat'), ...
+                'f');
     end
-    save(strcat('fL', int2str(L), 'JPM', abs(num2str(JPM)), ...
-            'JZ', abs(num2str(JZ)), 'h', abs(num2str(h)), '.mat'), ...
-        'res');
 end
     
