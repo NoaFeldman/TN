@@ -25,7 +25,8 @@ function [T, base] = getTridiagonal(HL, HR, H, k, psi)
     w = Hv - alpha * v;
     beta = sqrt(getscalar(contract(w, '1234', w, '1234*')));
     counter = 1;
-    while beta > accuarcy & counter <= 50
+    formBeta = 2*beta; % This is just some value to init formBeta > beta.
+    while beta > accuarcy & counter <= 50 & beta < formBeta
         T(counter, counter+1) = beta;
         T(counter+1, counter) = beta;
         counter = counter + 1;
@@ -35,6 +36,7 @@ function [T, base] = getTridiagonal(HL, HR, H, k, psi)
         alpha = getscalar(contract(v, '1234', Hv, '1234*'));
         T(counter, counter) = alpha;
         w = Hv - alpha * v - beta * base(counter - 1);
+        formBeta = beta;
         beta = sqrt(getscalar(contract(w, '1234', w, '1234*')));
     end
 end
