@@ -1,10 +1,10 @@
-function getFl(L, h, JPM, JZ, m, dt, tStep, tStepsNum)
-    % Creates vectors of fl, the eigenvalues of <Ci^dagger * Cj> (based on
-    % page 2 of https://arxiv.org/pdf/1711.09418.pdf).
+function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tStepsNum)
+    % Saves the eigenvalues of the RDM (of half the lattice) for two ground
+    % state L/2 lattices suddenly coupled.
     % We first calculate g.s of an L/2 lattice.
     % Then we couple two chains in g.s to an L sized lattice and propegate
     % this lattice in time (With trotter time step = dt).
-    % Every t = tStep * dt we calculate <Ci^dagger * Cj> and diagonalize.
+    % Every t = tStep * dt we save the spectrum of the RDM.
     % h, JPM, JZ - Heisenberg hamiltonian parameters.
     % m = initial spin of state (assumed spin of g.s) for the L / 2 chain.
     tic;
@@ -20,17 +20,9 @@ function getFl(L, h, JPM, JZ, m, dt, tStep, tStepsNum)
            disp(strcat('t = ', int2str(t + (step-1)*tStep) , ' * ', num2str(dt)));
            toc
         end
-        M = getCiCjMatrix(psi, L/4); %/2);
-        disp('M');
-        toc
-        [~, F] = eig(M);
-        f = zeros(1, length(F));
-        for i = 1 : length(F)
-            f(i) = F(i, i);
-        end
-        save(strcat('fL', int2str(L), 'JPM', abs(num2str(JPM)), ...
-                'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), 'step', int2str(step), '.mat'), ...
-                'f');
+        saveRDMSpectrum(strcat('specL', int2str(L), 'JPM', num2str(abs(JPM)), ...
+                                'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), ...
+                                'step', int2str(step), '.mat'), ...
+                        psi);
     end
 end
-    

@@ -1,7 +1,7 @@
 function M = getCiCjMatrix(psi, L)
     % Creates M_ij = <psi|Ci^dagger Cj|psi>
     % M will be an L*L matrix of the first L sites of the chain.
-    M = zeros(length(psi), length(psi));
+    M = zeros(L, L);
     workPsi = psi;
     canonCenter = length(psi);
     for i = 1 : L
@@ -29,7 +29,6 @@ function M = getCiCjMatrix(psi, L)
         % Which will grow by one column n each step.
         open = contract(CiState, '12', getCnForSiteI(workPsi, i+1, i), '12*');
         for j = i+1 : L
-            % TODO but when j = i+1
             CjState = getCnForSiteI(workPsi, j, j);
             temp = contract(contract(workPsi(j), 3, getIdentity(workPsi(j), 3), '1*'), '23', ...
                 CjState, '23*');

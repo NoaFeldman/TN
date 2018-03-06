@@ -1,23 +1,25 @@
-function saveRDMSpectrum(N, Delta)
-    % Save all RDM eigenvalues, separated by XXZ model Delta and by 
-    % the half-system's spin.
-    tic;
-
-    opts = {'Nkeep', 1024, 'stol', 1e-5};
-    [psi, H, HR, HL] = getGroundState(N, 0, 1, Delta, 0, opts);
-    
+function saveRDMSpectrum(fileName, psi)
+    % Save all RDM eigenvalues of psi by spin (sub system is half the
+    % lattice).
+    % psi is expected to be left canonical.
+    workPsi = psi;
     % Sweep to mid chain 
-    i = length(psi);
-    while(i > length(psi)/2)
-        [HL, HR, psi, ~, i, ~] = dmrgStep(HL, HR, H, psi, i, '<<', opts);
+    k = length(workPsi);
+    opts = {'Nkeep', 1024};
+    while(k > length(workPsi)/2)
+        M = contract(workPsi(k-1), 3, workPsi(k), 1);
+        [workPsi, truncErr] = decomposeAndTruncate(M, k-1, workPsi, '<<', opts);
+        if (truncErr > 0)
+            disp(truncErr);
+        end
+        k = k - 1;
     end
-    M = contract(psi(length(psi)/2), 3, psi(length(psi)/2 + 1), 1);
     % We take M to represent easily S^z_A:
     %      ______                ______
     %  ---|______|---   >>>  ===|______|---
     %       |  |                     |
     % Q on the double line is exactly S^z_A.
-    M = contract(getIdentity(M, 1, M, 2), '12*', M, '12');
+    M = contract(getIdentity(real(M), 1, real(M), 2), '12*', M, '12');
     % We now force the spin value of A by projection, and SVD
     % separately.
     [minSZ, maxSZ] = getMinMaxSZ(M);
@@ -29,9 +31,7 @@ function saveRDMSpectrum(N, Delta)
             spectrum(num2str(m)) = I.svd.^2;
         end
     end
-    disp(strcat('Finished calculating GS and spectrum for lambda = ', num2str(Delta)));
-    toc;
-    save(strcat('spectrumN', int2str(N), 'D', abs(num2str(Delta)), '.mat'), 'spectrum');
+    save(fileName, 'spectrum');
 end
     
 function projected = project(M, m)
