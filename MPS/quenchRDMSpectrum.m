@@ -11,18 +11,20 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tStepsNum)
     opts = {'Nkeep', 2048, 'stol', 1e-5};
     [gs, ~, ~, ~] = getGroundState(L / 2, h, JPM, JZ, m, opts);
     disp('Found ground state for L/2');
-    toc
+    toc;
     [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     psi = coupleStates(gs, gs);
     for step = 1: tStepsNum
         for t = 1 : tStep
            psi = trotterSweep(psi, dt, 0, H, opts);
            disp(strcat('t = ', int2str(t + (step-1)*tStep) , ' * ', num2str(dt)));
-           toc
+           toc;
         end
         saveRDMSpectrum(strcat('specL', int2str(L), 'JPM', num2str(abs(JPM)), ...
                                 'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), ...
                                 'step', int2str(step), '.mat'), ...
                         psi);
+       disp('saved RDM spectrum');
+       toc;
     end
 end

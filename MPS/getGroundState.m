@@ -6,7 +6,7 @@ function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, m, opts)
         EForm = ECurr;
         [HL, HR, psi, ~] = dmrgSweep(HL, HR, H, psi, '<<', opts);
         [HL, HR, psi, ECurr] = dmrgSweep(HL, HR, H, psi, '>>', opts);
-        if (abs(ECurr - EForm)/abs(ECurr) < 1e-5)
+        if (abs(ECurr - EForm)/abs(ECurr) < 1e-7)
             break;
         end
         if (i == 100)
