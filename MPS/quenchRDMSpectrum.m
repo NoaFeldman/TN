@@ -14,17 +14,21 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tStepsNum)
     toc;
     [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     psi = coupleStates(gs, gs);
-    for step = 1: tStepsNum
-        for t = 1 : tStep
-           psi = trotterSweep(psi, dt, 0, H, opts);
-           disp(strcat('t = ', int2str(t + (step-1)*tStep) , ' * ', num2str(dt)));
-           toc;
+    dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
+                     'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)));
+    mkdir(dirName);
+    truncErr = 0;
+    for step = 0: tStepsNum
+        saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), psi, truncErr);
+        disp('saved RDM spectrum');
+        toc;
+        if (step < tStepsNum)
+            for t = 1 : tStep
+                [psi, truncErr] = trotterSweep(psi, dt, 0, H, opts);
+                disp(strcat('t = ', int2str(t + (step-1)*tStep) , ' * ', num2str(dt)));
+                disp(strcat('truncErr = ', num2str(truncErr)));
+                toc;
+            end
         end
-        saveRDMSpectrum(strcat('specL', int2str(L), 'JPM', num2str(abs(JPM)), ...
-                                'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), ...
-                                'step', int2str(step), '.mat'), ...
-                        psi);
-       disp('saved RDM spectrum');
-       toc;
     end
 end
