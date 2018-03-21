@@ -1,50 +1,50 @@
 function sNAFromAnal(L, tStep, tStepNum, filename)
-    cicj = getCiCj0(L);
-    x = L / 4 - 5 : L / 4 + 5;
-    res = zeros(length(x), tStepNum + 1);
+    % TODO take to outside func
+    ckcqA = zeros(L/2, L/2);
+    for i = 1 : L/4 % L/4 + 1 : L/2
+        ckcqA(i, i) = 1;
+    end
+    SA = realSpaceToDualSpace(L/2); 
+    cicjA = SA * ckcqA * SA';
+    cicj = zeros(L, L);
+    cicj(1:L/2, 1:L/2) = cicjA;
+    cicj(L/2 + 1 : L, L/2 + 1 : L) = cicjA;
+
+    x = L / 4 - 2 : L / 4 + 2;
+    s = zeros(length(x), tStepNum + 1);
+    sFull = zeros(1, tStepNum + 1);
+    U = realSpaceToDualSpace(L);
     for step = 0 : tStepNum
         [~, v] = eig(cicj(1:L/2, 1:L/2));
         for i = 1 : length(v)
             f(i) = v(i, i);
         end
-        res(:, step + 1)  = getSNA(1, f, x);
-        S = realSpaceToDualSpace(L);
-        ckcq = S' * cicj * S;
+%         res(step + 1)  = sum(getEE(f, x, L)); 
+%         res(:, step + 1)  = getSNA(1, f, x, L);
+        res(:, step + 1)  = getEE(f, x, L);
+        sFull(step + 1) = sum(res(:, step + 1));
+        ckcq = U' * cicj * U;
         ckcq = expectedCkCqMatrix(L, ckcq, tStep);
-        cicj = S * ckcq * S';
+        cicj = U * ckcq * U';
     end 
     t = 0 : tStepNum;
-    t = t * tStep;
+    t = t * sFull;
+    plot(t, res);
+    legendInfo{1} = 'sFull';
     for i = 1 : length(x)
-        scatter(t(:), res(i, :));
-        legendInfo{i} = strcat('$N_A = $', num2str(x(i)));
+        plot(t(:), res(i, :));
+        legendInfo{i + 1} = strcat('$s^z = $', num2str(L/4 - x(i)));
         hold on
     end
     legend(legendInfo, 'Interpreter', 'latex');
+    set(gca, 'XScale', 'log');
     savefig(filename);
     hold off
 end
 
-function C = getCiCj0(L)
-C = zeros(L, L);
-    for i = 1 : L/2
-        for j = 1 : L/2
-            if (i == j) 
-                C(i, j) = 0.5;
-            else
-                C(i, j) = sin(pi * (i-j) / 2) / (pi * (i - j));
-                C(j, i) = C(i, j);
-            end
-        end
-    end
-    for i = L/2 + 1 : L
-        for j = L/2 + 1 : L
-            if (i == j) 
-                C(i, j) = 0.5;
-            else
-                C(i, j) = sin(pi * (i-j) / 2) / (pi * (i - j));
-                C(j, i) = C(i, j);
-            end
-        end
-    end
+function S = getEE(f, x, L)
+    dn = 1e-3;
+    snTop = getSNA(1 + dn / 2, f, x, L);
+    snBottom = getSNA(1 - dn / 2, f, x, L);
+    S = -(snTop - snBottom) / dn;
 end
