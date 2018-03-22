@@ -13,9 +13,8 @@ function SNAFromSpec(dirName, firstStep, lastStep, stepT, figFileName, color)
             currSz = str2num(k{i});
             ind = find(sz == currSz);
             pNA = sum(val{i});
-            sNA = -sum(val{i}.*log(val{i}));
-%             dn = 1e-2;
-%             sNA = -(sum(val{i}.^(1+dn)) - sum(val{i}.^(1-dn))) / (2 * dn);
+            dn = 1e-2;
+            sNA = -(sum(val{i}.^(1+dn)) - sum(val{i}.^(1-dn))) / (2 * dn);
             if (~isempty(ind))
                 s(ind, step+1 - firstStep) = sNA;
                 p(ind, step+1 - firstStep) = pNA;
@@ -36,10 +35,10 @@ function SNAFromSpec(dirName, firstStep, lastStep, stepT, figFileName, color)
 %         legendInfo{i} = ['$2S^z = $' num2str(sz(i))];
     end
     set(gca, 'XScale', 'log');
-    legend(legendInfo, 'Interpreter', 'latex');
+%     legend(legendInfo, 'Interpreter', 'latex');
     xlabel('t', 'Interpreter', 'latex');
     ylabel('$S$', 'Interpreter', 'latex');
-    ylabel('$P(s^z)$', 'Interpreter', 'latex');
+%     ylabel('$P(s^z)$', 'Interpreter', 'latex');
     savefig(figFileName);
     hold off
 end
