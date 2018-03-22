@@ -21,23 +21,7 @@ function saveRDMSpectrum(fileName, psi, truncErr)
     %      ______                ______
     %  ---|______|---   >>>  ===|______|---
     %       |  |                     |
-    % Q on the double line is exactly S^z_A.
-
-%     % TODO - just a test, delete and change back to row 38.
-%     l = workPsi(1);
-%     l = contract(getIdentity(real(l), 1, real(l), 2), '12*', l, '12');
-%     for ind = 2:(length(workPsi)/2)
-%         l = contract(l, 2, workPsi(ind), 1);
-%         l = contract(getIdentity(real(l), 1, real(l), 2), '12*', l, '12');
-%     end
-%     r = workPsi(length(workPsi));
-%     r = contract(r, '23', getIdentity(real(r), 2, real(r), 3), '12*');
-%     for ind = (length(workPsi) - 1):-1:(length(workPsi)/2 + 1)
-%         r = contract(workPsi(ind), 3, r, 1);
-%         r = contract(r, '23', getIdentity(real(r), 2, real(r), 3), '12*');
-%     end
-%     M = contract(l, 2, r, 1);
-%     
+    % Q on the double line is exactly S^z_A.     
     M = contract(getIdentity(real(M), 1, real(M), 2), '12*', M, '12');
     
     % We now force the spin value of A by projection, and SVD
