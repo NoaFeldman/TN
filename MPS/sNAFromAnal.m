@@ -1,4 +1,7 @@
 function sNAFromAnal(L, tStep, tStepNum, filename)
+    path(path, [pwd, '/MPSPACK_v3.0']);
+    path(path, [pwd, '/Noa_tsts']);
+    startup;
     % TODO take to outside func
     ckcqA = zeros(L/2, L/2);
     for i = 1 : L/4 % L/4 + 1 : L/2
