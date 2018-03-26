@@ -22,12 +22,12 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum)
         psi = coupleStates(gs, gs);
         mkdir(dirName);
     else
-        f = load(strcat(dirName, '/psiAtStep', int2str(tFirstStep), '.mat'));
+        f = load(strcat(dirName, '/psiAtStep', int2str(tFirstStep - 1), '.mat'));
         psi = f.psi;
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     end
     truncErr = 0;
-    for step = tFirstStep+1: tStepsNum
+    for step = tFirstStep : tStepsNum
         saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), psi);
         disp('saved RDM spectrum');
         toc;

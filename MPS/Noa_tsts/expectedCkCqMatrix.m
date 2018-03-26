@@ -3,9 +3,9 @@ function At = expectedCkCqMatrix(N, A0, t)
     for k = 1 : length(At)
         for q = k : length(At)
             At(k, q) = At(k, q) * ...
-                exp(j * t * (getEk(N, k) - getEk(N, q)));
+                exp(0.5j * t * (getEk(N, k) - getEk(N, q)));
             At(q, k) = At(q, k) * ...
-                exp(j * t * (getEk(N, q) - getEk(N, k)));
+                exp(0.5j * t * (getEk(N, q) - getEk(N, k)));
         end
     end
 end
