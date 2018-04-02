@@ -1,5 +1,5 @@
 function s = getSNA(n, f, x, N) 
-    % S_1(N_A),  based on https://arxiv.org/pdf/1711.09418.pdf
+    % S_n(N_A),  based on https://arxiv.org/pdf/1711.09418.pdf
     stepSize = 2 * pi / (N + 1);
     s = zeros(1, length(x));
     for alpha = stepSize : stepSize : stepSize  * N
