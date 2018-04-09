@@ -11,7 +11,7 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum)
     path(path, [pwd, '/Noa_tsts']);
     startup;
     tic;
-    opts = {'Nkeep', 2048, 'stol', 1e-5};
+    opts = {'Nkeep', 300};
     dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
                      'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)));
     if (tFirstStep == 0)
@@ -26,16 +26,17 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum)
         psi = f.psi;
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     end
-    truncErr = 0;
+    truncErr = zeros(1, tStep*(tStepsNum - tFirstStep + 1));
     for step = tFirstStep : tStepsNum
         saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), psi);
         disp('saved RDM spectrum');
         toc;
         if (step < tStepsNum)
             for t = 1 : tStep
-                [psi, truncErr] = trotterSweep(psi, dt, 0, H, opts);
-                disp(strcat('t = ', int2str(t + (step-1)*tStep) , ' * ', num2str(dt)));
-                disp(strcat('truncErr = ', num2str(truncErr))); % TODO relevant only for stol = 0
+                ind = (step - tFirstStep)*tStep + t;
+                [psi, truncErr(ind)] = trotterSweep(psi, dt, 0, H, opts);
+                disp(strcat('t = ', int2str(ind) , ' * ', num2str(dt)));
+                disp(strcat('truncErr = ', num2str(truncErr(ind)))); % TODO relevant only for stol = 0
                 toc;
             end
         end
@@ -43,4 +44,5 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum)
             save(strcat(dirName, '/psiAtStep', int2str(step), '.mat'), 'psi');
         end
     end
+    save(strcat(dirName, '/truncErr.mat'), 'truncErr');
 end

@@ -7,7 +7,7 @@ function [psi, workingSiteIndex] = shiftWorkingSite(psi, workingSiteIndex, dir)
     if (strcmp(dir, '>>'))
         [r, psi(workingSiteIndex)] = orthoQS(psi(workingSiteIndex), [1, 2], '>>');
         workingSiteIndex = workingSiteIndex + 1;
-        psi(workingSiteIndex) = contract(conj(QSpace(r)), '1', psi(workingSiteIndex), '1');        
+        psi(workingSiteIndex) = contract(QSpace(r), '1', psi(workingSiteIndex), '1');        
     else if (strcmp(dir, '<<'))
         [psi(workingSiteIndex), l] = orthoQS(psi(workingSiteIndex), 1, '<<');
         workingSiteIndex = workingSiteIndex - 1;
