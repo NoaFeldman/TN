@@ -42,6 +42,9 @@ function sNAFromAnal(L, tStep, tStepNum)
         cicj = U * ckcq * U';
         disp(strcat('step = ', num2str(step)));
         toc;
+        if (mod(step, 100) == 0)
+                save(strcat('theoSP', int2str(L), 'step_', num2str(step)), 's', 'p', 'sFull', 't');
+        end
     end 
     t = 0 : tStepNum;
     t = t * tStep;
