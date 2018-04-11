@@ -43,7 +43,9 @@ function sNAFromAnal(L, tStep, tStepNum)
         disp(strcat('step = ', num2str(step)));
         toc;
         if (mod(step, 100) == 0)
-                save(strcat('theoSP', int2str(L), 'step_', num2str(step)), 's', 'p', 'sFull', 't');
+            t = 0 : step;
+            t = t * tStep;
+            save(strcat('theoSP', int2str(L), 'step_', num2str(step)), 's', 'p', 'sFull', 't');
         end
     end 
     t = 0 : tStepNum;
