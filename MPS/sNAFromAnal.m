@@ -1,4 +1,4 @@
-function sNAFromAnal(L, tStep, tStepNum)
+function sNAFromAnal(L, tFirstStep, tStep, tStepNum)
     path(path, [pwd, '/MPSPACK_v3.0']);
     path(path, [pwd, '/Noa_tsts']);
     startup;
@@ -21,7 +21,10 @@ function sNAFromAnal(L, tStep, tStepNum)
     p = zeros(length(x), tStepNum + 1);
     sFull = zeros(1, tStepNum + 1);
     U = realSpaceToDualSpace(L);
-    disp('got U');
+    ckcq = U' * cicj * U;
+    ckcq = expectedCkCqMatrix(L, ckcq, tFirstStep);
+    cicj = U * ckcq * U';
+    disp('finished first step');
     toc;
     for step = 0 : tStepNum
         [~, v] = eig(cicj(1:L/2, 1:L/2));
