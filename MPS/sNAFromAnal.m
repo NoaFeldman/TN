@@ -31,20 +31,12 @@ function sNAFromAnal(L, tFirstStep, tStep, tStepNum)
         for i = 1 : length(v)
             f(i) = v(i, i);
         end
-        disp(strcat('step = ', num2str(step), ', line 31'));
-        toc;
         p(:, step + 1)  = getSNA(1, f, x, L);
-        disp(strcat('step = ', num2str(step), ', line 34'));
-        toc;
         s(:, step + 1)  = getEE(f, x, L);
         sFull(step + 1) = sum(s(:, step + 1));
-        disp(strcat('step = ', num2str(step), ', line 38'));
-        toc;
         ckcq = U' * cicj * U;
         ckcq = expectedCkCqMatrix(L, ckcq, tStep);
         cicj = U * ckcq * U';
-        disp(strcat('step = ', num2str(step)));
-        toc;
         if (mod(step, 100) == 0)
             t = 0 : step;
             t = t * tStep;

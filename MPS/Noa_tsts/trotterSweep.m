@@ -1,7 +1,6 @@
-function [psi, truncErr] = trotterSweep(psi, dtReal, dtIm, H, opts)
+function [psi, truncErr] = trotterSweep(trotterGates, psi, opts)
     % 
     truncErr = 0;
-    trotterGates = getTrotterGates(H, dtReal, dtIm);
     for k = length(psi) - 1 : -1 : 1
         [err, psi] = applyHPair(trotterGates, k, psi, '<<', opts);
         if (err > truncErr)

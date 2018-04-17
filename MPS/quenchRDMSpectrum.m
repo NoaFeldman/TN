@@ -1,4 +1,4 @@
-function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum)
+function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, dirName, myEps)
     % Saves the eigenvalues of the RDM (of half the lattice) for two ground
     % state L/2 lattices suddenly coupled.
     % We first calculate g.s of an L/2 lattice.
@@ -11,11 +11,12 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum)
     path(path, [pwd, '/Noa_tsts']);
     startup;
     tic;
-    opts = {'Nkeep', 300};
-    dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
-                     'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)));
+    gsopts = {'Nkeep', 1024, 'stol', 1e-16};
+    topts = {'Nkeep', 4};
+%     dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
+%                      'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), '_200');
     if (tFirstStep == 0)
-        [gs, ~, ~, ~] = getGroundState(L / 2, h, JPM, JZ, m, opts);
+        [gs, ~, ~, ~] = getGroundState(L / 2, h, JPM, JZ, m, gsopts);
         disp('Found ground state for L/2');
         toc;
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
@@ -27,17 +28,18 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum)
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     end
     truncErr = zeros(1, tStep*(tStepsNum - tFirstStep + 1));
+    trotterGates = getTrotterGates(H, dt, 0, myEps);
     for step = tFirstStep : tStepsNum
         saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), psi);
-        disp('saved RDM spectrum');
-        toc;
+%         disp('saved RDM spectrum');
+%         toc;
         if (step < tStepsNum)
             for t = 1 : tStep
                 ind = (step - tFirstStep)*tStep + t;
-                [psi, truncErr(ind)] = trotterSweep(psi, dt, 0, H, opts);
-                disp(strcat('t = ', int2str(ind) , ' * ', num2str(dt)));
-                disp(strcat('truncErr = ', num2str(truncErr(ind)))); % TODO relevant only for stol = 0
-                toc;
+                [psi, truncErr(ind)] = trotterSweep(trotterGates, psi, topts);
+%                 disp(strcat('t = ', int2str(ind) , ' * ', num2str(dt)));
+%                 disp(strcat('truncErr = ', num2str(truncErr(ind)))); % TODO relevant only for stol = 0
+%                 toc;
             end
         end
         if (mod(step, 200) == 0)
