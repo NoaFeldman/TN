@@ -16,7 +16,7 @@ function sNAFromAnal(L, tFirstStep, tStep, tStepNum)
     disp('got cicj');
     toc;
     
-    x = L / 4 - 2 : L / 4 + 2;
+    x = L / 4 - 4 : L / 4 + 4;
     s = zeros(length(x), tStepNum + 1);
     p = zeros(length(x), tStepNum + 1);
     sFull = zeros(1, tStepNum + 1);
