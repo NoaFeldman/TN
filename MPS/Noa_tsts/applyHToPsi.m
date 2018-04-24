@@ -19,6 +19,7 @@ function Hpsi = applyHToPsi(H, psi)
                 contract(H.l2r(i), 3, H.r2l(i+1), 3), '13', [1 3 4 2]);
         end
     end
-    % Contract all sites 
+    % Contract all sites
+end
         
     

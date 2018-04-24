@@ -7,4 +7,3 @@ function [truncErr, psi] = applyHPair(trotterGates, k, psi, dir, orthoOpts)
     M = contract(M, '23', trotterGates(k), '12', [1 3 4 2]);
     [psi, truncErr] = decomposeAndTruncate(M, k, psi, dir, orthoOpts);
 end
-    
