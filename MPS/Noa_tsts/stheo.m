@@ -1,10 +1,14 @@
-function s = stheo(t, NA, epsS, c1, sigma2)
-%     dn = 1e-2;
-%     s = -(sntheo(1+dn, t, NA, epsP, epsS) - sntheo(1-dn, t, NA, epsP, epsS)) / (2 * dn);
+function s = stheo(t, NA, epsS, c1, sigma2, L)
+    % S_A(N_A) = (c_n * A * B * c)'
+    % c_n' |_{n = 1} = c1 (from sFull fit)
+    % A = X(t, epsS)^(c(n - 1/n)/6)
+    % B = sqrt(pi * n / 2 * K * log(X(t, epsP)) = sqrt(n / (2 * pi *
+    % sigma2))
+    % C = e^(- n * N_A^2 / (2 * sigma2))
     global c;
     c = 1;
     cn = 1;
-    xS = getOnePointFunc(t, epsS);
+    xS = getOnePointFunc(t, epsS, L);
    
     s = - (cn .* dnA(xS) .* B(sigma2) .* C(NA, sigma2) + ...
         cn .* A(xS) .* dnB(sigma2) .* C(NA, sigma2) + ...
