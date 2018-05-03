@@ -1,4 +1,4 @@
-function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, dirName, myEps)
+function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, dirName)
     % Saves the eigenvalues of the RDM (of half the lattice) for two ground
     % state L/2 lattices suddenly coupled.
     % We first calculate g.s of an L/2 lattice.
@@ -28,7 +28,7 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     end
     truncErr = zeros(1, tStep*(tStepsNum - tFirstStep + 1));
-    trotterGates = getTrotterGates(H, dt, 0, myEps);
+    trotterGates = getTrotterGates(H, dt, 0);
     for step = tFirstStep : tStepsNum
         saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), psi);
 %         disp('saved RDM spectrum');

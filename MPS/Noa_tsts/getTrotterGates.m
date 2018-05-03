@@ -1,4 +1,4 @@
-function trotterGates = getTrotterGates(H, dtReal, dtIm, myEps)
+function trotterGates = getTrotterGates(H, dtReal, dtIm)
     % returns the building blocks for a trotter step.
     % pairOp: 
     %     s_k,k+1
@@ -32,7 +32,7 @@ function trotterGates = getTrotterGates(H, dtReal, dtIm, myEps)
         end
         trotterGates(k) = contract(trotterGates(k), '12', IDPair, '12*');
         IDPairKronned = contract(IDPair, '12', IDPair, '12*');
-        trotterGates(k) = trotterGates(k) + IDPairKronned * myEps;
+        trotterGates(k) = trotterGates(k) + IDPairKronned * 1e-25;
          % exponentiate
         for l=1:length(trotterGates(k).data)
             trotterGates(k).data{l} = ...
