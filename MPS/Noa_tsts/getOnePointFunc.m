@@ -1,0 +1,6 @@
+function X = getOnePointFunc(t, epsilon, L)
+    vF = 2;
+    X = abs(pi .* sinh(pi/L * 2 * epsilon) ./ ...
+        (2 .* sinh(pi / L .* (epsilon + i .* vF .* t)) .* ...
+         sinh(pi / L .* (epsilon - i.*vF.*t))));
+end

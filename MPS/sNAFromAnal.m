@@ -26,7 +26,7 @@ function sNAFromAnal(L, tFirstStep, tStep, tStepNum)
     cicj = U * ckcq * U';
     disp('finished first step');
     toc;
-    for step = 0 : tStepNum
+    for step = tFirstStep : tStepNum
         [~, v] = eig(cicj(1:L/2, 1:L/2));
         for i = 1 : length(v)
             f(i) = v(i, i);

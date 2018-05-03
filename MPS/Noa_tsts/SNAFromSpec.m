@@ -1,14 +1,19 @@
-function SNAFromSpec(dirName, firstStep, lastStep, stepT, figFileName, color)
+function specResults = SNAFromSpec(dirName, firstStep, lastStep, stepT)
     stepsNum = lastStep - firstStep + 1;
-    sz = 0:2:10;
-    s = zeros(length(sz), stepsNum); 
-    p = zeros(length(sz), stepsNum); 
-    sFull = zeros(1, stepsNum); 
-    pFull = zeros(1, stepsNum); 
+    sz = -10:2:10;
+    specResults.s = zeros(length(sz), stepsNum); 
+    specResults.p = zeros(length(sz), stepsNum); 
+    specResults.sFull = zeros(1, stepsNum); 
+    specResults.sigmaN = zeros(1, stepsNum);
+    specResults.avgN = zeros(1, stepsNum);
+    specResults.gaussR = zeros(1, stepsNum);
     for step = firstStep:lastStep
         file = load(strcat(dirName, '/step', int2str(step)));
         k = keys(file.spectrum);
         val = values(file.spectrum);
+        szForGaussianFit = zeros(1, length(val)); 
+        pForGaussianFit = zeros(1, length(val));
+        sForGaussianFit = zeros(1, length(val));
         for i = 1:length(val)
             currSz = str2num(k{i});
             ind = find(sz == currSz);
@@ -16,29 +21,23 @@ function SNAFromSpec(dirName, firstStep, lastStep, stepT, figFileName, color)
             dn = 1e-2;
             sNA = -(sum(val{i}.^(1+dn)) - sum(val{i}.^(1-dn))) / (2 * dn);
             if (~isempty(ind))
-                s(ind, step+1 - firstStep) = sNA;
-                p(ind, step+1 - firstStep) = pNA;
+                specResults.s(ind, step+1 - firstStep) = sNA;
+                specResults.p(ind, step+1 - firstStep) = pNA;
             end
-            sFull(step+1 - firstStep) = sFull(step+1 - firstStep) + sNA;
-            pFull(step+1 - firstStep) = pFull(step+1 - firstStep) + pNA;
+            specResults.sFull(step+1 - firstStep) = specResults.sFull(step+1 - firstStep) + sNA;
+            szForGaussianFit(i) = currSz;
+            pForGaussianFit(i) = pNA;
+            sForGaussianFit(i) = sNA;
         end
+%         if (length(val) >= 3)
+%             f = fittype('a*exp(-(x-b)^2/c)', 'independent', 'x', 'dependent', 'y');
+%             [fg, gof] = fit(szForGaussianFit.', pForGaussianFit.', f, 'StartPoint', [1 0.1 .5]);
+%             specResults.sigmaN(step+1 - firstStep) = sqrt(fg.c/2);
+%             specResults.avgN(step+1 - firstStep) = fg.b;
+%             specResults.gaussR(step+1 - firstStep) = gof.rsquare;
+%         end
+        specResults.avgN(step+1 - firstStep) = sum(szForGaussianFit.*pForGaussianFit);
     end
-    t = firstStep:lastStep;
-    t = t * stepT;
-    plot(t, sFull, 'color', color);
-    legendInfo{1} = ['sFull'];
-    hold on
-    for i = 1:length(sz)
-        plot(t(:), s(i, :));
-        legendInfo{i+1} = ['$2S^z = $' num2str(sz(i))];
-%         plot(t(:), p(i, :));
-%         legendInfo{i} = ['$2S^z = $' num2str(sz(i))];
-    end
-    set(gca, 'XScale', 'log');
-%     legend(legendInfo, 'Interpreter', 'latex');
-    xlabel('t', 'Interpreter', 'latex');
-    ylabel('$S$', 'Interpreter', 'latex');
-%     ylabel('$P(s^z)$', 'Interpreter', 'latex');
-    savefig(figFileName);
-    hold off
+    specResults.t = firstStep:lastStep;
+    specResults.t = specResults.t * stepT;
 end
