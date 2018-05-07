@@ -8,12 +8,16 @@ function s = stheo(t, NA, epsS, c1, sigma2, L)
     global c;
     c = 1;
     cn = 1;
-    xS = getOnePointFunc(t, epsS, L);
-   
+    xS = exp(-c1 * 6 / c) .* getOnePointFunc(t, epsS, L);
     s = - (cn .* dnA(xS) .* B(sigma2) .* C(NA, sigma2) + ...
         cn .* A(xS) .* dnB(sigma2) .* C(NA, sigma2) + ...
-        cn .* A(xS) .* B(sigma2) .* dnC(NA, sigma2) - ...
-        c1 .* A(xS) .* B(sigma2) .* C(NA, sigma2));
+        cn .* A(xS) .* B(sigma2) .* dnC(NA, sigma2));    
+    
+%     xS = getOnePointFunc(t, epsS, L); 
+%     s = - (cn .* dnA(xS) .* B(sigma2) .* C(NA, sigma2) + ...
+%         cn .* A(xS) .* dnB(sigma2) .* C(NA, sigma2) + ...
+%         cn .* A(xS) .* B(sigma2) .* dnC(NA, sigma2) - ...
+%         c1 .* A(xS) .* B(sigma2) .* C(NA, sigma2));
 end
     
 function a = A(x)

@@ -1,4 +1,4 @@
-function sNAFromAnal(L, tFirstStep, tStep, tStepNum)
+function sNAExact(L, tFirstStep, tStep, tStepNum)
     path(path, [pwd, '/MPSPACK_v3.0']);
     path(path, [pwd, '/Noa_tsts']);
     startup;

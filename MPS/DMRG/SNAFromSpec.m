@@ -25,18 +25,21 @@ function specResults = SNAFromSpec(dirName, firstStep, lastStep, stepT)
                 specResults.p(ind, step+1 - firstStep) = pNA;
             end
             specResults.sFull(step+1 - firstStep) = specResults.sFull(step+1 - firstStep) + sNA;
-            szForGaussianFit(i) = currSz;
+            szForGaussianFit(i) = currSz/2;
             pForGaussianFit(i) = pNA;
             sForGaussianFit(i) = sNA;
         end
-%         if (length(val) >= 3)
-%             f = fittype('a*exp(-(x-b)^2/c)', 'independent', 'x', 'dependent', 'y');
-%             [fg, gof] = fit(szForGaussianFit.', pForGaussianFit.', f, 'StartPoint', [1 0.1 .5]);
-%             specResults.sigmaN(step+1 - firstStep) = sqrt(fg.c/2);
-%             specResults.avgN(step+1 - firstStep) = fg.b;
-%             specResults.gaussR(step+1 - firstStep) = gof.rsquare;
-%         end
-        specResults.avgN(step+1 - firstStep) = sum(szForGaussianFit.*pForGaussianFit);
+        if (length(val) >= 3)
+            try
+                f = fittype('sqrt(1/(2*pi*c))*exp(-(x-b)^2/(2*c))', 'independent', 'x', 'dependent', 'y');
+                [fg, gof] = fit(szForGaussianFit.', real(pForGaussianFit).', f, 'StartPoint', [0.1 1]);
+                specResults.sigmaN(step+1 - firstStep) = fg.c;
+                specResults.avgN(step+1 - firstStep) = fg.b;
+                specResults.gaussR(step+1 - firstStep) = gof.rsquare;
+            catch exception
+                specResults.avgN(step+1 - firstStep) = sum(szForGaussianFit.*pForGaussianFit);
+            end
+        end
     end
     specResults.t = firstStep:lastStep;
     specResults.t = specResults.t * stepT;
