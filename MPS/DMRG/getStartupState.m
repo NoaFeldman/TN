@@ -3,7 +3,8 @@ function psi = getStartupState(N, m)
     % Assuming n even.
     % Assuming m >= 0.
     % Bring the state to a left canonical form (except for the rightmost site).
-    currSpin = 0;
+    currSpinA = 0;
+    currSpinB = 0;
     flipRate = N+1;
     if (m ~=0)
         flipRate = floor((N / 2) / m);
@@ -11,13 +12,15 @@ function psi = getStartupState(N, m)
     for i = 1:N
         psi(i) = QSpace;
         if (mod(i, 2) ~= 0 | mod(i / 2, flipRate) == 0)
-            psi(i).Q = {[currSpin], [-1], [currSpin - 1]};
-            currSpin = currSpin - 1;
+            psi(i).Q = {[currSpinA; currSpinB], [-1; 1], [currSpinA - 1; currSpinB + 1]};
+            currSpinA = currSpinA - 1;
+            currSpinB = currSpinB + 1;
         else
-            psi(i).Q = {[currSpin], [+1], [currSpin  + 1]};
-            currSpin = currSpin + 1;
+            psi(i).Q = {[currSpinA; currSpinB], [1; -1], [currSpinA + 1; currSpinB - 1]};
+            currSpinA = currSpinA + 1;
+            currSpinB = currSpinB - 1;
         end
-        psi(i).data = {1};
+        psi(i).data = {1; 1};
         tag1 = strcat(int2str(i - 1), 'a');
         tag2 = strcat(int2str(i), 's');
         tag3 = strcat(int2str(i), 'a', '*');
@@ -28,4 +31,5 @@ function psi = getStartupState(N, m)
     % Get the rightmost site to mixed canonical form.
     psi(N).Q{3} = -1 * psi(N).Q{3};
     psi(N).info.itags{3} = strcat(int2str(N), 'a');
+    psi(N) = psi(N) / sqrt(getOverlap(psi, psi, length(psi)));
 end
