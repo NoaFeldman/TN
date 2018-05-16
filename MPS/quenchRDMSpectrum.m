@@ -8,7 +8,7 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
     % h, JPM, JZ - Heisenberg hamiltonian parameters.
     % m = initial spin of state (assumed spin of g.s) for the L / 2 chain.
     path(path, [pwd, '/MPSPACK_v3.0']);
-    path(path, [pwd, '/Noa_tsts']);
+    path(path, [pwd, '/DMRG']);
     startup;
     tic;
     gsopts = {'Nkeep', 1024, 'stol', 1e-16};
@@ -30,16 +30,11 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
     truncErr = zeros(1, tStep*(tStepsNum - tFirstStep + 1));
     trotterGates = getTrotterGates(H, dt, 0);
     for step = tFirstStep : tStepsNum
-        saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), psi);
-%         disp('saved RDM spectrum');
-%         toc;
+        saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), psi, length(psi)/4);
         if (step < tStepsNum)
             for t = 1 : tStep
                 ind = (step - tFirstStep)*tStep + t;
                 [psi, truncErr(ind)] = trotterSweep(trotterGates, psi, topts);
-%                 disp(strcat('t = ', int2str(ind) , ' * ', num2str(dt)));
-%                 disp(strcat('truncErr = ', num2str(truncErr(ind)))); % TODO relevant only for stol = 0
-%                 toc;
             end
         end
         if (mod(step, 200) == 0)

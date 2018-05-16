@@ -1,6 +1,6 @@
 function [psi, H, HR, HL] = myStartup(N, h, JPM, JZ, m)
     path(path, [pwd, '/MPSPACK_v3.0']);
-    path(path, [pwd, '/Noa_tsts']);
+    path(path, [pwd, '/DMRG']);
     startup;
     psi = getStartupState(N, m);
     H = getH(N, h, JPM, JZ);

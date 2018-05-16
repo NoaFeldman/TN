@@ -1,5 +1,5 @@
-function saveRDMSpectrum(fileName, psi, truncErr)
-    if (nargin == 2)
+function saveRDMSpectrum(fileName, psi, subsystemASize, truncErr)
+    if (nargin == 3)
         truncErr = 0;
     end
     % Save all RDM eigenvalues of psi by spin (sub system is half the
@@ -9,7 +9,7 @@ function saveRDMSpectrum(fileName, psi, truncErr)
     % Sweep to mid chain 
     k = length(workPsi);
     opts = {'Nkeep', 1024};
-    while(k > length(workPsi)/2)
+    while(k > subsystemASize)
         M = contract(workPsi(k-1), 3, workPsi(k), 1);
         [workPsi, Err] = decomposeAndTruncate(M, k-1, workPsi, '<<', opts);
         if (Err > 1e-16)
