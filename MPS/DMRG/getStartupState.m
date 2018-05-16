@@ -20,7 +20,7 @@ function psi = getStartupState(N, m)
             currSpinA = currSpinA + 1;
             currSpinB = currSpinB - 1;
         end
-        psi(i).data = {1; 1};
+        psi(i).data = {1/2^(1/4); 1/2^(1/4)};
         tag1 = strcat(int2str(i - 1), 'a');
         tag2 = strcat(int2str(i), 's');
         tag3 = strcat(int2str(i), 'a', '*');
@@ -31,5 +31,4 @@ function psi = getStartupState(N, m)
     % Get the rightmost site to mixed canonical form.
     psi(N).Q{3} = -1 * psi(N).Q{3};
     psi(N).info.itags{3} = strcat(int2str(N), 'a');
-    psi(N) = psi(N) / sqrt(getOverlap(psi, psi, length(psi)));
 end
