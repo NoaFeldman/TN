@@ -14,7 +14,7 @@ function [l, r, I] = myOrthoQS(M, idx, dir, opts)
     end
     originalNkeep = I.Nkeep;
     Nkeep = originalNkeep;
-    while (abs(I.svd(originalNkeep) - I.svd(Nkeep + 1)) / I.svd(originalNkeep) < 1e-5)
+    while (abs(I.svd(originalNkeep) - I.svd(Nkeep + 1)) / I.svd(originalNkeep) < 1e-2)
         Nkeep = Nkeep + 1;
     end
     if (Nkeep ~= originalNkeep)
