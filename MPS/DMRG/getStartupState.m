@@ -11,11 +11,11 @@ function psi = getStartupState(N, m)
     for i = 1:N
         psi(i) = QSpace;
         if (mod(i, 2) ~= 0 | mod(i / 2, flipRate) == 0)
-            psi(i).Q = {[currSpin], [1], [currSpin + 1]};
-            currSpin = currSpin + 1;
+            psi(i).Q = {[currSpin], [-1], [currSpin - 1]};
+            currSpin = currSpin - 1;
         else
-            psi(i).Q = {[currSpin], [-1], [currSpin  - 1]};
-            currSpin = currSpin -1;
+            psi(i).Q = {[currSpin], [+1], [currSpin  + 1]};
+            currSpin = currSpin + 1;
         end
         psi(i).data = {1};
         tag1 = strcat(int2str(i - 1), 'a');
