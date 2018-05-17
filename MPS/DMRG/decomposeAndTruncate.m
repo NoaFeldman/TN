@@ -8,19 +8,7 @@ function [psi, truncErr] = decomposeAndTruncate(M, k, psi, dir, opts)
 end
 
 function [l, r, I] = myOrthoQS(M, idx, dir, opts)
-    try
-        [l, r, I] = orthoQS(M, idx, dir, opts{:});
-    catch exception
-        disp('M:');
-        disp(M);
-        disp('opts:');
-        disp(opts);
-        disp('idx:');
-        disp(idx);
-        disp('dir:');
-        disp(dir);
-        throw(exception)
-    end
+    [l, r, I] = orthoQS(M, idx, dir, opts{:});
     if (I.Nkeep == I.Ntot)
         return
     end
