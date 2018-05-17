@@ -11,12 +11,11 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
     path(path, [pwd, '/DMRG']);
     startup;
     tic;
-    gsopts = {'Nkeep', 100};
     topts = {'Nkeep', 100};
 %     dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
 %                      'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), '_200');
     if (tFirstStep == 0)
-        [gs, ~, ~, ~] = getGroundState(L / 2, h, JPM, JZ, m, gsopts);
+        [gs, ~, ~, ~] = getGroundState(L / 2, h, JPM, JZ, m);
         disp('Found ground state for L/2');
         toc;
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
