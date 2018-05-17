@@ -14,4 +14,5 @@ function [M, E0] = lanczos(HL, HR, H, k, psi)
     for i = 1 : length(V)
         M = M + V(i, V0) * base(i);
     end
+end
         
