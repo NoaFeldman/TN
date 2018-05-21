@@ -1,8 +1,5 @@
-function sNAExact(L, tFirstStep, tStep, tStepNum)
-    path(path, [pwd, '/MPSPACK_v3.0']);
-    path(path, [pwd, '/Noa_tsts']);
-    startup;
-    tic;
+function sNAExact(L, LA, tFirstStep, tStep, tStepNum)
+    path(path, [pwd, '/theo']);
     % TODO take to outside func
     ckcqA = zeros(L/2, L/2);
     for i = 1 : L/4 % L/4 + 1 : L/2
@@ -13,10 +10,8 @@ function sNAExact(L, tFirstStep, tStep, tStepNum)
     cicj = zeros(L, L);
     cicj(1:L/2, 1:L/2) = cicjA;
     cicj(L/2 + 1 : L, L/2 + 1 : L) = cicjA;
-    disp('got cicj');
-    toc;
     
-    x = L / 4 - 4 : L / 4 + 4;
+    x = LA / 2 - 5 : LA / 2 + 5;
     s = zeros(length(x), tStepNum + 1);
     p = zeros(length(x), tStepNum + 1);
     sFull = zeros(1, tStepNum + 1);
@@ -24,10 +19,8 @@ function sNAExact(L, tFirstStep, tStep, tStepNum)
     ckcq = U' * cicj * U;
     ckcq = expectedCkCqMatrix(L, ckcq, tFirstStep);
     cicj = U * ckcq * U';
-    disp('finished first step');
-    toc;
     for step = tFirstStep : tStepNum
-        [~, v] = eig(cicj(1:L/2, 1:L/2));
+        [~, v] = eig(cicj(1:LA, 1:LA));
         for i = 1 : length(v)
             f(i) = v(i, i);
         end
@@ -40,12 +33,12 @@ function sNAExact(L, tFirstStep, tStep, tStepNum)
         if (mod(step, 100) == 0)
             t = 0 : step;
             t = t * tStep;
-            save(strcat('theoSP', int2str(L), 'step_', num2str(step)), 's', 'p', 'sFull', 't');
+            save(strcat('theoSP', int2str(L), '_', int2str(LA), '_step_', num2str(step)), 's', 'p', 'sFull', 't');
         end
     end 
     t = 0 : tStepNum;
     t = t * tStep;
-    save(strcat('theoSP', int2str(L), '_', num2str(tStepNum)), 's', 'p', 'sFull', 't');
+    save(strcat('theoSP', int2str(L), '_', int2str(LA), '_', num2str(tStepNum)), 's', 'p', 'sFull', 't');
 end
 
 function S = getEE(f, x, L)
