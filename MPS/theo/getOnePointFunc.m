@@ -2,7 +2,7 @@ function X = getOnePointFunc(t, epsilon, L)
     vF = 2*sin(pi * (L/2 + 1) / (L+1));
     w = 1i.*vF.*t;
     Y = abs(dZ(w, epsilon, L) ./ analyticContinuationForImZ(w, epsilon, L));
-    %hopefully, substitue X with Y once its problems are solved.s
+    % hopefully, substitue X with Y once its problems are solved.s
     X = abs(pi .* sinh(pi/L * 2 * epsilon) ./ ...
         (2 .* sinh(pi / L .* (epsilon + 1i .* vF .* t)) .* ...
          sinh(pi / L .* (epsilon - 1i.*vF.*t))));
