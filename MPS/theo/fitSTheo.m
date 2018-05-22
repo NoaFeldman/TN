@@ -31,9 +31,9 @@ function fitSTheo(sz, t, fitStartInd, fitEndInd, p, sFull, s, filename, figname,
     hold on;
     plot(t, s(round(length(sz) / 2) + 1, :), 'color', 'c');
     plot(t, s(round(length(sz) / 2) + 2, :), 'color', 'c');
-    plot(t, stheo(t, 0, epsS, c1, mysig, L), 'color', 'm');
-    plot(t, stheo(t, 1, epsS, c1, mysig, L), 'color', 'm');
-    plot(t, stheo(t, 2, epsS, c1, mysig, L), 'color', 'm');
+    plot(t, stheo(t, 0, epsS, c1, mysig, L), 'color', 'b');
+    plot(t, stheo(t, 1, epsS, c1, mysig, L), 'color', 'b');
+    plot(t, stheo(t, 2, epsS, c1, mysig, L), 'color', 'b');
 %     plot(t, stheo(t, 0, epsS, c1, mysig, L), 'color', 'k');
 %     plot(t, stheo(t, 1, epsS, c1, mysig, L), 'color', 'k');
 %     plot(t, stheo(t, 2, epsS, c1, mysig, L), 'color', 'k');
