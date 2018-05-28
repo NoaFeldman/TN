@@ -1,14 +1,15 @@
-function graphAB()
+function graphAB(L)
     % recreate Fig 2 here https://arxiv.org/pdf/1711.09418.pdf
-    L = 1000;
     n = 1; K = 1;
     x = (L/2 - 5):(L/2 + 5);
     avgNA = L / 2;
-    pTheo = sqrt(pi * n / (2 * K * log(L))) .* exp(-1 * n * pi^2 .* (x - avgNA).^2 ./ (2 * K * log(L)));
-    hold on
+%     sigma2 = log(L) + 1 + 0.577 + log(2);
+    sigma2 = log(L);
+    pTheo = sqrt(pi * n / (2 * K * sigma2)) .* exp(-1 * n * pi^2 .* (x - avgNA).^2 ./ (2 * K * sigma2));
     plot(x, pTheo, 'k');
+    hold on
     legendInfo{1} = ['$P(N_A)$'];
-    STheo = sqrt(pi * log(L) / (2 * K)) / 3 .* exp(-1 * pi^2 .* (x - avgNA).^2 ./ (2 * K * log(L)));
+    STheo = sqrt(pi * sigma2 / (2 * K)) / 3 .* exp(-1 * pi^2 .* (x - avgNA).^2 ./ (2 * K * sigma2));
     plot(x, STheo, 'r');
     legendInfo{2} = ['$S(N_A)$'];
     
@@ -36,7 +37,8 @@ function graphAB()
         
     legend(legendInfo, 'Interpreter', 'latex');
     xlabel('$N_A$', 'Interpreter', 'latex');
-    savefig('FigAB');
+%     savefig('FigAB');
+    save(strcat('graphAB', int2str(L)), 'p', 'S');
     hold off
 end
 
