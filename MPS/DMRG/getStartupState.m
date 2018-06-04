@@ -3,6 +3,9 @@ function psi = getStartupState(N, m)
     % Assuming n even.
     % Assuming m >= 0.
     % Bring the state to a left canonical form (except for the rightmost site).
+    if nargin == 1
+        m = 0;
+    end
     currSpinA = 0;
     currSpinB = 0;
     flipRate = N+1;
