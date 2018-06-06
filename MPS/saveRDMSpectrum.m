@@ -5,13 +5,13 @@ function saveRDMSpectrum(fileName, psi, subsystemASize, truncErr)
     % Save all RDM eigenvalues of psi by spin (sub system is half the
     % lattice).
     % psi is expected to be left canonical.
-    workPsi = psi;
-    % Sweep to mid chain 
-    k = length(workPsi);
+
+    % Sweep to cut between subsystems
+    k = length(psi);
     opts = {'Nkeep', 1024};
     while(k > subsystemASize)
-        M = contract(workPsi(k-1), 3, workPsi(k), 1);
-        [workPsi, Err] = decomposeAndTruncate(M, k-1, workPsi, '<<', opts);
+        M = contract(psi(k-1), 3, psi(k), 1);
+        [psi, Err] = decomposeAndTruncate(M, k-1, psi, '<<', opts);
         if (Err > 1e-16)
             disp(Err);
         end
