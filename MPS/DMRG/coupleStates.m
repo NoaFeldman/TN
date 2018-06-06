@@ -5,7 +5,6 @@ function psi = coupleStates(psiL, psiR)
     psi(1:length(psiL)) = psiL;
     psi(length(psiL)) = contract(psi(length(psiL)), 3, ...
         getIdentity(psi(length(psiL)), 3, '-0'), '1*');
-    psiR = mirrorState(psiR);
     for i = 1 : length(psiR)
         index = length(psiL) + i;
         psi(index) = psiR(i);

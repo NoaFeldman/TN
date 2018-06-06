@@ -1,4 +1,8 @@
 function folded = foldChain(psi)
+    % TODO This is super memory consuming! I need to fold two pairs of
+    % sites, perform the working size shift and the throw away the
+    % right-side pair, until I reach the point where I want to measure.
+
     % folds      _
     % |>- -|>- -|_|- -<|
     % to  _     _

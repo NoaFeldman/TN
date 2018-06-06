@@ -1,17 +1,12 @@
 function sNAExact(L, LA, tFirstStep, tStep, tStepNum, fileNameAddition)
     path(path, [pwd, '/theo']);
-    % TODO take to outside func
-    ckcqA = zeros(L/2, L/2);
-    for i = 1 : L/4 % L/4 + 1 : L/2
-        ckcqA(i, i) = 1;
-    end
-    SA = realSpaceToDualSpace(L/2); 
-    cicjA = SA * ckcqA * SA';
+    
+    cicjA = getCiCj0Matrix(L/2);
     cicj = zeros(L, L);
     cicj(1:L/2, 1:L/2) = cicjA;
     cicj(L/2 + 1 : L, L/2 + 1 : L) = cicjA;
     
-    x = LA / 2 - 5 : LA / 2 + 5;
+    x = LA / 2 - 10 : 2 : LA / 2 + 10;
     s = zeros(length(x), tStepNum + 1);
     p = zeros(length(x), tStepNum + 1);
     sFull = zeros(1, tStepNum + 1);
@@ -56,6 +51,7 @@ function sNAExact(L, LA, tFirstStep, tStep, tStepNum, fileNameAddition)
     t = t * tStep;
     save(strcat('theoSP', int2str(L), '_', int2str(LA), '_', num2str(tStepNum), '_', fileNameAddition)...
         , 't', 's', 'p', 'sFull', 'sb', 'pb', 'sFullb');
+<<<<<<< HEAD
 end
 
 function S = getEE(f, x, L)
@@ -64,3 +60,6 @@ function S = getEE(f, x, L)
     snBottom = getSNA(1 - dn / 2, f, x, L);
     S = -(snTop - snBottom) / dn;
 end
+=======
+end
+>>>>>>> bfceb6fd2f0fd147a08cf5c6ee843737de6d9a5f

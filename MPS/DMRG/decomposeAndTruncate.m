@@ -8,7 +8,11 @@ function [psi, truncErr] = decomposeAndTruncate(M, k, psi, dir, opts)
 end
 
 function [l, r, I] = myOrthoQS(M, idx, dir, opts)
-    [l, r, I] = orthoQS(M, idx, dir, opts{:});
+    if (length(M.Q) == 3)
+        [r, l, I] = orthoQS(M, idx, dir, opts{:});
+    else
+        [l, r, I] = orthoQS(M, idx, dir, opts{:});
+    end
     if (I.Nkeep == I.Ntot)
         return
     end
