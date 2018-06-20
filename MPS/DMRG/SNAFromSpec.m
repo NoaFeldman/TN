@@ -42,5 +42,5 @@ function specResults = SNAFromSpec(dirName, firstStep, lastStep, stepT)
         end
     end
     specResults.t = firstStep:lastStep;
-    specResults.t = specResults.t * stepT;
+    specResults.t = specResults.t * stepT/2;
 end
