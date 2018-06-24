@@ -20,5 +20,5 @@ function finiteSystemGroundState(Ls, filename, ratio)
          fg = fit(x.', real(p(:, l)), gaussian, 'StartPoint', [L * ratio / 2 0.1]);
          sigma2(l) = fg.c;
     end
-    save(filname, 'Ls', 'p', 's', 'sFull', 'sigma2');
+    save(filename, 'Ls', 'p', 's', 'sFull', 'sigma2');
 end
