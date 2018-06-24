@@ -13,7 +13,7 @@ function fitSTheo(sz, t, fitStartInd, fitEndInd, p, sFull, s, filename, figname,
     end
     [ap, aerrp ,covp, chi2p, yfit] = fitnonlin(t(fitStartInd:fitEndInd), t(fitStartInd:fitEndInd), ...
         sigmaN(fitStartInd:fitEndInd).', 0.01.*t(fitStartInd:fitEndInd), ...
-        0.01.*sigmaN(fitStartInd:fitEndInd).', 'getSigmaN', [25 1], L);
+        0.01.*sigmaN(fitStartInd:fitEndInd).', 'getSigmaN', [15 1], L);
     mysig = getSigmaN(t, ap, L);
     epsP = ap(1);
     constP = ap(2);
@@ -32,8 +32,8 @@ function fitSTheo(sz, t, fitStartInd, fitEndInd, p, sFull, s, filename, figname,
     plot(t, s(round(length(sz) / 2) + 1, :), 'color', 'c');
     plot(t, s(round(length(sz) / 2) + 2, :), 'color', 'c');
     plot(t, stheo(t, [epsP constP epsS c1], [L 0]), 'color', 'b');
-    plot(t, stheo(t, [epsP constP epsS c1], [L 1]), 'color', 'b');
     plot(t, stheo(t, [epsP constP epsS c1], [L 2]), 'color', 'b');
+    plot(t, stheo(t, [epsP constP epsS c1], [L 4]), 'color', 'b');
     xlabel('$t$', 'Interpreter', 'latex');
     ylabel('$S(N_A)$', 'Interpreter', 'latex');
     title('Charged resolved entanglement entropy');
