@@ -11,8 +11,7 @@
 %% Useful packages
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
-\usepackage{subcaption}
-\graphicspath{ {/home/noa/TN/Pictures} }
+\graphicspath{ {/home/noa/Pictures} }
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{mathtools}
@@ -118,10 +117,10 @@ Substituting into the full expression, I get (dropping the cosines, since they a
 \sum_{j \in (\mathbb{Z}_{even} - \mathbb{N})} \frac{L^6}{4^6}
 \end{gather*}
 
-So firstly I notice that we will get a factor of $L^6$ after taking the sums over j to integrals as well, to go with the $L^{-6}$ we got in the beginning, so that's a nice sanity check. I'll drop them from now on. The 4th line diverges, but for now I don't let it bother me, since in fact $N_A$ now should diverge after taking the continuum limit, and hopefully it works out.
+So firstly I notice that we will get a factor of $L^6$ after taking the sums over j to integrals as well, to go with the $L^{-6}$ we got in the beginning, so that's a nice sanity check. I'll drop them from now on. The 5th line diverges, but for now I don't let it bother me, since in fact $N_A$ now should diverge after taking the continuum limit, and hopefully this works out later.
 
 I start with the first two rows. After performing the k integral, this is too complicated to type, so I just put a print screen from Mathematica here:\newline
-%\includegraphics[width=1\linewidth]{row12} \newline
+\includegraphics[width=1\linewidth]{row12} \newline
 Now I get poles at $q = \pm q_1$, but they can't be gotten rid of like I did before, so we'll have to do a proper principal value. 
 
 
