@@ -11,7 +11,7 @@
 %% Useful packages
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
-\graphicspath{ {/home/noa/Pictures} }
+\graphicspath{ {/home/noa/Pictures/} }
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{mathtools}
@@ -89,12 +89,8 @@ Taking the sum over m to an integral, we get a factor of $2\pi/L$. Estimating th
 \int_{-\infty}^{\infty}dk \frac{1}{(q^2 - k^2)(q_1^2 - k^2)}e^{-i k a E t} [\rightarrow
 \int_{-\infty}^{\infty}d\delta_k \frac{1}{4(\delta_q - \delta_k)(\delta_{q_1} - \delta_k)}e^{-i (\pi/2 + \delta_k a)E t}]
 \end{gather*} 
-(E is some constant I still need to verify).\newline
-The linear dispersion relation limit is in brackets because I don't think I need it: I can now perform the integral:
-
-% \includegraphics[width=1\linewidth]{kintegral}
-
-We only want the black part (I introduce a cutoff close to $k = \pm q, \pm q_1$ since they really can't be equal before we take the $L\rightarrow\infty$ limit.) The lower bow vanishes and we are left with 
+(E is some constant I still need to verify, though I'm pretty sure it's 1.)\newline
+The linear dispersion relation limit is in brackets because I don't think I need it: I can now perform the integral in the specific value method. I introduce a cutoff close to $k = \pm q, \pm q_1$ since they really could not be equal before we took the $L\rightarrow\infty$ limit. We are left with 
 \[ \int .. = \frac{1}{2}2 \pi i \sum Res  \]
 
 \begin{gather*}
@@ -105,24 +101,31 @@ We only want the black part (I introduce a cutoff close to $k = \pm q, \pm q_1$ 
 
 Substituting into the full expression, I get (dropping the cosines, since they are squared anyway):
 
-\begin{gather*}
-\sum_{j, j_1 \in (\mathbb{Z}_{even} - \mathbb{N})}
-\big[ \sum_{m \in \mathbb{Z}_{odd}} \frac{L}{4} \frac{qq_1}{(q^2 - k^2)(q_1^2 - k^2)}[e^{-i(\epsilon_k + \epsilon_q)t} + e^{-i(\epsilon_k + \epsilon_{q_1})t} + e^{-2i\epsilon_k t}] 
-+ \delta_{j, j_1}(\frac{L}{4})^3 e^{-2i\epsilon_j t} 
-\big] \big[...^\prime\big] = \\
-\sum_{j, j_1 \in (\mathbb{Z}_{even} - \mathbb{N})}\frac{L^2}{(2\pi)^2} \frac{L^2}{4^2}\big[\int_{-\infty}^{\infty} dk \frac{qq_1}{(q^2 - k^2)(q_1^2 - k^2)}[e^{-i(\epsilon_k + \epsilon_q)t} + e^{-i(\epsilon_k + \epsilon_{q_1})t} + e^{-2i\epsilon_k t}] \big] \times \\
-\big[\int_{-\infty}^{\infty} dk \frac{qq_1}{(q^2 - k^2)(q_1^2 - k^2)}[e^{i(\epsilon_k + \epsilon_q)t} + e^{i(\epsilon_k + \epsilon_{q_1})t} + e^{2i\epsilon_k t}] \big] + \\
-\sum_{j \in (\mathbb{Z}_{even} - \mathbb{N})} \frac{L}{2\pi}\frac{L^4}{4^4}\big[\int_{-\infty}^{\infty} dk \frac{q^2}{(q^2 - k^2)^2}[2e^{-i(\epsilon_k - \epsilon_q)t}  + e^{-2i(\epsilon_k -\epsilon_q)t}] \big] + \\
-\sum_{j \in (\mathbb{Z}_{even} - \mathbb{N})} \frac{L}{2\pi}\frac{L^4}{4^4}\big[\int_{-\infty}^{\infty} dk \frac{q^2}{(q^2 - k^2)^2}[2e^{i(\epsilon_k - \epsilon_q)t}  + e^{2i(\epsilon_k -\epsilon_q)t}] \big] + \\
-\sum_{j \in (\mathbb{Z}_{even} - \mathbb{N})} \frac{L^6}{4^6}
-\end{gather*}
+\begin{align}
+& \sum_{j, j_1 \in (\mathbb{Z}_{even} - \mathbb{N})}\frac{L^2}{(2\pi)^2} \frac{L^2}{4^2}\big[\int_{-\infty}^{\infty} dk \frac{qq_1}{(q^2 - k^2)(q_1^2 - k^2)}[e^{-i(\epsilon_k + \epsilon_q)t} + e^{-i(\epsilon_k + \epsilon_{q_1})t} + e^{-2i\epsilon_k t}] \big] \times \\
+& \big[\int_{-\infty}^{\infty} dk \frac{qq_1}{(q^2 - k^2)(q_1^2 - k^2)}[e^{i(\epsilon_k + \epsilon_q)t} + e^{i(\epsilon_k + \epsilon_{q_1})t} + e^{2i\epsilon_k t}] \big] + \\
+& \sum_{j \in (\mathbb{Z}_{even} - \mathbb{N})} \frac{L}{2\pi}\frac{L^4}{4^4}\big[\int_{-\infty}^{\infty} dk \frac{q^2}{(q^2 - k^2)^2}[2e^{-i(\epsilon_k - \epsilon_q)t}  + e^{-2i(\epsilon_k -\epsilon_q)t}] \big] + \\
+& \sum_{j \in (\mathbb{Z}_{even} - \mathbb{N})} \frac{L}{2\pi}\frac{L^4}{4^4}\big[\int_{-\infty}^{\infty} dk \frac{q^2}{(q^2 - k^2)^2}[2e^{i(\epsilon_k - \epsilon_q)t}  + e^{2i(\epsilon_k -\epsilon_q)t}] \big] + \\
+& \sum_{j \in (\mathbb{Z}_{even} - \mathbb{N})} \frac{L^6}{4^6}
+\end{align}
 
 So firstly I notice that we will get a factor of $L^6$ after taking the sums over j to integrals as well, to go with the $L^{-6}$ we got in the beginning, so that's a nice sanity check. I'll drop them from now on. The 5th line diverges, but for now I don't let it bother me, since in fact $N_A$ now should diverge after taking the continuum limit, and hopefully this works out later.
 
 I start with the first two rows. After performing the k integral, this is too complicated to type, so I just put a print screen from Mathematica here:\newline
-\includegraphics[width=1\linewidth]{row12} \newline
-Now I get poles at $q = \pm q_1$, but they can't be gotten rid of like I did before, so we'll have to do a proper principal value. 
+\includegraphics[width=1\linewidth]{row12.png} \newline
+The integral over the q's goes from $-\infty$ to 0. I notice that if I take $q, q_1 \rightarrow -q, -q_1$ I get the same result, and perform the integral from 0 to $\infty$. I will try to get my result to the shape of the first answer  \href{https://math.stackexchange.com/questions/2340049/calculate-the-fourier-transform-of-log-x}{here}.\newline
+First I make a rotation of $q, q_1$:\newline
+\includegraphics[width=1\linewidth]{rotated.png} \newline
+And the integral is performed on $\int_{0}^{\infty}dp_+ \int_{-\infty}^{\infty}dp_-$.\newline
 
+I am left with 3 types of terms: ones that diverge completely (The ones $\propto (q_- q_+)^{-1}$), terms that converge similarly to row 5 above($\propto (q_-)^{-2}$), and terms that diverge badly at $q_+ = 0$ ($\propto (q_+)^{-2}$). I can introduce a low boundary cutoff for $q_+$, which will equal $4\pi/L$ (The lower boundary for $q, q_1 = 2\pi/L$) I'm not sure it makes sense, as we can in fact have the 0 mode in our ground state.
+
+Next steps:
+\begin{itemize}
+	\item Perform the integrals, getting all the divergent integrals as a divergent sum over the same argument.
+	\item Figure out what to do regarding integrals of the form: $\int_{4\pi/L}^\infty dq_+ \int_{-\infty}^{\infty} dq_- \frac{cos{q_-}}{q_+^2}$ - the $q_-$ integral should take this to 0, but the $L\rightarrow\infty$ should diverge.
+	\item handle rows 3-4, which give me the $\cos{q}/q$ integrals I need for the log(t) Fourier transform.
+\end{itemize}
 
 % TODO here I separate j = j_1 and j != j_1, but the L factors don't work. It also feels sketchy, since I already took the L-> \infty limit.
 %\begin{gather*}
