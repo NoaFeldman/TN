@@ -1,4 +1,4 @@
-function s = stheo(X_scaled, sigma2, NA)
+function s = stheo(X_scaled, sigma2, NA, pointFunc)
     % S_A(N_A) = (c_n * A * B * c)'
     % c_n' |_{n = 1} = c1 (from sFull fit)
     % A = X^(c(n - 1/n)/12)
@@ -9,7 +9,7 @@ function s = stheo(X_scaled, sigma2, NA)
     % Note: I take c_n = 1, and add a multiplicative constant to X_scaled
     % detrmined by sFull.
 
-    s = - (dnA(X_scaled) .* B(sigma2) .* C(NA, sigma2) + ...
+    s = - (dnA(X_scaled, pointFunc) .* B(sigma2) .* C(NA, sigma2) + ...
         A(X_scaled) .* dnB(sigma2) .* C(NA, sigma2) + ...
         A(X_scaled) .* B(sigma2) .* dnC(NA, sigma2));    
 end
@@ -18,9 +18,9 @@ function a = A(x)
     a = 1;
 end
 
-function da = dnA(x)
+function da = dnA(x, pointFunc)
     c = 1;
-    da = c/6.* log(x);
+    da = c/(6/pointFunc).* log(x);
 end
 
 function b = B(sigma2)
