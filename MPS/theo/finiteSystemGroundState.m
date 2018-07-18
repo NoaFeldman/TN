@@ -14,22 +14,25 @@ function finiteSystemGroundState(Ls, filename, us, vs)
 %     for l = 1:length(Ls)
         for l1 = 1:length(us)
             for l2 = 1:length(vs)
-                ratio1 = us(l1);
-                ratio2 = vs(l2);
-                if (ratio2 > ratio1)
+                % Here I trust myself to assign proper u and v values such
+                % that L*u and L*v are integers! This assignment is for
+                % numerical reasons.
+                u = us(l1);
+                v = vs(l2);
+                if (v > u)
         %             L = Ls(l);
                     L = Ls(1);
-                    x = L * (ratio2 - ratio1) / 2 + chargeRange;
+                    x = L * (v - u) / 2 + chargeRange;
                     cicj = getCiCj0Matrix(L);
-                    [~, v] = eig(cicj((L*ratio1+1):L*ratio2, (L*ratio1+1):L*ratio2));
-                    f = zeros(1, length(v));
-                    for i = 1 : length(v)
-                        f(i) = v(i, i);
+                    [~, eigenVals] = eig(cicj(int16(L*u+1):int16(L*v), int16(L*u+1):int16(L*v)));
+                    f = zeros(1, length(eigenVals));
+                    for i = 1 : length(eigenVals)
+                        f(i) = eigenVals(i, i);
                     end
                     p(:, l1, l2)  = getSNA(1, f, x, L);
                     s(:, l1, l2)  = getEE(f, x, L);
                     sFull(l1, l2) = sum(s(:, l1, l2));
-                    fg = fit(x.', real(p(:, l1, l2)), gaussian, 'StartPoint', [L * (ratio2 - ratio1) / 2 0.1]);
+                    fg = fit(x.', real(p(:, l1, l2)), gaussian, 'StartPoint', [L * (v - u) / 2 0.1]);
                     sigma2(l1, l2) = fg.c;
                 end
             end
