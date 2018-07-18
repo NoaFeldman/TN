@@ -1,21 +1,21 @@
-function finiteSystemGroundState(Ls, filename, ratio1s, ratio2s)
+function finiteSystemGroundState(Ls, filename, us, vs)
     chargeRange = -5:5;
 %     s = zeros(length(chargeRange), length(Ls));
 %     p = zeros(length(chargeRange), length(Ls));
 %     sigma2 = zeros(1, length(Ls));
 %     sFull = zeros(1, length(Ls)); 
-    ratios = ratio2s - ratio1s.';
+    ratios = vs - us.';
     ratios(ratios < 0) = 0;
-    s = zeros(length(chargeRange), length(ratio1s), length(ratio2s));
-    p = zeros(length(chargeRange), length(ratio1s), length(ratio2s));
-    sigma2 = zeros(length(ratio1s), length(ratio2s));
-    sFull = zeros(length(ratio1s), length(ratio2s)); 
+    s = zeros(length(chargeRange), length(us), length(vs));
+    p = zeros(length(chargeRange), length(us), length(vs));
+    sigma2 = zeros(length(us), length(vs));
+    sFull = zeros(length(us), length(vs)); 
     gaussian = fittype('sqrt(1/(2*pi*c))*exp(-(x-b)^2/(2*c))', 'independent', 'x', 'dependent', 'y');
 %     for l = 1:length(Ls)
-        for l1 = 1:length(ratio1s)
-            for l2 = 1:length(ratio2s)
-                ratio1 = ratio1s(l1);
-                ratio2 = ratio2s(l2);
+        for l1 = 1:length(us)
+            for l2 = 1:length(vs)
+                ratio1 = us(l1);
+                ratio2 = vs(l2);
                 if (ratio2 > ratio1)
         %             L = Ls(l);
                     L = Ls(1);
@@ -36,5 +36,5 @@ function finiteSystemGroundState(Ls, filename, ratio1s, ratio2s)
         end
 %     end
 %     save(filename, 'Ls', 'p', 's', 'sFull', 'sigma2');
-    save(filename, 'p', 's', 'sFull', 'sigma2', 'ratios', 'ratio1s', 'ratio2s');
+    save(filename, 'p', 's', 'sFull', 'sigma2', 'ratios', 'us', 'vs');
 end
