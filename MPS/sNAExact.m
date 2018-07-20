@@ -11,11 +11,16 @@ function sNAExact(L, u, v, tFirstStep, tStep, tStepNum, fileNameAddition)
     p = zeros(length(x), tStepNum + 1);
     sFull = zeros(1, tStepNum + 1);
     
+    % Sanity check - S_A == S_B?
+    sb = zeros(length(x), tStepNum + 1);
+    pb = zeros(length(x), tStepNum + 1);
+    sFullb = zeros(1, tStepNum + 1);
+    
     U = realSpaceToDualSpace(L);
     ckcq = U' * cicj * U;
     ckcq = expectedCkCqMatrix(L, ckcq, tFirstStep);
     cicj = U * ckcq * U';
-    for step = tFirstStep : tStepNum
+    for step = 0 : tStepNum
         [~, V] = eig(cicj(u+1:v, u+1:v));
         for i = 1 : length(V)
             f(i) = V(i, i);
@@ -23,15 +28,10 @@ function sNAExact(L, u, v, tFirstStep, tStep, tStepNum, fileNameAddition)
         p(:, step + 1)  = getSNA(1, f, x, L);
         s(:, step + 1)  = getEE(f, x, L);
         sFull(step + 1) = sum(s(:, step + 1));
-       
+        
         ckcq = U' * cicj * U;
         ckcq = expectedCkCqMatrix(L, ckcq, tStep);
         cicj = U * ckcq * U';
-%         if (mod(step, 100) == 0)
-%             t = 0 : step;
-%             t = t * tStep;
-%             save(strcat('theoSP', int2str(L), '_', int2str(LA), '_step_', num2str(step)), 's', 'p', 'sFull', 't');
-%         end
     end 
     t = 0 : tStepNum;
     t = t * tStep;
