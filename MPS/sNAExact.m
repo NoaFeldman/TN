@@ -11,11 +11,7 @@ function sNAExact(L, u, v, tFirstStep, tStep, tStepNum, fileNameAddition)
     p = zeros(length(x), tStepNum + 1);
     sFull = zeros(1, tStepNum + 1);
     
-    % Sanity check - S_A == S_B?
-    sb = zeros(length(x), tStepNum + 1);
-    pb = zeros(length(x), tStepNum + 1);
-    sFullb = zeros(1, tStepNum + 1);
-    
+  
     U = realSpaceToDualSpace(L);
     ckcq = U' * cicj * U;
     ckcq = expectedCkCqMatrix(L, ckcq, tFirstStep);
