@@ -1,7 +1,7 @@
 function s = stheo(X_scaled, sigma2, NA, pointFunc)
-    % S_A(N_A) = (c_n * A * B * c)'
+    % S_A(N_A) = (c_n * A * B * C)'
     % c_n' |_{n = 1} = c1 (from sFull fit)
-    % A = X^(c(n - 1/n)/12)
+    % A = X^(pointFunc * c(n - 1/n)/12)
     % B = sqrt( n / 2 * K * pi * sigma2) = sqrt(n / (2 * pi *
     % sigma2))
     % C = e^(- n * N_A^2 / (2 * sigma2))
