@@ -7,10 +7,3 @@ function s = getSNA(n, f, x, N)
         s = s + sAlpha .* exp(complex(0, -alpha .* x)) / (2 * pi / stepSize);
     end
 end
-
-function s = getSAlpha(n, alpha, f)
-    s = 1;
-    for l = 1 : length(f)
-        s = s * (exp(1i * alpha) * f(l)^n + (1 - f(l))^n);
-    end
-end
