@@ -7,15 +7,26 @@ function finiteSystemGroundState(Ls, filename, us, vs, alphas)
     ratios = vs - us.';
     ratios(ratios < 0) = 0;
     s = zeros(length(chargeRange), length(Ls), length(us), length(vs));
-    p = zeros(length(chargeRange), length(Ls), length(us), length(vs));
-    sAlpha = zeros(length(alphas), length(Ls), length(us), length(vs));
+    s1 = zeros(length(chargeRange), length(Ls), length(us), length(vs));
+    s1Alpha = zeros(length(alphas), length(Ls), length(us), length(vs));
+    s2Alpha = zeros(length(alphas), length(Ls), length(us), length(vs));
+    s3Alpha = zeros(length(alphas), length(Ls), length(us), length(vs));
     s2 = zeros(length(chargeRange), length(Ls), length(us), length(vs));
     s3 = zeros(length(chargeRange), length(Ls), length(us), length(vs));
     s4 = zeros(length(chargeRange), length(Ls), length(us), length(vs));
     s5 = zeros(length(chargeRange), length(Ls), length(us), length(vs));
-    sigma2 = zeros(length(Ls), length(us), length(vs));
+    varN1 = zeros(length(Ls), length(us), length(vs));
+    varN2 = zeros(length(Ls), length(us), length(vs));
+    varN3 = zeros(length(Ls), length(us), length(vs));
+    varN4 = zeros(length(Ls), length(us), length(vs));
+    varN5 = zeros(length(Ls), length(us), length(vs));
+    sn02 = zeros(length(Ls), length(us), length(vs));
+    sn03 = zeros(length(Ls), length(us), length(vs));
+    sn04 = zeros(length(Ls), length(us), length(vs));
+    sn05 = zeros(length(Ls), length(us), length(vs));
     sFull = zeros(length(Ls), length(us), length(vs)); 
     gaussian = fittype('sqrt(1/(2*pi*c))*exp(-(x-b)^2/(2*c))', 'independent', 'x', 'dependent', 'y');
+    renyi = fittype('a*exp(-(x-b)^2/(2*c))', 'independent', 'x', 'dependent', 'y');
     for l = 1:length(Ls)
         for l1 = 1:length(us)
             for l2 = 1:length(vs)
@@ -33,20 +44,38 @@ function finiteSystemGroundState(Ls, filename, us, vs, alphas)
                     for i = 1 : length(eigenVals)
                         f(i) = eigenVals(i, i);
                     end
-                    p(:, l, l1, l2)  = getSNA(1, f, x, L);
                     s(:, l, l1, l2)  = getEE(f, x, L);
-%                     s2(:, l, l1, l2)  = getSNA(2, f, x, L);
-%                     s3(:, l, l1, l2)  = getSNA(3, f, x, L);
-%                     s4(:, l, l1, l2)  = getSNA(4, f, x, L);
-%                     s5(:, l, l1, l2)  = getSNA(5, f, x, L);
-                    sAlpha(:, l, l1, l2)  = getSAlpha(1, alphas, f);
+                    s1(:, l, l1, l2)  = getSNA(1, f, x, L);
+                    s2(:, l, l1, l2)  = getSNA(2, f, x, L);
+                    s3(:, l, l1, l2)  = getSNA(3, f, x, L);
+                    s4(:, l, l1, l2)  = getSNA(4, f, x, L);
+                    s5(:, l, l1, l2)  = getSNA(5, f, x, L);
+                    s1Alpha(:, l, l1, l2)  = getSAlpha(1, alphas, f, 1);
+                    s2Alpha(:, l, l1, l2)  = getSAlpha(2, alphas, f, 1);
+                    s3Alpha(:, l, l1, l2)  = getSAlpha(3, alphas, f, 1);
                     sFull(l, l1, l2) = sum(s(:, l, l1, l2));
-                    fg = fit(x.', real(p(:, l, l1, l2)), gaussian, 'StartPoint', [L * (v - u) / 2 0.1]);
-                    sigma2(l, l1, l2) = fg.c;
+
+                    fg = fit(x.', real(s1(:, l, l1, l2)), gaussian, 'StartPoint', [L * (v - u) / 2 0.1]);
+                    varN1(l, l1, l2) = fg.c;
+                    fg = fit(x.', real(s2(:, l, l1, l2)), renyi, 'StartPoint', [1 L * (v - u) / 2 0.1]);
+                    sn02(l, l1, l2) = fg.a;
+                    varN2(l, l1, l2) = fg.c;
+                    fg = fit(x.', real(s3(:, l, l1, l2)), renyi, 'StartPoint', [1 L * (v - u) / 2 0.1]);
+                    sn03(l, l1, l2) = fg.a;
+                    varN3(l, l1, l2) = fg.c;
+                    fg = fit(x.', real(s4(:, l, l1, l2)), renyi, 'StartPoint', [1 L * (v - u) / 2 0.1]);
+                    sn04(l, l1, l2) = fg.a;
+                    varN4(l, l1, l2) = fg.c;
+                    fg = fit(x.', real(s5(:, l, l1, l2)), renyi, 'StartPoint', [1 L * (v - u) / 2 0.1]);
+                    sn05(l, l1, l2) = fg.a;
+                    varN5(l, l1, l2) = fg.c;
                 end
             end
         end
-%     end
+    end
 %     save(filename, 'Ls', 'p', 's', 'sFull', 'sigma2');
-    save(filename, 'p', 's', 's2', 's3', 's4', 's5', 'sAlpha', 'sFull', 'sigma2', 'ratios', 'us', 'vs', 'Ls', 'alphas');
+    save(filename, 's', 's1', 's2', 's3', 's4', 's5', 's1Alpha', 's2Alpha', 's3Alpha', ...
+        'sFull', 'varN1', 'varN2', 'varN3', 'varN4', 'varN5',...
+        'sn02', 'sn03', 'sn04', 'sn05', ...
+        'ratios', 'us', 'vs', 'Ls', 'alphas');
 end
