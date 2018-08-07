@@ -1,9 +1,9 @@
-function S = getEE(f, x, N)
+function S = getEE(f, x, L)
     % S(N_A),  based on https://arxiv.org/pdf/1711.09418.pdf (derivation by
     % n of eq. 2, 9)
-    stepSize = 2 * pi / (N + 1);
+    stepSize = 2 * pi / (L + 1);
     S = zeros(1, length(x));
-    for alpha = stepSize : stepSize : stepSize  * N
+    for alpha = stepSize : stepSize : stepSize  * L
         sAlpha = getSAlpha(1, alpha, f);
         dnSAlpha = 0;
         for l = 1 : length(f)

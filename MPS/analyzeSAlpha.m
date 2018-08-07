@@ -21,24 +21,24 @@ function analyzeSAlpha(filename)
 %     f = fittype('b^(-x^2)', 'independent', 'x', 'dependent', 'y');
     
     % We expact b \propto (L*sin(pi*l/L))^(k/n*(2pi)^2).
+    n = 1;
+    s0 = 1;
     scaled = zeros(1, length(data.ratios));
     fittingRange = 20:(length(data.alphas) - 20);
     for i = 1:length(data.ratios)
         [fg, gof] = fit(data.alphas(fittingRange).', real(data.s1Alpha(fittingRange, 1, 1, i)), f, ...
             'StartPoint', [(L*sin(pi*data.ratios(i)))^(1/(2*pi)^2)]);
-%         plot(fg, data.alphas.', abs(data.s1Alpha(:, 1, 1, i))); pause(0.5);
+        plot(fg, data.alphas.', abs(data.s1Alpha(:, 1, 1, i))); pause(0.5);
         scaled(i) = fg.b;
     end
-     
+    
     % Compare to the equivalent of GS Eq(7) with the new form for f.
-    n = 1;
-    s0 = 1;
-    for dNA = 0:2
-        plot(data.ratios, permute(data.s1(6 - dNA, 1, 1, :), [4 1 2 3]), 'color', 'c');
-        hold on
-        plot(data.ratios, getNewSNA(s0, n, dNA, scaled), 'color', 'b')
-    end
-    hold off
+%     for dNA = 0:2
+%         plot(data.ratios, real(permute(data.s1(6 - dNA, 1, 1, :), [4 1 2 3])), 'color', 'c');
+%         hold on
+%         plot(data.ratios, getNewSNA(s0, n, dNA, scaled, 2), 'color', 'b')
+%     end
+%     hold off
 
 %     plot(data.ratios, b1s, 'color', 'r');
 %     hold on
@@ -62,26 +62,31 @@ function analyzeSAlpha(filename)
             hold off
             scatter(data.alphas, real(sAlpha(:, 1, 1, i)), '.', 'markerEdgeColor', 'b');
             hold on
-            plot(data.alphas, s0(i).*...
-                (scaled(i).^(-data.alphas.^2/n) + ...
-                    scaled(i).^(-(data.alphas + 2*pi).^2/n) + ...
-                    scaled(i).^(-(data.alphas - 2*pi).^2/n)), 'color', 'r'); 
+            plot(data.alphas, getNewSNAlpha(s0(i), n, data.alphas, scaled(i), 2), 'color', 'r'); 
             title(strcat('n = ', int2str(n)));
-%             pause(0.5)
+            pause(0.5)
         end
         hold off
-        for dNA = 0:2
-            s = data.(strcat('s', int2str(n)));
-            plot(data.ratios, permute(s(6 - dNA, 1, 1, :), [4 1 2 3]), 'color', 'c');
-            hold on
-            plot(data.ratios, getNewSNA(s0, n, dNA, scaled), 'color', 'b')
-        end
-    hold off
+%         for dNA = 0:2
+%             s = data.(strcat('s', int2str(n)));
+%             plot(data.ratios, real(permute(s(6 - dNA, 1, 1, :), [4 1 2 3])), 'color', 'c');
+%             hold on
+%             plot(data.ratios, getNewSNA(s0, n, dNA, scaled, 2), 'color', 'b')
+%         end
+%     hold off
     end
 end
 
-function sna = getNewSNA(s0, n, dNA, scaled) 
+function snalpha = getNewSNAlpha(s0, n, alphas, scaled, alphaCycles)
+    snalpha = s0.*(scaled.^(-(alphas).^2/n));
+    for c = 2:alphaCycles
+        snalpha = snalpha + s0.*(scaled.^(-(alphas + 2*pi*(c-1)).^2/n)) + ...
+                            s0.*(scaled.^(-(alphas - 2*pi*(c-1)).^2/n));
+    end
+end
+
+function sna = getNewSNA(s0, n, dNA, scaled, alphaCycles) 
     sna = s0.*exp(-dNA^2./4.*n./log(scaled))*1./(4*sqrt(pi)).*sqrt(n./log(scaled)).* ...
-            (erfz(3*pi.*sqrt(log(scaled)./n) + 1i*dNA./2 .*sqrt(n./log(scaled))) - ...
-                erfz(-3*pi.*sqrt(log(scaled)./n) + 1i*dNA/2 .*sqrt(n./log(scaled))));
+            (erfz((2*alphaCycles - 1)*pi.*sqrt(log(scaled)./n) + 1i*dNA./2 .*sqrt(n./log(scaled))) - ...
+                erfz(-(2*alphaCycles - 1)*pi.*sqrt(log(scaled)./n) + 1i*dNA/2 .*sqrt(n./log(scaled))));
 end
