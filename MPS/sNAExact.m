@@ -6,7 +6,7 @@ function sNAExact(L, u, v, tFirstStep, tStep, tStepNum, fileNameAddition, alphas
     cicj(1:L/2, 1:L/2) = cicjA;
     cicj(L/2 + 1 : L, L/2 + 1 : L) = cicjA;
     
-    x = (v-u) / 2 - 10 : 2 : (v-u) / 2 + 10;
+    x = (v-u) / 2 - 5 : 1 : (v-u) / 2 + 5;
     s = zeros(length(x), tStepNum + 1);
     s1 = zeros(length(x), tStepNum + 1);
     s2 = zeros(length(x), tStepNum + 1);
@@ -49,7 +49,7 @@ function sNAExact(L, u, v, tFirstStep, tStep, tStepNum, fileNameAddition, alphas
     end 
     t = 0 : tStepNum;
     t = t * tStep;
-    save(strcat('theoSP', int2str(L), '_', int2str(u), '-', int2str(v), '_', num2str(tStep*tStepNum), '_', fileNameAddition)...
+    save(strcat('exactSP', int2str(L), '_', int2str(u), '-', int2str(v), '_', num2str(tStep*tStepNum), '_', fileNameAddition)...
         , 't', 's', 's1', 's2', 's3', 's4', 's5', ...
         'alphas', 's1Alpha', 's2Alpha', 's3Alpha', 's4Alpha', 's5Alpha', 'sFull');
 end
