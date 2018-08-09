@@ -1,41 +1,32 @@
-function s = stheo(X_scaled, sigma2, NA, pointFunc)
-    % S_A(N_A) = (c_n * A * B * C)'
-    % c_n' |_{n = 1} = c1 (from sFull fit)
-    % A = X^(pointFunc * c(n - 1/n)/12)
-    % B = sqrt( n / 2 * K * pi * sigma2) = sqrt(n / (2 * pi *
-    % sigma2))
-    % C = e^(- n * N_A^2 / (2 * sigma2))
-    %
-    % Note: I take c_n = 1, and add a multiplicative constant to X_scaled
-    % detrmined by sFull.
-
-    s = - (dnA(X_scaled, pointFunc) .* B(sigma2) .* C(NA, sigma2) + ...
-        A(X_scaled) .* dnB(sigma2) .* C(NA, sigma2) + ...
-        A(X_scaled) .* B(sigma2) .* dnC(NA, sigma2));    
-end
+function s = stheo(X0Scaled, XChargeScaled, NA, pointFunc, weight, k)
+    % Charge resolved VN entropy based on 
+    % s_n(\alpha) = 
+    %       s_n(\alpha = 0)[XCharge^{-k/n (\aplha/2pi)^2 +
+    %       weight*XCharge^{-k/n ((\alpha \pm 2pi)/2pi)^2]
+    % The (alpha = 0) entropy dependence on n is assumed to be
+    % A = X0_scaled^(-pointFunc*c/12(n - n^-1)), X0_scaled is extracted from
+    % sFull.
+    % Code here is taken from Mathematica (vertexOpsWeights.nb on my gp).
+    if (nargin == 5)
+        k = 1;
+    end
     
-function a = A(x)
-    a = 1;
+    s = (-1/(3*2*pi)).*exp(1).^((sqrt(-1)*(-1)).*NA.*pi).*k.^(-3/2).*pointFunc.^(-3/2).* ...
+  pi.*XChargeScaled.^((-9/4).*k.*pointFunc).*log(XChargeScaled).^(-3/2).*(sqrt(-1).*((-1)+exp(1).^( ...
+  (sqrt(-1)*2).*NA.*pi).*weight).*XChargeScaled.^(2.*k.*pointFunc).*dawson((1/2).*k.^(-1/2) ...
+  .*pointFunc.^(-1/2).*log(XChargeScaled).^(-1/2).*(2.*NA.*pi+(sqrt(-1)*(-1)).*k.*pointFunc.* ...
+  log(XChargeScaled))).*(6.*NA.^2.*pi.^2+k.*pointFunc.*log(XChargeScaled).*((-3)+pointFunc.*log(X0Scaled)))+weight.*( ...
+  (sqrt(-1)*(-1)).*dawson((1/2).*k.^(-1/2).*pointFunc.^(-1/2).*log(XChargeScaled).^( ...
+  -1/2).*(2.*NA.*pi+(sqrt(-1)*(-3)).*k.*pointFunc.*log(XChargeScaled))).*(6.*NA.^2.* ...
+  pi.^2+k.*pointFunc.*log(XChargeScaled).*((-3)+pointFunc.*log(X0Scaled)))+sqrt(-1).*exp(1).^((sqrt( ...
+  -1)*2).*NA.*pi).*dawson((1/2).*k.^(-1/2).*pointFunc.^(-1/2).*log(XChargeScaled).^( ...
+  -1/2).*(2.*NA.*pi+(sqrt(-1)*3).*k.*pointFunc.*log(XChargeScaled))).*(6.*NA.^2.*pi.^2+ ...
+  k.*pointFunc.*log(XChargeScaled).*((-3)+pointFunc.*log(X0Scaled)))+(-3).*exp(1).^(sqrt(-1).*NA.* ...
+  pi).*k.^(1/2).*pointFunc.^(1/2).*log(XChargeScaled).^(1/2).*(3.*k.*pointFunc.*cos(NA.*pi).* ...
+  log(XChargeScaled)+(-2).*NA.*pi.*sin(NA.*pi)))+XChargeScaled.^(2.*k.*pointFunc).*(sqrt(-1).*(exp( ...
+  1).^((sqrt(-1)*2).*NA.*pi)+(-1).*weight).*dawson((1/2).*k.^(-1/2).* ...
+  pointFunc.^(-1/2).*log(XChargeScaled).^(-1/2).*(2.*NA.*pi+sqrt(-1).*k.*pointFunc.*log(XChargeScaled))).* ...
+  (6.*NA.^2.*pi.^2+k.*pointFunc.*log(XChargeScaled).*((-3)+pointFunc.*log(X0Scaled)))+3.*exp(1).^( ...
+  sqrt(-1).*NA.*pi).*k.^(1/2).*pointFunc.^(1/2).*log(XChargeScaled).^(1/2).*(k.*pointFunc.*(( ...
+  -1)+weight).*cos(NA.*pi).*log(XChargeScaled)+2.*NA.*pi.*(1+weight).*sin(NA.*pi))));    
 end
-
-function da = dnA(x, pointFunc)
-    c = 1;
-    da = c/(6/pointFunc).* log(x);
-end
-
-function b = B(sigma2)
-    b = sqrt(1 ./ (2 .* pi .* sigma2));
-end
-
-function db = dnB(sigma2)
-    db = 1/2 .* sqrt(1 ./ (2 .* pi .* sigma2));
-end
-
-function c = C(NA, sigma2)
-    c = exp(- NA.^2 ./ (2 .* sigma2));
-end
-
-function dc = dnC(NA, sigma2)
-    dc = - NA.^2 ./ (2 .* sigma2) .* C(NA, sigma2);
-end
-

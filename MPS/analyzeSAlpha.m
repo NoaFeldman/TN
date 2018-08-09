@@ -1,92 +1,59 @@
-function analyzeSAlpha(filename)
+function analyzeSAlpha(filename, L, cftRegion, varFieldName, model, pointFunc)
     hold off
-    % load('t0L10000_1point_full.mat');
     data = load(filename);
-    L = 10000;
     
-    % Index for location of alpha = 0 in data.alphas.
-    zeroIndex = 63;
+    zeroIndex = find(data.alphas == 0);
     
-    % Plot sigma^2 extracted from s_{1-5}
-    % From Eq.(7), we expect it to go as 1/n
-%     for n = 1:5
-%         plot(data.ratios, permute(n.*data.(strcat('varN', int2str(n))), [3 1 2]));
-%         legendinfo{n} = strcat('n = ', int2str(n));
-%         hold on;
-%     end
-%     hold off
-       
-    % Evaluating S_1(alpha)
-    f = fittype('b^(-x^2) + b^(-(x + 2*pi)^2) + b^(-(x - 2*pi)^2)', 'independent', 'x', 'dependent', 'y');
-%     f = fittype('b^(-x^2)', 'independent', 'x', 'dependent', 'y');
+    var = data.(varFieldName);
+    [~, varIndex] = max(data.sFull(:));
+    [a, ~, ~, ~, ~] = fitnonlin(data.alphas, ...
+        data.alphas, real(data.s1Alpha(:, varIndex)).', ...
+        0.01.*data.alphas, 0.01.*real(data.s1Alpha(:, varIndex)).', ...
+        'sAlphaTheo', [10 10], [1 L var(varIndex) model 0.85]);
+    plot(data.alphas, real(data.s1Alpha(:, varIndex)).');
+    hold on
+    plot(data.alphas, sAlphaTheo(data.alphas, a, [1 L var(varIndex) model]));
     
-    % We expact b \propto (L*sin(pi*l/L))^(k/n*(2pi)^2).
-    n = 1;
-    s0 = 1;
-    scaled = zeros(1, length(data.ratios));
-    fittingRange = 20:(length(data.alphas) - 20);
-    for i = 1:length(data.ratios)
-        [fg, gof] = fit(data.alphas(fittingRange).', real(data.s1Alpha(fittingRange, 1, 1, i)), f, ...
-            'StartPoint', [(L*sin(pi*data.ratios(i)))^(1/(2*pi)^2)]);
-        plot(fg, data.alphas.', abs(data.s1Alpha(:, 1, 1, i))); pause(0.5);
-        scaled(i) = fg.b;
-    end
-    
-    % Compare to the equivalent of GS Eq(7) with the new form for f.
-%     for dNA = 0:2
-%         plot(data.ratios, real(permute(data.s1(6 - dNA, 1, 1, :), [4 1 2 3])), 'color', 'c');
-%         hold on
-%         plot(data.ratios, getNewSNA(s0, n, dNA, scaled, 2), 'color', 'b')
-%     end
-%     hold off
-
-%     plot(data.ratios, b1s, 'color', 'r');
-%     hold on
-%     scatter(data.ratios, b1s, '+', 'markerEdgeColor', 'r');
-%     plot(data.ratios, (L*sin(pi.*data.ratios)).^(1/(2*pi)^2), 'color', 'b');
-%     hold off
-%     % Note we only expected this to be proportional (no pi, c1,
-%     % 2-factor...), isn't it wierd?
-%     plot(data.ratios, (L*sin(pi.*data.ratios)).^(1/(2*pi)^2)./b1s);
-%     hold off
-    
-    % Fit results for larger n values
-    for n = 2:5
-        s0 = zeros(1, length(data.ratios));
-        for i = 1:length(data.ratios)
-            sAlpha = data.(strcat('s', int2str(n), 'Alpha'));
-            s0(i) = sAlpha(zeroIndex, 1, 1, i)./...
-                (scaled(i).^(-data.alphas(zeroIndex).^2/n) + ...
-                    scaled(i).^(-(data.alphas(zeroIndex) + 2*pi).^2/n) + ...
-                    scaled(i).^(-(data.alphas(zeroIndex) - 2*pi).^2/n));
-            hold off
-            scatter(data.alphas, real(sAlpha(:, 1, 1, i)), '.', 'markerEdgeColor', 'b');
-            hold on
-            plot(data.alphas, getNewSNAlpha(s0(i), n, data.alphas, scaled(i), 2), 'color', 'r'); 
-            title(strcat('n = ', int2str(n)));
-            pause(0.5)
-        end
+    for i = 10:10:length(var)
         hold off
-%         for dNA = 0:2
-%             s = data.(strcat('s', int2str(n)));
-%             plot(data.ratios, real(permute(s(6 - dNA, 1, 1, :), [4 1 2 3])), 'color', 'c');
-%             hold on
-%             plot(data.ratios, getNewSNA(s0, n, dNA, scaled, 2), 'color', 'b')
-%         end
-%     hold off
+        plot(data.alphas, real(data.s1Alpha(:, i)));
+        hold on
+        plot(data.alphas, sAlphaTheo(data.alphas, a, [1 L var(i) model]));
+%         pause(0.5);
     end
-end
-
-function snalpha = getNewSNAlpha(s0, n, alphas, scaled, alphaCycles)
-    snalpha = s0.*(scaled.^(-(alphas).^2/n));
-    for c = 2:alphaCycles
-        snalpha = snalpha + s0.*(scaled.^(-(alphas + 2*pi*(c-1)).^2/n)) + ...
-                            s0.*(scaled.^(-(alphas - 2*pi*(c-1)).^2/n));
-    end
-end
-
-function sna = getNewSNA(s0, n, dNA, scaled, alphaCycles) 
-    sna = s0.*exp(-dNA^2./4.*n./log(scaled))*1./(4*sqrt(pi)).*sqrt(n./log(scaled)).* ...
-            (erfz((2*alphaCycles - 1)*pi.*sqrt(log(scaled)./n) + 1i*dNA./2 .*sqrt(n./log(scaled))) - ...
-                erfz(-(2*alphaCycles - 1)*pi.*sqrt(log(scaled)./n) + 1i*dNA/2 .*sqrt(n./log(scaled))));
+    
+    hold off
+    
+    epsilon = a(1);
+    multiplyingConst = a(2);
+    % w = a(3);
+    
+    XChargeScaled = multiplyingConst .* getScaledVariable(var, epsilon, L, model);
+       
+    
+    [as, ~, ~, ~, ~] = fitnonlin(var(cftRegion), ...
+        var(cftRegion), real(data.sFull(cftRegion)), 0.01.*var(cftRegion), ...
+        0.01.*real(data.sFull(cftRegion)), 'getEntanglementEntropy', [1 1], [L, model]);
+    plot(var(cftRegion), real(data.sFull(cftRegion)));
+    hold on
+    plot(var(cftRegion), getEntanglementEntropy(var(cftRegion), as, [L, model]));
+    
+    hold off
+    
+    sFullEpsilon = as(1);
+    sFullC1 = as(2);
+    
+    X0Scaled = exp((6/pointFunc).*sFullC1).*getScaledVariable(var, sFullEpsilon, L, model);
+    
+    plot(var, data.s(6, :), 'color', 'c');
+    hold on
+    plot(var, data.s(5, :), 'color', 'c');
+    plot(var, data.s(4, :), 'color', 'c');
+    k = 1;
+    w = 0.85;
+    % Still need to play a little with multiplyingConst here - s1Alpha is
+    % very insensitive to it but stheo is.
+    plot(var(cftRegion), stheo(X0Scaled(cftRegion), XChargeScaled(cftRegion), 0, pointFunc, w, k), 'color', 'b');
+    plot(var(cftRegion), stheo(X0Scaled(cftRegion), XChargeScaled(cftRegion), 1, pointFunc, w, k), 'color', 'b');
+    plot(var(cftRegion), stheo(X0Scaled(cftRegion), XChargeScaled(cftRegion), 2, pointFunc, w, k), 'color', 'b');
 end

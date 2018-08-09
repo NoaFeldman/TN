@@ -1,4 +1,6 @@
 function sigma = getSigmaN(t, a, L)
+    % ON HOLD - PROBABLY DEPRACATED AFTER UPGRADE OF GS EQ(6)
+    
     % fitfun for fitgui/fitnonlin.
     % based on file:///home/noa/Downloads/EEt_calc.pdf
     % and Eq. (36) in https://arxiv.org/pdf/1105.4846.pdf
