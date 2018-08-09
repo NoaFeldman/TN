@@ -1,4 +1,4 @@
-function specResults = SNAFromSpec(dirName, firstStep, lastStep, stepT)
+function specResults = arrangeDMRGResults(dirName, firstStep, lastStep, stepT)
     stepsNum = lastStep - firstStep + 1;
     sz = -10:2:10;
     specResults.s = zeros(length(sz), stepsNum); 

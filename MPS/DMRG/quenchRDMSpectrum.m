@@ -1,4 +1,4 @@
-function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, dirName, subsystemA)
+function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStepOverDt, tFirstStep, tStepsNum, dirName, subsystemA)
     % Saves the eigenvalues of the RDM (of half the lattice) for two ground
     % state L/2 lattices suddenly coupled.
     % We first calculate g.s of an L/2 lattice.
@@ -26,7 +26,7 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
         psi = f.psi;
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     end
-    truncErr = zeros(1, tStep*(tStepsNum - tFirstStep + 1));
+    truncErr = zeros(1, tStepOverDt*(tStepsNum - tFirstStep + 1));
     trotterGates = getTrotterGates(H, dt, 0);
     if nargin == 10
         subsystemA = 'half';
@@ -55,8 +55,8 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
         end
         
         if (step < tStepsNum)
-            for t = 1 : tStep
-                ind = (step - tFirstStep)*tStep + t;
+            for t = 1 : tStepOverDt
+                ind = (step - tFirstStep)*tStepOverDt + t;
                 [psi, truncErr(ind)] = trotterSweep(trotterGates, psi, topts);
             end
         end
