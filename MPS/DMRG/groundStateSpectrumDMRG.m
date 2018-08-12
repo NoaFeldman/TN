@@ -1,7 +1,7 @@
-function groundStateSpectrumDMRG(L, LA)
-    if (nargin == 1)
+function groundStateSpectrumDMRG(L, JZ, LA)
+    if (nargin == 2)
         LA = L/2;
     end
-    [psi, ~, ~, ~] = getGroundState(L, 0, 1, 0, 0);
-    saveRDMSpectrum(strcat('groundStateSpectrumDMRG_', int2str(L), '_', int2str(LA)), psi, LA);
+    [psi, ~, ~, ~] = getGroundState(L, 0, 1, JZ, 0);
+    saveRDMSpectrum(strcat('groundStateSpectrumDMRG_', int2str(L), '_', int2str(LA), '_', num2str(JZ)), psi, LA);
 end
