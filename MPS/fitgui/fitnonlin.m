@@ -138,18 +138,6 @@ step1 = stepdown*((chi3-chi2)/(chi1-2*chi2+chi3)+.5);
 anew = anew - step1*grad;
 
 
-
-%------------------------------------------------------------
-% this function just calculates the value of chi^2
-function chi2 = calcchi2(x,y,sigx,sigy,fitfun,a, L)
-%chi2 = sum( ((y-feval(fitfun,x,a)) ./sig).^2);
-xup = x + sigx;
-xdwn = x - sigx;
-chi2 = sum( ((y-feval(fitfun,x,a, L)).^2)./(sigy.^2 + ((feval(fitfun,xup,a, L) - feval(fitfun,xdwn,a, L))./2).^2) );
-if chi2 < 0
-    k = 1;
-end
-
 %--------------------------------------------------------------
 % this function calculates the (negative) gradient at a point in 
 % parameter space

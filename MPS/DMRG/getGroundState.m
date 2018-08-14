@@ -2,10 +2,10 @@ function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, m)
     [psi, H, HR, HL] = myStartup(N, h, JPM, JZ, m);
     % Find ground state
     ECurr = 0;
-    EError = 1e-7;
+    EError = 1e-6;
     maxBondDimension = 128;
     opts = {'Nkeep', 4};
-    for i=1:100
+    for i=1:400
         EForm = ECurr;
         [HL, HR, psi, ~] = dmrgSweep(HL, HR, H, psi, '<<', opts);
         [HL, HR, psi, ECurr] = dmrgSweep(HL, HR, H, psi, '>>', opts);
@@ -16,7 +16,7 @@ function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, m)
             end
             opts{2} = opts{2}*2;
         end        
-        if (i == 100)
+        if (i == 400)
             disp(['Sweeped 100 times and still not converged, ECurr = ' num2str(ECurr) ...
                 ', EForm = ' num2str(EForm) ...
                 ', NKeep = ' num2str(opts{2})]);
