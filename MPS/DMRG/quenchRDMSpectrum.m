@@ -1,4 +1,4 @@
-function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStepOverDt, tFirstStep, tStepsNum, dirName, subsystemA)
+function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStepOverDt, firstStep, stepsNum, dirName, subsystemA)
     % Saves the eigenvalues of the RDM (of half the lattice) for two ground
     % state L/2 lattices suddenly coupled.
     % We first calculate g.s of an L/2 lattice.
@@ -11,27 +11,36 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStepOverDt, tFirstStep, tSteps
     path(path, [pwd, '/DMRG']);
     startup;
     tic;
-    topts = {'Nkeep', 100};
+    topts = {'Nkeep', 1024, 'stol', 1e-8};
 %     dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
 %                      'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), '_200');
-    if (tFirstStep == 0)
+    if (firstStep == 0)
         [gs, ~, ~, ~] = getGroundState(L / 2, h, JPM, JZ, m);
         disp('Found ground state for L/2');
         toc;
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
         psi = coupleStates(gs, mirrorState(gs));
         mkdir(dirName);
+        % TODO extract the saveRDMSpectrum loop for different subsystemA
+        % options and use it here
     else
-        f = load(strcat(dirName, '/psiAtStep', int2str(tFirstStep - 1), '.mat'));
+        f = load(strcat(dirName, '/psiAtStep', int2str(firstStep), '.mat'));
         psi = f.psi;
         [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
     end
-    truncErr = zeros(1, tStepOverDt*(tStepsNum - tFirstStep + 1));
+    truncErr = zeros(1, tStepOverDt*(stepsNum - firstStep + 1));
     trotterGates = getTrotterGates(H, dt, 0);
     if nargin == 10
         subsystemA = 'half';
     end
-    for step = tFirstStep : tStepsNum
+    for step = firstStep : stepsNum
+        if (step ~= firstStep && mod(step, 20) == 0)
+            disp(strcat('saving psi at step ', int2str(step)));
+            toc;
+            save(strcat(dirName, '/psiAtStep', int2str(step), '.mat'), 'psi', 'truncErr');
+            toc;
+        end
+        
         if strcmp(subsystemA, 'half')
             saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), psi, length(psi)/2);
         % For the lightcone states, we take the B system to be ~L/16, so
@@ -54,14 +63,11 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStepOverDt, tFirstStep, tSteps
             saveRDMSpectrum(strcat(dirName, '/step', int2str(step), '.mat'), folded, L/2);
         end
         
-        if (step < tStepsNum)
+        if (step < stepsNum)
             for t = 1 : tStepOverDt
-                ind = (step - tFirstStep)*tStepOverDt + t;
+                ind = (step - firstStep)*tStepOverDt + t;
                 [psi, truncErr(ind)] = trotterSweep(trotterGates, psi, topts);
             end
-        end
-        if (mod(step, 200) == 0)
-            save(strcat(dirName, '/psiAtStep', int2str(step), '.mat'), 'psi');
         end
     end
     save(strcat(dirName, '/truncErr.mat'), 'truncErr');
