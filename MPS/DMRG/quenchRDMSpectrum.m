@@ -34,7 +34,7 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStepOverDt, firstStep, stepsNu
         subsystemA = 'half';
     end
     for step = firstStep : stepsNum
-        if (step ~= firstStep && mod(step, 20) == 0)
+        if ((firstStep ~= 0 && step ~= firstStep) && mod(step, 1) == 0)
             disp(strcat('saving psi at step ', int2str(step)));
             toc;
             save(strcat(dirName, '/psiAtStep', int2str(step), '.mat'), 'psi', 'truncErr');
