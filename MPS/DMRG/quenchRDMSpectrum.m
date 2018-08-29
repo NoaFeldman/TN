@@ -1,4 +1,4 @@
-function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, dirName, subsystemA)
+function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, dirName, cpuNumber, subsystemA)
     % Saves the eigenvalues of the RDM (of half the lattice) for two ground
     % state L/2 lattices suddenly coupled.
     % We first calculate g.s of an L/2 lattice.
@@ -7,9 +7,10 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
     % Every t = tStep * dt we save the spectrum of the RDM.
     % h, JPM, JZ - Heisenberg hamiltonian parameters.
     % m = initial spin of state (assumed spin of g.s) for the L / 2 chain.
-    path(path, [pwd, '/MPSPACK_v3.0']);
-    path(path, [pwd, '/DMRG']);
-    if nargin == 10
+    maxNumCompThreads(cpuNumber)
+    path(path, ['/a/home/cc/students/csguests/feldmannoa/TN/MPS/MPSPACK_v3.0']);
+    path(path, ['/a/home/cc/students/csguests/feldmannoa/TN/MPS/DMRG']);
+    if nargin == 11
         subsystemA = 'half';
     end
     startup;
