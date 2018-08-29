@@ -1,4 +1,4 @@
-function fitSTheo(sz, alphas, t, fitStartInd, fitEndInd, s1Charge, s1Alpha, sFull, s, filename, figname, L)
+function fitSTheo(sz, alphas, t, fitStartInd, fitEndInd, sigmaN, sFull, s, filename, figname, L)
     %
     % Find var(N_A) and fit to theoretic expectation to sigmaN.
 %     sigmaN = zeros(fitEndInd, 1);
@@ -20,21 +20,27 @@ function fitSTheo(sz, alphas, t, fitStartInd, fitEndInd, s1Charge, s1Alpha, sFul
     
     % Fit flux-resolved Renyi entropies for the flux / charge dependent
     % parameters.
-    f = fittype('b^(-x^2) + 0.85*b^(-(x + 2*pi)^2) + 0.85*b^(-(x - 2*pi)^2)', 'independent', 'x', 'dependent', 'y');
-    scaled = zeros(1, length(t));
-    fittingRange = 20:(length(alphas) - 20);
-    for i = 1:length(t)
-        
-    end
+%     f = fittype('b^(-x^2) + w*b^(-(x + 2*pi)^2) + w*b^(-(x - 2*pi)^2)', 'independent', 'x', 'dependent', 'y');
+%     XChargeScaled = zeros(1, length(t));
+%     w = zeros(1, length(t));
+%     for i = fitStartInd:fitEndInd
+%         [fg, gof] = fit(alphas.', real(s1Alpha(:, i)), f, 'StartPoint', [1 0.85]);
+% %         plot(fg, alphas.', real(s1Alpha(:, i))); pause(0.5);
+%         XChargeScaled(i) = fg.b;
+%         w(i) = fg.w;
+%     end
 
+    
 
     % Fit full (non-sectored) entanglement entropy to theoretical
     % expectation.
     [as, aerrs, covs, chi2s, yfit] = fitnonlin(t(fitStartInd:fitEndInd), t(fitStartInd:fitEndInd), ...
         real(sFull(fitStartInd:fitEndInd)), 0.01.*t(fitStartInd:fitEndInd), ...
-        0.01.*real(sFull(fitStartInd:fitEndInd)), 'getEntanglementEntropy', [1 1], L);
+        0.01.*real(sFull(fitStartInd:fitEndInd)), 'getEntanglementEntropy', [1 1], [L, 1]);
     epsS = as(1);
     c1 = as(2);
+    X0Scaled = exp(6.*(sFull - 1/6.*log(getScaledVariable(t, epsS, L, 1)))).*getScaledVariable(t, epsS, L, 1);
+    XChargeScaled = exp(2*pi^2.*sigmaN);
     % Use fit parameters for plotting theoretical expectation for sectored
     % entanglement entropy.
     hold off;
@@ -42,9 +48,8 @@ function fitSTheo(sz, alphas, t, fitStartInd, fitEndInd, s1Charge, s1Alpha, sFul
     hold on;
     plot(t, s(round(length(sz) / 2) + 1, :), 'color', 'c');
     plot(t, s(round(length(sz) / 2) + 2, :), 'color', 'c');
-    plot(t, timeDependentSTheo(t, [epsP constP epsS c1], [L 0]), 'color', 'b');
-    plot(t, timeDependentSTheo(t, [epsP constP epsS c1], [L 1]), 'color', 'b');
-    plot(t, timeDependentSTheo(t, [epsP constP epsS c1], [L 2]), 'color', 'b');
+    plot(t(fitStartInd:fitEndInd), stheo(X0Scaled(fitStartInd:fitEndInd), XChargeScaled(fitStartInd:fitEndInd), 0, ...
+        1, 1, 1), 'color', 'b');
     xlabel('$t$', 'Interpreter', 'latex');
     ylabel('$S(N_A)$', 'Interpreter', 'latex');
     title('Charged resolved entanglement entropy');

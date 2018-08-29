@@ -7,8 +7,8 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStepOverDt, firstStep, stepsNu
     % Every t = tStep * dt we save the spectrum of the RDM.
     % h, JPM, JZ - Heisenberg hamiltonian parameters.
     % m = initial spin of state (assumed spin of g.s) for the L / 2 chain.
-    path(path, [pwd, '/MPSPACK_v3.0']);
-    path(path, [pwd, '/DMRG']);
+    path(path, ['/home/noa/TN/MPS/MPSPACK_v3.0']);
+    path(path, ['/home/noa/TN/MPS/DMRG']);
     startup;
     tic;
     topts = {'Nkeep', 1024, 'stol', 1e-8};
@@ -34,7 +34,7 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStepOverDt, firstStep, stepsNu
         subsystemA = 'half';
     end
     for step = firstStep : stepsNum
-        if ((firstStep ~= 0 && step ~= firstStep) && mod(step, 1) == 0)
+        if (mod(step, 1) == 0)
             disp(strcat('saving psi at step ', int2str(step)));
             toc;
             save(strcat(dirName, '/psiAtStep', int2str(step), '.mat'), 'psi', 'truncErr');

@@ -3,7 +3,7 @@ function S = getExactEE(f, x, L)
     % n of eq. 2, 9)
     stepSize = 2 * pi / (L + 1);
     S = zeros(1, length(x));
-    for alpha = stepSize : stepSize : stepSize  * L
+    for alpha = stepSize : stepSize : stepSize  * (L + 1)
         sAlpha = getSAlpha(1, alpha, f);
         dnSAlpha = 0;
         for l = 1 : length(f)
