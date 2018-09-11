@@ -1,11 +1,11 @@
 function specResults = arrangeDMRGResults(dirName, firstStep, lastStep, stepT)
     stepsNum = lastStep - firstStep + 1;
     sz = -10:2:10;
-    alphas = -3.14:0.01:3.14;
+    specResults.alphas = -3.14:0.01:3.14;
     specResults.s = zeros(length(sz), stepsNum); 
     specResults.s1Charge = zeros(length(sz), stepsNum); 
     specResults.sFull = zeros(1, stepsNum);
-    specResults.s1Alpha = zeros(length(alphas), stepsNum); 
+    specResults.s1Alpha = zeros(length(specResults.alphas), stepsNum); 
     specResults.sigmaN = zeros(1, stepsNum);
     specResults.avgN = zeros(1, stepsNum);
     specResults.gaussR = zeros(1, stepsNum);
@@ -32,7 +32,7 @@ function specResults = arrangeDMRGResults(dirName, firstStep, lastStep, stepT)
             pForGaussianFit(i) = pNA;
             sForGaussianFit(i) = sNA;
         end
-        specResults.s1Alpha(:, step+1 - firstStep) = discreteFourier(alphas, sz/2, specResults.s1Charge(:, step+1 - firstStep).');
+        specResults.s1Alpha(:, step+1 - firstStep) = discreteFourier(specResults.alphas, sz/2, specResults.s1Charge(:, step+1 - firstStep).');
         if (length(val) >= 3)
             try
                 f = fittype('sqrt(1/(2*pi*c))*exp(-(x)^2/(2*c))', 'independent', 'x', 'dependent', 'y');
@@ -40,9 +40,9 @@ function specResults = arrangeDMRGResults(dirName, firstStep, lastStep, stepT)
                 specResults.sigmaN(step+1 - firstStep) = fg.c;
 %                 specResults.avgN(step+1 - firstStep) = fg.b;
                 specResults.gaussR(step+1 - firstStep) = gof.rsquare;
-                plot(fg, szForGaussianFit.', real(pForGaussianFit).'); pause(0.5);
+                plot(fg, szForGaussianFit.', real(pForGaussianFit).'); pause(0.1);
             catch exception
-                specResults.avgN(step+1 - firstStep) = sum(szForGaussianFit.*pForGaussianFit);
+%                 specResults.avgN(step+1 - firstStep) = sum(szForGauspecssianFit.*pForGaussianFit);
             end
         end
     end
