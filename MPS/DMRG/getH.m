@@ -47,6 +47,6 @@ function H = getH(N, h, JPM, JZ)
             H.l2r(i) = l2r;
         end
     end
-    
+end
     
         

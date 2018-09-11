@@ -1,6 +1,4 @@
-function exactAfterQuench(L, u, v, tFirstStep, tStep, tStepNum, directory, fileNameAddition, alphas)
-    path(path, [pwd, '/theo']);
-    
+function exactAfterQuench(L, u, v, tFirstStep, tStep, tStepNum, directory, fileNameAddition, alphas)    
     cicjA = getCiCj0Matrix(L/2);
     cicj = zeros(L, L);
     cicj(1:L/2, 1:L/2) = cicjA;
@@ -48,7 +46,7 @@ function exactAfterQuench(L, u, v, tFirstStep, tStep, tStepNum, directory, fileN
         cicj = U * ckcq * U';
     end 
     t = 0 : tStepNum;
-    t = t * tStep;
+    t = t * tStep + tFirstStep;
     save(strcat(directory, '/exactQuench', int2str(L), '_', int2str(u), '-', int2str(v), '_', fileNameAddition)...
         , 't', 's', 's1', 's2', 's3', 's4', 's5', ...
         'alphas', 's1Alpha', 's2Alpha', 's3Alpha', 's4Alpha', 's5Alpha', 'sFull');
