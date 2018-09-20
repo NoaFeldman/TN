@@ -1,6 +1,5 @@
-function s = stheo(L1, L2, NA, K, w1, w2)
-% derivation in salpha.nb
-    c = 1;
+function s2 = stheo2(L1, L2, NA, K, w1, w2)
+   c = 1;
     s = (1/12).*K.^(-3/2).*L2.^((-1/2).*K).*log(L2).^(-3/2).*(sqrt(-1).* ...
          2.^(1/2).*exp(1).^((sqrt(-1)*(-1)).*NA.*pi).*(dawson(2.^(-1/2).* ...
           K.^(-1/2).*log(L2).^(-1/2).*(NA.*pi+(sqrt(-1)*(-1)).*K.*log(L2)))+ ...
@@ -8,7 +7,7 @@ function s = stheo(L1, L2, NA, K, w1, w2)
           .*log(L2).^(-1/2).*(NA.*pi+sqrt(-1).*K.*log(L2)))).*(3.*NA.^2.* ...
           pi.^2+K.*((-3)+c.*log(L1)).*log(L2))+6.*K.^(1/2).*log(L2).^( ...
           1/2).*(K.*cos(NA.*pi).*log(L2)+(-1).*NA.*pi.*sin(NA.*pi)));
-%   s = w1.*s + w2.*s2ndOrder(L1, L2, NA, K); 
+   s2 = w1.*s + w2.*s2ndOrder(L1, L2, NA, K); 
 end
 
 function s2 = s2ndOrder(L1, L2, NA, K)

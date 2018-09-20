@@ -40,7 +40,7 @@ function specResults = arrangeDMRGResults(dirName, firstStep, lastStep, stepT)
                 specResults.sigmaN(step+1 - firstStep) = fg.c;
 %                 specResults.avgN(step+1 - firstStep) = fg.b;
                 specResults.gaussR(step+1 - firstStep) = gof.rsquare;
-                plot(fg, szForGaussianFit.', real(pForGaussianFit).'); pause(0.1);
+%                 plot(fg, szForGaussianFit.', real(pForGaussianFit).'); pause(0.1);
             catch exception
 %                 specResults.avgN(step+1 - firstStep) = sum(szForGauspecssianFit.*pForGaussianFit);
             end
