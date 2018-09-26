@@ -52,8 +52,7 @@ function N = getN(E, sysNum)
 %     N.info.otype = '';
 %     N.Q = NQ;
 %     N.data = NData;
-    [U, S, Vd, I] = svdQS(E, [3, 4], 'Nkeep', 256);
-    I.svd2tr
+    [U, S, Vd, I] = svdQS(E, [3, 4]);
     sqrtS = S;
     for i = 1:length(S.data)
         sqrtS.data{i} = zeros(length(S.data{i}));
