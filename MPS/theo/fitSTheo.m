@@ -9,12 +9,15 @@ function fitSTheo(data, L, pointFunc, delta, cftRegion, figName)
     
     counter = 1;
     for i = 2:length(data.t) - 1
-        if (data.s(5, i) < data.s(5, i - 1) && data.s(5, i) < data.s(5, i + 1))
+        if (data.s(6, i) < data.s(6, i - 1) && data.s(6, i) < data.s(6, i + 1))
             mins(counter) = i;
             counter = counter + 1;
         end
     end
-%     cftRegion = mins;
+    cftRegion = mins;
+    plot(data.t, data.sFull)
+    hold on
+    scatter(data.t(cftRegion), data.sFull(cftRegion))
     
     hold off;
     [as, ~, ~, ~, yfit] = fitnonlin(data.t(cftRegion), data.t(cftRegion), ...
@@ -49,6 +52,9 @@ function fitSTheo(data, L, pointFunc, delta, cftRegion, figName)
         w1(i) = fg2.b;
         w2(i) = fg2.d;
     end
+  
+    w1 = mean(w1);
+    w2 = mean(w2);
     
     [ap, ~, ~, ~, yfit] = fitnonlin(data.t(cftRegion), data.t(cftRegion), ...
         var2(cftRegion), 0.01.*data.t(cftRegion), ...
@@ -56,8 +62,8 @@ function fitSTheo(data, L, pointFunc, delta, cftRegion, figName)
     plot(data.t(cftRegion), var2(cftRegion));
     hold on
     plot(data.t(cftRegion), yfit);
-%     L2 = exp(pi^2./(K .* getSigmaAlpha(data.t, ap, [L 1 K pointFunc])));
-    L2 = exp(pi^2./(K.*var2));
+    L2 = exp(pi^2./(K .* getSigmaAlpha(data.t, ap, [L 1 K pointFunc])));
+%     L2 = exp(pi^2./(K.*var2));
     hold off
     
     plot(data.t, data.s(6, :), 'color', 'c');
@@ -65,18 +71,17 @@ function fitSTheo(data, L, pointFunc, delta, cftRegion, figName)
     plot(data.t, data.s(5, :), 'color', 'c');
     plot(data.t, data.s(4, :), 'color', 'c');
     max = length(data.t);
-    plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 0, K, w1(2:max), w2(2:max)), 'color', 'b'); 
-    plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 1, K, w1(2:max), w2(2:max)), 'color', 'b'); 
-    plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 2, K, w1(2:max), w2(2:max)), 'color', 'b');     
+%     plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 0, K, w1(2:max), w2(2:max)), 'color', 'b'); 
+%     plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 1, K, w1(2:max), w2(2:max)), 'color', 'b'); 
+%     plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 2, K, w1(2:max), w2(2:max)), 'color', 'b');     
+    plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 0, K, w1, w2), 'color', 'b'); 
+    plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 1, K, w1, w2), 'color', 'b'); 
+    plot(data.t(2:max), stheo2(L1(2:max), L2(2:max), 2, K, w1, w2), 'color', 'b');     
     xlabel('$t$', 'Interpreter', 'latex');
     ylabel('$S(N_A)$', 'Interpreter', 'latex');
     title(strcat('Charged resolved entanglement entropy, $\Delta = ', num2str(delta), '$'), ...
         'Interpreter', 'latex');
     h = findobj(gca);
-    legend([h(5) h(2)], {'Exact', 'CFT'});
+    legend([h(5) h(2)], {'DMRG', 'CFT'});
     saveas(gcf, figName);
-end
-
-function K = getK(delta)
-    K = pi ./ (2 * (pi - acos(delta)));
 end
