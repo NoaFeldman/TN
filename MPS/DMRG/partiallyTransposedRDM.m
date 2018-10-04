@@ -5,12 +5,12 @@ function rhoT2 = partiallyTransposedRDM(N1, N2)
     % This action gets me out of memory - divide to sectors
     rho = contract(M, '13', M, '13*');
     clear M;
-    % For symmetric cases, don't save matrices corresponding to negative DeltaN.
-%     inds = find(rho.Q{1} - rho.Q{4} >= 0);
-%     for i = 1:4
-%         rho.Q{i} = rho.Q{i}(inds);
-%     end
-%     rho.data = rho.data(inds);
+    % For symmetric cases (h = 0), don't save matrices corresponding to negative DeltaN.
+    inds = find(rho.Q{1} - rho.Q{4} >= 0);
+    for i = 1:4
+        rho.Q{i} = rho.Q{i}(inds);
+    end
+    rho.data = rho.data(inds);
     
     rhoT2 = rho;
     rhoT2.Q{2} = -rho.Q{4};

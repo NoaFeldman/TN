@@ -33,9 +33,4 @@ function N = getN(E, sysNum)
     end
     N = contract(QSpace(U), 3, QSpace(sqrtS), 1);
     N = contract(N, 3, getIdentity(N, 3, '-0', strcat('sA', int2str(sysNum))), 1);
-%     if (sysNum == 2)
-%         N = contract(N, 3, getIdentity(N, 3, '-0', strcat('sA', int2str(sysNum))), 1);
-%     else
-%         N.info.itags{3} = strcat('sA', int2str(sysNum), '*');
-%     end
 end
