@@ -11,7 +11,7 @@ function negs = arrangeNegativityDMRG(filename)
             y = zeros(1, length(q));
             map = orig.res.(strcat('l', int2str(l)));
             for k = 1:length(q)
-                vals = map(int2str(2*abs(q(k))));
+                vals = map(int2str(2*(q(k))));
                 if vals == 0
                     y(k) = 0;
                 else
