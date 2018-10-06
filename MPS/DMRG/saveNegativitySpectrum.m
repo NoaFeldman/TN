@@ -28,4 +28,3 @@ function spec = getSpectrum(rhoT2, q)
         spec = diag(V);
     end
 end
-end
