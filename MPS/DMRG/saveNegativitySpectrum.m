@@ -16,7 +16,7 @@ function saveNegativitySpectrum(psi, ls, mode, filename)
         end
         res.(strcat('l',num2str(l))) = renyis;
     end
-    save(filename, 'res', 'ns', 'ls');
+    save(filename, 'res', 'ls');
 end
 
 function spec = getSpectrum(rhoT2, q)

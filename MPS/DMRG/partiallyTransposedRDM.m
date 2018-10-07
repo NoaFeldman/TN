@@ -19,12 +19,6 @@ function rhoT2 = partiallyTransposedRDM(N1, N2)
         rhoT2.data{i} = permute(rho.data{i}, [1 4 3 2]);
     end
     clear rho;
-    % getIdentity doesn't work on complex QSpaces for some reason, so I use
-    % temp for creating the index unifying QSpaces.
-    temp = rhoT2;
-    for i = 1:length(temp.data)
-        temp.data{i} = real(temp.data{i});
-    end
-    rhoT2 = contract(contract(rhoT2, '12', getIdentity(temp, 1, temp, 2), '12*'), '12',...
-        getIdentity(temp, 3, temp, 4), '12');
+    rhoT2 = contract(contract(rhoT2, '12', getIdentity(real(rhoT2), 1, real(rhoT2), 2), '12*'), '12',...
+        getIdentity(real(rhoT2), 3, real(rhoT2), 4), '12');
 end

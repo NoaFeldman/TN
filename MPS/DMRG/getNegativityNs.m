@@ -26,10 +26,7 @@ function N = getN(E, sysNum)
     clear E;
     sqrtS = S;
     for i = 1:length(S.data)
-        sqrtS.data{i} = zeros(length(S.data{i}));
-        for j = 1:length(S.data{i})
-            sqrtS.data{i}(j, j) = sqrt(S.data{i}(j));
-        end
+        sqrtS.data{i} = diag(sqrt(S.data{i}));
     end
     N = contract(QSpace(U), 3, QSpace(sqrtS), 1);
     N = contract(N, 3, getIdentity(N, 3, '-0', strcat('sA', int2str(sysNum))), 1);
