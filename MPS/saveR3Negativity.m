@@ -1,8 +1,10 @@
-function saveR3Negativity(qs, L, l1Overl2, filename)
+function saveR3Negativity(qs, L, l1Overl2, filename, threadNum)
+    maxNumCompThreads(threadNum);
+    path(path, [pwd, '/exact']);
     l2 = L / (1 + l1Overl2);
     l1 = L - l2;
     r3 = zeros(1, length(qs));
-    cicj = getCiCj0Matrix(1000);
+    cicj = zeros(L);
     for i = 1:L
         for j = 1:L
             if (i == j)
