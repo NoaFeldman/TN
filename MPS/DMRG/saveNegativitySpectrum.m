@@ -1,5 +1,4 @@
 function saveNegativitySpectrum(psi, ls, mode, filename)
-    maxNumCompThreads(4);
     L = length(psi);
     for j = 1:length(ls)
         l = ls(j);
