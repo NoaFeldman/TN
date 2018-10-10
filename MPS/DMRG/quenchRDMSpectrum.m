@@ -7,15 +7,15 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
     % Every t = tStep * dt we save the spectrum of the RDM.
     % h, JPM, JZ - Heisenberg hamiltonian parameters.
     % m = initial spin of state (assumed spin of g.s) for the L / 2 chain.
-    maxNumCompThreads(cpuNumber)
-    path(path, ['/a/home/cc/students/csguests/feldmannoa/TN/MPS/MPSPACK_v3.0']);
-    path(path, ['/a/home/cc/students/csguests/feldmannoa/TN/MPS/DMRG']);
+    maxNumCompThreads(cpuNumber);
+    path(path, ['/home/noa/TN/MPS/MPSPACK_v3.0']);
+    path(path, ['/home/noa/TN/MPS/DMRG']);
     if nargin == 11
         subsystemA = 'half';
     end
     startup;
     tic;
-    topts = {'Nkeep', 10};
+    topts = {'Nkeep', 1024, 'stol', 1e-8};
 %     dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
 %                      'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), '_200');
     if (tFirstStep == 0)
@@ -43,7 +43,7 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
             [psi, truncErr(ind)] = trotterSweep(trotterGates, psi, topts);
         end
         saveSpec(dirName, step+1, psi, subsystemA, L);
-        if (mod(step, 2) == 0)
+        if (mod(step, 1) == 0)
             save(strcat(dirName, '/psiAtStep', int2str(step), '.mat'), 'psi', 'truncErr');
         end
     end

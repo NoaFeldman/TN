@@ -29,16 +29,16 @@ function exactAfterQuench(L, u, v, tFirstStep, tStep, tStepNum, directory, fileN
             f(i) = V(i, i);
         end
         s1(:, step + 1)  = getSNA(1, f, x, L);
-%         s2(:, step + 1)  = getSNA(2, f, x, L);
-%         s3(:, step + 1)  = getSNA(3, f, x, L);
-%         s4(:, step + 1)  = getSNA(4, f, x, L);
-%         s5(:, step + 1)  = getSNA(5, f, x, L);
-%         s1Alpha(:, step + 1) = getSAlpha(1, alphas, f, 1);
-%         s2Alpha(:, step + 1) = getSAlpha(2, alphas, f, 1);
-%         s3Alpha(:, step + 1) = getSAlpha(3, alphas, f, 1);
-%         s4Alpha(:, step + 1) = getSAlpha(4, alphas, f, 1);
-%         s5Alpha(:, step + 1) = getSAlpha(5, alphas, f, 1);
-%         s(:, step + 1)  = getExactEE(f, x, L);
+        s2(:, step + 1)  = getSNA(2, f, x, L);
+        s3(:, step + 1)  = getSNA(3, f, x, L);
+        s4(:, step + 1)  = getSNA(4, f, x, L);
+        s5(:, step + 1)  = getSNA(5, f, x, L);
+        s1Alpha(:, step + 1) = getSAlpha(1, alphas, f, 1);
+        s2Alpha(:, step + 1) = getSAlpha(2, alphas, f, 1);
+        s3Alpha(:, step + 1) = getSAlpha(3, alphas, f, 1);
+        s4Alpha(:, step + 1) = getSAlpha(4, alphas, f, 1);
+        s5Alpha(:, step + 1) = getSAlpha(5, alphas, f, 1);
+        s(:, step + 1)  = getExactEE(f, x, L);
         sFull(step + 1) = sum(s(:, step + 1));
         
         ckcq = U' * cicj * U;

@@ -53,8 +53,8 @@ function fitSTheo(data, L, pointFunc, delta, cftRegion, figName)
         w2(i) = fg2.d;
     end
   
-    w1 = mean(w1);
-    w2 = mean(w2);
+    w1 = mean(w1(cftRegion));
+    w2 = mean(w2(cftRegion));
     
     [ap, ~, ~, ~, yfit] = fitnonlin(data.t(cftRegion), data.t(cftRegion), ...
         var2(cftRegion), 0.01.*data.t(cftRegion), ...
