@@ -21,7 +21,6 @@ function r = chargeRenyi3(cicj, Q, u1, v1, v2)
 end
 
 function r = fluxRenyi3(I, Gplus, Gminus, Gp2, Gp3, GpGm, GmGp, Gp2Gm, GpGmGp, alpha, L2)
-
     Tr = (-1/2 * det((I - 3.*Gplus + 3.*Gp2 - Gp3) / 2^3 + exp(1i .* alpha) .* (I + 3.*Gplus + 3.* Gp2 + Gp3) / 2^3) + ...
         1 * det((I - 2.*Gplus + Gp2 - Gminus + 2.*GpGm - Gp2Gm) / 2^3 + exp(1i .* alpha) .* (I + 2.*Gplus + Gp2 + Gminus + 2.*GpGm + Gp2Gm) / 2^3) +  ...
         1/2 * det((I - 2.* Gplus - Gminus + GmGp + Gp2 + GpGm - GpGmGp) / 2^3 +  exp(1i .* alpha) .* (I + 2.* Gplus + Gminus + GmGp + Gp2 + GpGm + GpGmGp) / 2^3));        
