@@ -1,8 +1,4 @@
 function r = fluxRenyi2(I, Gplus, Gminus, alpha, L2)
-digits(128);
-    Tr = 1/2 * (exp(-1i * pi / 2) * det((I - Gplus)*(I - Gplus)/2^2 + exp(1i * alpha) .* (I + Gplus)*(I + Gplus)/2^2) + ...
-                                    det((I - Gminus)*(I - Gplus)/2^2 + exp(1i * alpha) .* (I + Gminus)*(I + Gplus)/2^2) + ...
-                                    det((I - Gplus)*(I - Gminus)/2^2 + exp(1i * alpha) .* (I + Gplus)*(I + Gminus)/2^2) + ...
-                exp(1i * pi / 2) * det((I - Gminus)*(I - Gminus)/2^2 + exp(1i * alpha) .* (I + Gminus)*(I + Gminus)/2^2));
+    Tr = det((I - Gminus)*(I - Gplus)/2^2 + exp(1i * alpha) .* (I + Gminus)*(I + Gplus)/2^2);
     r = Tr * exp(-1i * alpha * L2);
 end

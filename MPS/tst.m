@@ -9,7 +9,10 @@ for i = 1:length(lRights)
     [I, Gplus, Gminus, Gp2, Gp3, GpGm, Gp2Gm, L2] = getRenyiNegNecessities(cicj, L/2 - lLeft  +1, L/2, L/2 + lRight);
     for j = 1:length(alphas)
         alpha = alphas(j);
-        negs(i, j) = fluxRenyi1(I, Gplus, Gminus, alpha, L2);
+        negs1(i, j) = fluxRenyi1(I, Gplus, Gminus, alpha, L2);
+        negs2(i, j) = fluxRenyi2(I, Gplus, Gminus, alpha, L2);
+        negs3(i, j) = fluxRenyi3(I, Gplus, Gminus, alpha, L2);
     end
 end
+save('negtst');
     
