@@ -5,5 +5,5 @@ function sigma = getSigmaAlpha(t, a, fixed)
     K = fixed(3);
     pointFunc = fixed(4);
     
-    sigma = 2 * pi^2 ./ (pointFunc * K .* log(getScaledVariable(t, a(1), L, model))) + a(2);
+    sigma = 2 * pi^2 ./ (pointFunc * K .* (log(getScaledVariable(t, a(1), L, model) * a(2))));
 end

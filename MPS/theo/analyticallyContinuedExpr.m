@@ -7,6 +7,7 @@ function res = analyticallyContinuedExpr(l, t, epsilon)
             sqrt((l + rhoCosTheta(l, t, epsilon)).^2 + (1i .* t + rhoSinTheta(l, t, epsilon)).^2);        
     end
 end
+
 function r = rho(l, t, epsilon)
     r = ((epsilon^2 + l^2 + t.^2).^2 - 4 * l^2 .* t.^2).^(1/4);
 end
