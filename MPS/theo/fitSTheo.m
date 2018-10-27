@@ -23,7 +23,7 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     
     hold off;
     [as, ~, ~, ~, yfit] = fitnonlin(var(cftRegion), var(cftRegion), ...
-        real(data.sFull(cftRegion)).', 0.01.*var(cftRegion), 0.01.*real(data.sFull(cftRegion)).', ...
+        real(data.sFull(cftRegion)), 0.01.*var(cftRegion), 0.01.*real(data.sFull(cftRegion)), ...
         'getEntanglementEntropy', [1 1], [L model pointFunc]);
     plot(var(cftRegion), real(data.sFull(cftRegion)));
     hold on
@@ -33,12 +33,12 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     
 %     f = fittype('exp(-x^2/(2*s))', 'independent', 'x', 'dependent', 'y');
     V = zeros(1, length(var));
-    f2 = fittype('exp(-(x)^2/(2*s)) +  2 * 1 * exp(-((x - 2*pi)^2 + (x + 2*pi)^2)/(2*2*s))', 'independent', 'x', 'dependent', 'y');
+    f2 = fittype('exp(-(x)^2/(2*s)) +  0.8 * (exp(-(x - 2*pi)^2/(2*s)) + exp(-(x + 2*pi)^2/(2*s)))', 'independent', 'x', 'dependent', 'y');
 %     f2 = fittype('exp(-(x)^2/(2*s)) + 1e-4 * exp(-(x - 2*pi)^2/(2*s)) + 1e-4 * exp(-(x + 2*pi)^2/(2*s))', 'independent', 'x', 'dependent', 'y');
     V2 = zeros(1, length(var));
     w1s = zeros(1, length(var));
     w2s = zeros(1, length(var));
-    alphaRegion = 1:125;
+    alphaRegion = 1:length(data.alphas);
     for i = 1:length(var)
 %         [fg, gof] = fit(data.alphas(alphaRegion).', real(data.s1Alpha(alphaRegion, i)), ...
 %             f, 'StartPoint', [0.5]);

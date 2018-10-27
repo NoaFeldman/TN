@@ -1,5 +1,3 @@
-                                                                                                                                                                                                                                                               
-
 function [a,aerr,cov,chisq,yfit] = fitnonlin(x, x_res, y, sigx, sigy, fitfun, a0, L)
 
 % Version 2 (creatd by Adiel Meyer 15.10.2012)
@@ -35,6 +33,11 @@ function [a,aerr,cov,chisq,yfit] = fitnonlin(x, x_res, y, sigx, sigy, fitfun, a0
 %
 
 % first set up the parameters needed by the algorithm
+x = x(:);
+y = y(:);
+sigx = sigx(:);
+sigy = sigy(:);
+
 
 stepdown = 0.1;
 stepsize = abs(a0)*0.01+eps ; % the amount each parameter will be varied by in each iteration
