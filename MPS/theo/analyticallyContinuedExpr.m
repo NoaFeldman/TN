@@ -9,7 +9,7 @@ function res = analyticallyContinuedExpr(l, t, epsilon)
 end
 
 function r = rho(l, t, epsilon)
-    r = ((epsilon^2 + l^2 + t.^2).^2 - 4 * l^2 .* t.^2).^(1/4);
+    r = ((epsilon^2 + l.^2 + t.^2).^2 - 4 * l.^2 .* t.^2).^(1/4);
 end
 
 function res = rhoCosTheta(l, t, epsilon)
