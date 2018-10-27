@@ -1,4 +1,4 @@
-function [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = getWDiffs(l, t, epsilon)
+function [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l, t, epsilon)
     % Analytically continued |omega_i - omega_j|, based on analytical calcs
     % and WCR.
     w11t = abs(2/epsilon .* (l + rhoCosTheta(l, t, epsilon)));
