@@ -8,6 +8,6 @@ function [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l, t, epsi
     w12t = abs(1/epsilon .* sqrt((l + rhoCosTheta(l, t, epsilon) + sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(l, t, epsilon).^2));
     w23  = abs(1/epsilon .* sqrt((-l + rhoCosTheta(-l, t, epsilon) - sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(-l, t, epsilon).^2));
     w23t = abs(1/epsilon .* sqrt((-l + rhoCosTheta(-l, t, epsilon) + sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(-l, t, epsilon).^2));
-    w13  = abs(1/epsilon .* sqrt((2*l + rhoCosTheta(l, t, epsilon) - rhoCosTheta(-l, t, epsilon))^2 + (rhoSinTheta(l, t, epsilon) - rhoSinTheta(-l, t, epsilon))^2));
-    w13t  = abs(1/epsilon .* sqrt((2*l + rhoCosTheta(l, t, epsilon) + rhoCosTheta(-l, t, epsilon))^2 + (rhoSinTheta(l, t, epsilon) + rhoSinTheta(-l, t, epsilon))^2));
+    w13  = abs(1/epsilon .* sqrt((2*l + rhoCosTheta(l, t, epsilon) - rhoCosTheta(-l, t, epsilon)).^2 + (rhoSinTheta(l, t, epsilon) - rhoSinTheta(-l, t, epsilon)).^2));
+    w13t  = abs(1/epsilon .* sqrt((2*l + rhoCosTheta(l, t, epsilon) + rhoCosTheta(-l, t, epsilon)).^2 + (rhoSinTheta(l, t, epsilon) + rhoSinTheta(-l, t, epsilon)).^2));
 end

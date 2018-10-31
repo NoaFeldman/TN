@@ -14,7 +14,7 @@ function [a,aerr,cov,chisq,yfit] = multiDimFit(funcName, x, y, aGlobal, aVariant
     
     fid = fopen('multiFunc.m', 'wt');
     fprintf(fid, 'function res = multiFunc(x, a, fixed)\n', 'tst');
-    fprintf(fid, 'res = zeros(length(x), 1);');
+    fprintf(fid, 'res = zeros(length(x), 1);\n');
     fprintf(fid, 'for i = 0:%d\n', d-1);
     fprintf(fid, 'res(i * %d + 1:(i+1) * %d) = %s(x(i * %d + 1:(i+1) * %d), [a(1:%d)         a(%d   + 1 + i * %d              :%d   + (i+1) *   %d)], fixed);\n', ...
                            n,            n,funcName,     n,             n,  length(aGlobal), length(aGlobal), length(aVariant),length(aGlobal), length(aVariant));

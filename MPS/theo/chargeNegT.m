@@ -1,4 +1,15 @@
-function res = chargeNegT(n, Q, K, dw1, dw2, dw3, w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t, wpm, nuc)
+function res = chargeNegT(t, a, fixed)
+    n = fixed(1);
+    K = fixed(2);
+    Q = fixed(3);
+    l = fixed(4);
+    epsilon = abs(a(1));
+    wpm = real(a(2));
+    nuc = abs(a(3));
+    [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l/2, t, epsilon);
+    dw1 = wDerivative(l/2, t, epsilon);
+    dw2 = wDerivative(0, t, epsilon);
+    dw3 = wDerivative(-l/2, t, epsilon);
     order2 = 0;
     order2Shift = [0, 1, -1];
     for i = 1:3

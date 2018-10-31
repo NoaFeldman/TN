@@ -69,18 +69,18 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
 %     L2 = exp(pi^2./(K.*var2));
     hold off
     
-    plot(var, data.s(6, :), 'color', 'c');
+    scatter(var, data.s(6, :), '.', 'markerEdgeColor', [0 0 0.3]);
     hold on
-    plot(var, data.s(5, :), 'color', 'c');
-    plot(var, data.s(4, :), 'color', 'c');
+    scatter(var, data.s(5, :), '.', 'markerEdgeColor', [0 0 0.3]);
+    scatter(var, data.s(4, :), '.', 'markerEdgeColor', [0 0 0.3]);
     max = length(var);
 %     plot(var(2:max), stheo2(L1(2:max), L2(2:max), 0, K, w1(2:max), w2(2:max)), 'color', 'b'); 
 %     plot(var(2:max), stheo2(L1(2:max), L2(2:max), 1, K, w1(2:max), w2(2:max)), 'color', 'b'); 
 %     plot(var(2:max), stheo2(L1(2:max), L2(2:max), 2, K, w1(2:max), w2(2:max)), 'color', 'b');     
-    plot(var(2:max), stheo2(L1(2:max), L2(2:max), 0, K, w1, w2), 'color', 'b'); 
-    plot(var(2:max), stheo2(L1(2:max), L2(2:max), 1, K, w1, w2), 'color', 'b'); 
-    plot(var(2:max), stheo2(L1(2:max), L2(2:max), 2, K, w1, w2), 'color', 'b');     
-    xlabel('$t$', 'Interpreter', 'latex');
+    plot(var(2:max), stheo2(L1(2:max), L2(2:max), 0, K, w1, w2), 'color', [0 0.9 0.4]); 
+    plot(var(2:max), stheo2(L1(2:max), L2(2:max), 1, K, w1, w2), 'color', [0 0.9 0.4]); 
+    plot(var(2:max), stheo2(L1(2:max), L2(2:max), 2, K, w1, w2), 'color', [0 0.9 0.4]);     
+    xlabel('$t[\hbar/J]$', 'Interpreter', 'latex');
     ylabel('$S(N_A)$', 'Interpreter', 'latex');
     title(strcat('Charged resolved entanglement entropy, $\Delta = ', num2str(delta), '$'), ...
         'Interpreter', 'latex');
