@@ -1,4 +1,4 @@
-function [a,aerr,cov,chisq,yfit] = fitnonlin(x, x_res, y, sigx, sigy, fitfun, a0, L)
+function [a,aerr,cov,chisq,yfit] = fitnonlin(x, x_res, y, sigx, sigy, fitfun, a0, fixed, fixedVariant)
 
 % Version 2 (creatd by Adiel Meyer 15.10.2012)
 %
@@ -51,27 +51,27 @@ a = a0;
 fprintf(1, 'Iteration No.       ');
 iter=0;
 %chi2 = calcchi2(x,y,sig,fitfun,a);
-chi2 = calcchi2(x,y,sigx,sigy,fitfun,a,L);
+chi2 = calcchi2(x,y,sigx,sigy,fitfun,a,fixed, fixedVariant);
 chi1 = chi2*2;
 
 % keep looking while the value of chi^2 is changing
 
 while (abs(chi2-chi1))>chicut
 
-  [anew,stepsum,stopflag,iter] = gradstep(x,y,sigx,sigy,fitfun,a,stepsize,stepdown,iter,L);
+  [anew,stepsum,stopflag,iter] = gradstep(x,y,sigx,sigy,fitfun,a,stepsize,stepdown,iter,fixed, fixedVariant);
   a = anew;
   stepdown = stepsum;
   chi1 = chi2;
-  chi2 = calcchi2(x,y,sigx,sigy,fitfun,a,L);
+  chi2 = calcchi2(x,y,sigx,sigy,fitfun,a,fixed, fixedVariant);
   if stopflag==1
 	fprintf(2,'\n can''t minimize chi^2 \n try different initial parameters\n')
 	break, end
 end
 
 % calculate the returned values
-[aerr,cov] = sigparab(x,y,sigx,sigy,fitfun,a,stepsize,L);
-chisq = calcchi2(x,y,sigx,sigy,fitfun,a,L);
-yfit = feval(fitfun,x_res,a,L);
+[aerr,cov] = sigparab(x,y,sigx,sigy,fitfun,a,stepsize,fixed, fixedVariant);
+chisq = calcchi2(x,y,sigx,sigy,fitfun,a,fixed, fixedVariant);
+yfit = feval(fitfun,x_res,a,fixed, fixedVariant);
 
 %----------------------------------------------------------------------- 
 % the following function calculates the (negative) chi^2 gradient at
@@ -79,12 +79,12 @@ yfit = feval(fitfun,x_res,a,L);
 % until a minimum is found
 % returns the new value of the parameters and the total length travelled
 
-function [anew,stepsum,stopflag,iter] = gradstep(x,y,sigx,sigy,fitfun,a,stepsize, stepdown,iter,L)
+function [anew,stepsum,stopflag,iter] = gradstep(x,y,sigx,sigy,fitfun,a,stepsize, stepdown,iter,fixed, fixedVariant)
 stopflag=0;
 
-chi2 = calcchi2(x,y,sigx,sigy,fitfun,a,L);
+chi2 = calcchi2(x,y,sigx,sigy,fitfun,a,fixed, fixedVariant);
 
-grad = calcgrad(x,y,sigx,sigy,fitfun,a,stepsize,L);
+grad = calcgrad(x,y,sigx,sigy,fitfun,a,stepsize,fixed, fixedVariant);
 
 chi3 = chi2*1.1;
 
@@ -101,7 +101,7 @@ end
 while chi3>chi2
   stepdown = stepdown/2;
   anew = a+stepdown*grad;
-  chi3 = calcchi2(x,y,sigx,sigy,fitfun,anew,L);
+  chi3 = calcchi2(x,y,sigx,sigy,fitfun,anew,fixed, fixedVariant);
   j=j+1;
   iter=iter+1;
   fprintf('\b\b\b\b\b\b');
@@ -123,7 +123,7 @@ while chi3<chi2
   chi1 = chi2;
   chi2 = chi3;
   anew = anew+stepdown*grad;
-  chi3 = calcchi2(x,y,sigx,sigy,fitfun,anew,L);
+  chi3 = calcchi2(x,y,sigx,sigy,fitfun,anew,fixed, fixedVariant);
   iter=iter+1;
   fprintf('\b\b\b\b\b\b');
   fprintf(1, '%6d', iter);
@@ -145,19 +145,19 @@ anew = anew - step1*grad;
 % this function calculates the (negative) gradient at a point in 
 % parameter space
 
-function grad = calcgrad(x,y,sigx,sigy,fitfun,a, stepsize, L)
+function grad = calcgrad(x,y,sigx,sigy,fitfun,a, stepsize, fixed, fixedVariant)
 
 f = 0.01;
 [dum, nparm] = size(a);
 
 grad = a;
-chisq2 = calcchi2(x,y,sigx,sigy,fitfun,a, L);  
+chisq2 = calcchi2(x,y,sigx,sigy,fitfun,a, fixed, fixedVariant);  
 for i=1:nparm
 
   a2 = a;
   da = f*stepsize(i);
   a2(i) = a2(i)+da;
-  chisq1 = calcchi2(x,y,sigx,sigy,fitfun,a2, L);
+  chisq1 = calcchi2(x,y,sigx,sigy,fitfun,a2, fixed, fixedVariant);
   grad(i) = chisq2-chisq1;
 
 end
@@ -169,7 +169,7 @@ grad = stepsize.*grad/sqrt(t);
 % this function calculates the errors on the final fitted 
 % parameters by approximating the minimum as parabolic
 % in each parameter.
-function [err1,cov]=sigparab(x,y,sigx,sigy,fitfun,a,stepsize,L)
+function [err1,cov]=sigparab(x,y,sigx,sigy,fitfun,a,stepsize,fixed, fixedVariant)
 
 [dum, nparm] = size(a);
 
@@ -186,7 +186,7 @@ for j=1:nparm
           da(k) = stepsize(k);
          a2(k)=a2(k)+da(k);
          a3(k)=a3(k)+da(k); 
-          dCHI2da(j,k)=0.5*(calcchi2(x,y,sigx,sigy,fitfun,a,L)-calcchi2(x,y,sigx,sigy,fitfun,a1,L)-calcchi2(x,y,sigx,sigy,fitfun,a2,L)+calcchi2(x,y,sigx,sigy,fitfun,a3,L))/da(j)/da(k);
+          dCHI2da(j,k)=0.5*(calcchi2(x,y,sigx,sigy,fitfun,a,fixed, fixedVariant)-calcchi2(x,y,sigx,sigy,fitfun,a1,fixed, fixedVariant)-calcchi2(x,y,sigx,sigy,fitfun,a2,fixed, fixedVariant)+calcchi2(x,y,sigx,sigy,fitfun,a3,fixed, fixedVariant))/da(j)/da(k);
      end
  end
 errc=inv(dCHI2da);
