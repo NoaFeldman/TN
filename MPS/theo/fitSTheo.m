@@ -24,7 +24,7 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     hold off;
     [as, ~, ~, ~, yfit] = fitnonlin(var(cftRegion), var(cftRegion), ...
         real(data.sFull(cftRegion)), 0.01.*var(cftRegion), 0.01.*real(data.sFull(cftRegion)), ...
-        'getEntanglementEntropy', [1 1], [L model pointFunc]);
+        'getEntanglementEntropy', [1 1], [L model pointFunc], []);
     plot(var(cftRegion), real(data.sFull(cftRegion)));
     hold on
     plot(var(cftRegion), yfit);
@@ -33,7 +33,7 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     
 %     f = fittype('exp(-x^2/(2*s))', 'independent', 'x', 'dependent', 'y');
     V = zeros(1, length(var));
-    f2 = fittype('exp(-(x)^2/(2*s)) +  0.8 * (exp(-(x - 2*pi)^2/(2*s)) + exp(-(x + 2*pi)^2/(2*s)))', 'independent', 'x', 'dependent', 'y');
+    f2 = fittype('exp(-(x)^2/(2*s)) +  w2 * (exp(-(x - 2*pi)^2/(2*s)) + exp(-(x + 2*pi)^2/(2*s)))', 'independent', 'x', 'dependent', 'y');
 %     f2 = fittype('exp(-(x)^2/(2*s)) + 1e-4 * exp(-(x - 2*pi)^2/(2*s)) + 1e-4 * exp(-(x + 2*pi)^2/(2*s))', 'independent', 'x', 'dependent', 'y');
     V2 = zeros(1, length(var));
     w1s = zeros(1, length(var));
@@ -43,17 +43,17 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
 %         [fg, gof] = fit(data.alphas(alphaRegion).', real(data.s1Alpha(alphaRegion, i)), ...
 %             f, 'StartPoint', [0.5]);
         [fg2, gof] = fit(data.alphas.', real(data.s1Alpha(:, i)), ...
-            f2, 'StartPoint', [0.5]);
+            f2, 'StartPoint', [0.5 0.8]);
         if (mod(i, 1) == 0)
 %             plot(fg, data.alphas, real(data.s1Alpha(:, i))); 
 %             hold on
-%             plot(fg2, data.alphas, real(data.s1Alpha(:, i))); pause(0.1);
+            plot(fg2, data.alphas, real(data.s1Alpha(:, i))); pause(0.01);
             hold off
         end
 %         V(i) = fg.s;
         V2(i) = fg2.s;
 %         w1s(i) = fg2.w1;
-%         w2s(i) = fg2.w2;
+        w2s(i) = fg2.w2;
     end
   
     w1 = 1; %mean(w1s(cftRegion));
@@ -61,12 +61,11 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     
     [ap, ~, ~, ~, yfit] = fitnonlin(var(cftRegion), var(cftRegion), ...
         V2(cftRegion).', 0.01.*var(cftRegion), ...
-        0.01.*V2(cftRegion).', 'getSigmaAlpha', [1e-4 1], [L model K pointFunc]);
+        0.01.*V2(cftRegion).', 'getSigmaAlpha', [1e-4 1], [L model K pointFunc], []);
     plot(var(cftRegion), V2(cftRegion));
     hold on
     plot(var(cftRegion), yfit);
     L2 = exp(pi^2./(K .* getSigmaAlpha(var, ap, [L model K pointFunc])));
-%     L2 = exp(pi^2./(K.*var2));
     hold off
     
     scatter(var, data.s(6, :), '.', 'markerEdgeColor', [0 0 0.3]);
@@ -85,6 +84,11 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     title(strcat('Charged resolved entanglement entropy, $\Delta = ', num2str(delta), '$'), ...
         'Interpreter', 'latex');
     h = findobj(gca);
-    legend([h(5) h(2)], {'DMRG', 'CFT'});
+    legend([h(5) h(2)], {'DMRG', 'CFT'}, 'Interpreter', 'latex', 'FontSize', 14);
+    xlim([min(data.t) max(data.t)]);
+    annotation('textbox',[.2 .2 .2 .6],'String', '$\Delta N_A = 0$','FitBoxToText','on', 'Interpreter', 'latex', 'EdgeColor', 'none', 'FontSize', 14);
+    annotation('textbox',[.2 .2 .2 .4],'String', '$\Delta N_A = 1$','FitBoxToText','on', 'Interpreter', 'latex', 'EdgeColor', 'none', 'FontSize', 14);
+    annotation('textbox',[.2 .2 .2 .2],'String', '$\Delta N_A = 2$','FitBoxToText','on', 'Interpreter', 'latex', 'EdgeColor', 'none', 'FontSize', 14);
+    box on
     saveas(gcf, figName);
 end

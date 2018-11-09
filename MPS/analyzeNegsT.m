@@ -22,7 +22,7 @@ alphaRegion = 1:length(data.alphas) - 1 + 1;
 for i = 1:6
     [a, ~, ~, chisq, yfit] = fitnonlin(data.alphas(alphaRegion), data.alphas(alphaRegion), ...
         abs(rn(i, alphaRegion)/rn(i, zeroIndex)), 0.01.*ones(length(alphaRegion), 1), ...
-         0.01.*ones(length(alphaRegion), 1), 'renyiNegT', [5 9 0.3], [l/2 data.t(i) n K]);
+         0.01.*abs(rn(i, alphaRegion)/rn(i, zeroIndex)), 'renyiNegT', [1e-2 2 0.6], [l/2 data.t(i) n K], []);
     plot(data.alphas, abs(rn(i, :)/rn(i, zeroIndex))); 
     hold on;
     plot(data.alphas(alphaRegion), yfit);

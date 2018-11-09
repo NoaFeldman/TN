@@ -71,7 +71,11 @@ end
 % calculate the returned values
 [aerr,cov] = sigparab(x,y,sigx,sigy,fitfun,a,stepsize,fixed, fixedVariant);
 chisq = calcchi2(x,y,sigx,sigy,fitfun,a,fixed, fixedVariant);
-yfit = feval(fitfun,x_res,a,fixed, fixedVariant);
+if (isempty(fixedVariant))
+    yfit = feval(fitfun,x_res,a,fixed);
+else
+    yfit = feval(fitfun,x_res,a,fixed, fixedVariant);
+end
 
 %----------------------------------------------------------------------- 
 % the following function calculates the (negative) chi^2 gradient at

@@ -1,8 +1,8 @@
 function res = chargeNegT(t, a, fixed)
     n = fixed(1);
     K = fixed(2);
-    Q = fixed(3);
-    l = fixed(4);
+    l = fixed(3);
+    Q = fixed(4);
     epsilon = abs(a(1));
     wpm = real(a(2));
     nuc = abs(a(3));
