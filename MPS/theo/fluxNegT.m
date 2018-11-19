@@ -1,10 +1,11 @@
-function res = renyiNegT(alpha, a, fixed)
+function res = fluxNegT(alpha, a, fixed)
     l = fixed(1);
     n = fixed(2);
     K = fixed(3);
     t = fixed(4);
     a = real(a);
-    epsilon = a(1);
+    epsilon = 17; % a(1);
+    a(3) = 0.7;
     [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l/2, t, epsilon);
     dw1 = wDerivative(l/2, t, epsilon);    
     dw2 = wDerivative(0, t, epsilon);    
