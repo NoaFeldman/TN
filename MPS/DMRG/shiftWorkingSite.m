@@ -1,9 +1,11 @@
-function [psi, workingSiteIndex] = shiftWorkingSite(psi, workingSiteIndex, dir)
+function [psi, workingSiteIndex] = shiftWorkingSite(psi, workingSiteIndex, dir, opts)
     % canonicize psi(workingSiteIndex) according to dir, contract the
     % remaining to the next site and promote workingSiteIndex by (1 * dir).
     % Assuming there is a site at (workingSiteIndex + 1 * dir).
     
-    opts = {'Nkeep', 1024, 'stol', 1e-16};
+    if nargin == 3
+        opts = {'Nkeep', 1024, 'stol', 1e-16};
+    end
     if (strcmp(dir, '>>'))
         [r, psi(workingSiteIndex)] = orthoQS(psi(workingSiteIndex), [1, 2], '>>', opts{:});
         workingSiteIndex = workingSiteIndex + 1;
