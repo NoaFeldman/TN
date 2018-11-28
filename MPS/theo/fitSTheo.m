@@ -8,19 +8,7 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     K = getK(delta);
     
     var = data.(varName);
-    
-%     counter = 1;
-%     for i = 2:length(var) - 1
-%         if (data.s(6, i) < data.s(6, i - 1) && data.s(6, i) < data.s(6, i + 1))
-%             mins(counter) = i;
-%             counter = counter + 1;
-%         end
-%     end
-%     cftRegion = mins;
-%     plot(var, data.sFull)
-%     hold on
-%     scatter(var(cftRegion), data.sFull(cftRegion))
-    
+        
     hold off;
     [as, ~, ~, ~, yfit] = fitnonlin(var(cftRegion), var(cftRegion), ...
         real(data.sFull(cftRegion)), 0.01.*var(cftRegion), 0.01.*real(data.sFull(cftRegion)), ...
@@ -31,38 +19,51 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     L1 = exp((6/pointFunc).*as(2)).*getScaledVariable(var, as(1), L, model);
     hold off
     
-%     f = fittype('exp(-x^2/(2*s))', 'independent', 'x', 'dependent', 'y');
+    f = fittype('w1* exp(-(x)^2 / (2 * s)) +  w2 * (exp(-(x - 2*pi)^2 / (2 * s)) + exp(-(x + 2*pi)^2 / (2 * s)))', 'independent', 'x', 'dependent', 'y');
+%     f = fittype('exp(-(x)^2 / (2 * s))', 'independent', 'x', 'dependent', 'y');
     V = zeros(1, length(var));
-    f2 = fittype('exp(-(x)^2/(2*s)) +  w2 * (exp(-(x - 2*pi)^2/(2*s)) + exp(-(x + 2*pi)^2/(2*s)))', 'independent', 'x', 'dependent', 'y');
-%     f2 = fittype('exp(-(x)^2/(2*s)) + 1e-4 * exp(-(x - 2*pi)^2/(2*s)) + 1e-4 * exp(-(x + 2*pi)^2/(2*s))', 'independent', 'x', 'dependent', 'y');
-    V2 = zeros(1, length(var));
     w1s = zeros(1, length(var));
     w2s = zeros(1, length(var));
-    alphaRegion = 1:length(data.alphas);
+    alphaRegion = 1:length(data.alphas) - 1 + 1;
     for i = 1:length(var)
-%         [fg, gof] = fit(data.alphas(alphaRegion).', real(data.s1Alpha(alphaRegion, i)), ...
-%             f, 'StartPoint', [0.5]);
-        [fg2, gof] = fit(data.alphas.', real(data.s1Alpha(:, i)), ...
-            f2, 'StartPoint', [0.5 0.8]);
-        if (mod(i, 1) == 0)
-%             plot(fg, data.alphas, real(data.s1Alpha(:, i))); 
-%             hold on
-            plot(fg2, data.alphas, real(data.s1Alpha(:, i))); pause(0.01);
+        [fg, gof] = fit(data.alphas(alphaRegion).', real(data.s1Alpha(alphaRegion, i)), ...
+            f, 'StartPoint', [0.5 1 1]);
+        fFixed = fittype(strcat('w1* exp(-(x)^2 / (2 * s)) +  ', num2str(fg.w2), ' * (exp(-(x - 2*pi)^2 / (2 * s)) + exp(-(x + 2*pi)^2 / (2 * s)))'), ...
+            'independent', 'x', 'dependent', 'y');
+        [fg2, gof] = fit(data.alphas(alphaRegion).', real(data.s2Alpha(alphaRegion, i)./data.s2Alpha(315, i)), ...
+            fFixed, 'StartPoint', [0.5 1]);
+        [fg3, gof] = fit(data.alphas(alphaRegion).', real(data.s3Alpha(alphaRegion, i)./data.s3Alpha(315, i)), ...
+            fFixed, 'StartPoint', [0.5 1]);
+        [fg4, gof] = fit(data.alphas(alphaRegion).', real(data.s4Alpha(alphaRegion, i)./data.s4Alpha(315, i)), ...
+            fFixed, 'StartPoint', [0.5 1]);
+        [fg5, gof] = fit(data.alphas(alphaRegion).', real(data.s5Alpha(alphaRegion, i)./data.s5Alpha(315, i)), ...
+            fFixed, 'StartPoint', [0.5 1]);
+        if (mod(i, 10) == 0)
+%             plot(fg, data.alphas, real(data.s1Alpha(:, i))); pause(0.1);
+            plot(fg4, data.alphas(alphaRegion), real(data.s4Alpha(alphaRegion, i)./data.s4Alpha(315, i))); pause(0.1);
+            plot(fg5, data.alphas(alphaRegion), real(data.s5Alpha(alphaRegion, i)./data.s5Alpha(315, i))); pause(0.1);
             hold off
         end
-%         V(i) = fg.s;
+        V(i) = fg.s;
         V2(i) = fg2.s;
-%         w1s(i) = fg2.w1;
-        w2s(i) = fg2.w2;
+        V3(i) = fg3.s;
+        V4(i) = fg4.s;
+        V5(i) = fg5.s;
+%         w1s(i) = fg.w1;
+        ws(i) = fg.w2;
+%         w2s(i) = fg2.w2;
+%         w3s(i) = fg3.w2;
+%         w4s(i) = fg4.w2;
+%         w5s(i) = fg5.w2;
     end
   
     w1 = 1; %mean(w1s(cftRegion));
-    w2 = 1.5; %mean(w2s(cftRegion));
+%     w2 = mean(w2s(cftRegion));
     
     [ap, ~, ~, ~, yfit] = fitnonlin(var(cftRegion), var(cftRegion), ...
-        V2(cftRegion).', 0.01.*var(cftRegion), ...
-        0.01.*V2(cftRegion).', 'getSigmaAlpha', [1e-4 1], [L model K pointFunc], []);
-    plot(var(cftRegion), V2(cftRegion));
+        V(cftRegion).', 0.01.*var(cftRegion), ...
+        0.01.*V(cftRegion).', 'getSigmaAlpha', [1e-4 2], [L model K pointFunc], []);
+    plot(var(cftRegion), V(cftRegion));
     hold on
     plot(var(cftRegion), yfit);
     L2 = exp(pi^2./(K .* getSigmaAlpha(var, ap, [L model K pointFunc])));

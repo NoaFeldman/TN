@@ -1,6 +1,6 @@
 function res = renyiNegGS(alpha, a, fixed)
-    nuc = 15; % a(1);
-    w = 0.3327; %a(2);
+    nuc = a(1); % 15; %
+    w = 0; %a(2); % 0.3327; %
     l1 = fixed(1);
     l2 = fixed(2);
     n = fixed(3);

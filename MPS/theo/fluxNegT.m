@@ -4,26 +4,26 @@ function res = fluxNegT(alpha, a, fixed)
     K = fixed(3);
     t = fixed(4);
     a = real(a);
-    epsilon = 17; % a(1);
-    a(3) = 0.7;
+    epsilon = 30; %a(1);
     [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l/2, t, epsilon);
     dw1 = wDerivative(l/2, t, epsilon);    
     dw2 = wDerivative(0, t, epsilon);    
     dw3 = wDerivative(-l/2, t, epsilon);
-    a(2) = abs(a(2));    
-    w11t = a(2) * w11t;
-    w22t = a(2) * w22t;
-    w33t = a(2) * w33t;
-    w12 = a(2) * w12;
-    w12t = a(2) * w12t;
-    w23 = a(2) * w23;
-    w23t = a(2) * w23t;
-    w13 = a(2) * w13;
-    w13t = a(2) * w13t;
-    dw1 = a(2) * dw1;
-    dw2 = a(2) * dw2;
-    dw3 = a(2) * dw3;
-    wpm = a(3);
+    a(2) = abs(a(2));
+    a(3) = abs(a(3)); % abs(a(2)); %
+    w11t = a(2)^2 * w11t;
+    w22t = a(3)^2 * w22t;
+    w33t = a(2)^2 * w33t;
+    w12 = a(2)*a(3) * w12;
+    w12t = a(2)*a(3) * w12t;
+    w23 = a(2)*a(3) * w23;
+    w23t = a(2)*a(3) * w23t;
+    w13 = a(2)^2 * w13;
+    w13t = a(2)^2 * w13t;
+    dw1 = a(2)^2 * dw1;
+    dw2 = a(3)^2 * dw2;
+    dw3 = a(2)^2 * dw3;
+    wpm = a(4);
     
     alpha1 = alpha / (2*pi);
     alpha2 = -2 .* alpha / (2*pi);
@@ -52,5 +52,8 @@ function res = fluxNegT(alpha, a, fixed)
             end
         end
     end    
-    res = order1 + wpm .* order2;    
+%     res = order1;
+%     res = order1 + wpm .* order2;
+    zeroIndex = length(alpha) / 2 + 1/2;;
+    res = (order1 + wpm .* order2) / (wpm * order2(zeroIndex) + order1(zeroIndex));
 end

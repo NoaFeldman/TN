@@ -1,15 +1,30 @@
 function res = chargeNegT(t, a, fixed)
-    n = fixed(1);
-    K = fixed(2);
-    l = fixed(3);
+    l = fixed(1);
+    n = fixed(2);
+    K = fixed(3);
     Q = fixed(4);
     epsilon = abs(a(1));
-    wpm = real(a(2));
-    nuc = abs(a(3));
+    nuc = 1; %abs(a(2));
+    wpm = real(a(4));
+    w0 = 1;
     [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l/2, t, epsilon);
     dw1 = wDerivative(l/2, t, epsilon);
     dw2 = wDerivative(0, t, epsilon);
     dw3 = wDerivative(-l/2, t, epsilon);
+    a(2) = abs(a(2));
+    a(3) = abs(a(3));
+    w11t = a(2)^2 * w11t;
+    w22t = a(3)^2 * w22t;
+    w33t = a(2)^2 * w33t;
+    w12 = a(2)*a(3) * w12;
+    w12t = a(2)*a(3) * w12t;
+    w23 = a(2)*a(3) * w23;
+    w23t = a(2)*a(3) * w23t;
+    w13 = a(2)^2 * w13;
+    w13t = a(2)^2 * w13t;
+    dw1 = a(2)^2 * dw1;
+    dw2 = a(3)^2 * dw2;
+    dw3 = a(2)^2 * dw3;
     order2 = 0;
     order2Shift = [0, 1, -1];
     for i = 1:3
@@ -28,7 +43,7 @@ function res = chargeNegT(t, a, fixed)
             end
         end
     end
-    res = fstOrderIntegral(K / n .* log((nuc .* w11t).^(-4) .* (nuc .* dw1).^(4/2)), ...
+    res = w0 .* fstOrderIntegral(K / n .* log((nuc .* w11t).^(-4) .* (nuc .* dw1).^(4/2)), ...
                                          K / n .* log((nuc .* w22t).^(-4) .* (nuc .* dw2).^(4/2)), ...
                                          K / n .* log((nuc .* w33t).^(-4) .* (nuc .* dw3).^(4/2)), ...
                                          K / n .* log((nuc .* w12).^4 .* (nuc .* w12t).^(-4)), ...
