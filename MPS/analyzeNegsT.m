@@ -1,17 +1,14 @@
 % clear nucs
 % clear ws
 % clear epss
-clear r0
-clear r1
-clear r2
-clear r3
-% data = load('exactNegQuenchFlux10000_1000-1000_.mat');
-n = 3;
+data = load('exactNegQuenchFlux10000_1000-1000_.mat');
+n = 1;
 K = 1;
 
 l = 1000;
-% rn = data.(strcat('r', int2str(n)));
-load('rn3.mat');
+rn = data.(strcat('r', int2str(n)));
+t = data.t;
+% load('rn3.mat');
 
 zeroIndex = find(data.alphas == 0);
 alphaRegion = 200:length(data.alphas) - 200 + 1;
@@ -29,12 +26,12 @@ for i = 1:length(t)
     plot(data.alphas(alphaRegion), yfit);
     [a, ~, ~, chisq, yfit] = fitnonlin(data.alphas(:), data.alphas(:), ...
         abs(rn(i, :)/rn(i, zeroIndex)), 0.01.*ones(length(data.alphas), 1), ...
-         0.01.*abs(rn(i, :)/rn(i, zeroIndex)), 'fluxNegT', [17 a(2)*3.8 a(3)*3.8 4], [l n K t(i)], []);
+         0.01.*abs(rn(i, :)/rn(i, zeroIndex)), 'fluxNegT', [17 a(2) a(3) 4], [l n K t(i)], []);
     plot(data.alphas, yfit);
     xlabel('$\alpha$', 'Interpreter', 'latex');
     ylabel(strcat('$R_', int2str(n), '(\alpha)/R_', int2str(n), '$'), 'Interpreter', 'latex');
     title(strcat('$t = ', num2str(t(i)), '$'), 'Interpreter', 'latex');
-    hold off
+%     hold off
     pause(0.1);
     chisqs(i) = chisq;
     epss(i) = a(1);
