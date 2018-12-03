@@ -1,4 +1,4 @@
-function S = getExactEEForFlux(f, alphas, L)
+function S = getExactEEForFlux(f, alphas)
     % Some tests to check the alpha-dependency of the exact results.
     % S(alpha),  based on https://arxiv.org/pdf/1711.09418.pdf 
     
