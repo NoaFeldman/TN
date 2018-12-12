@@ -1,4 +1,4 @@
-function rn = arrangeNegativityDMRGRenyi(map, n)
+function arranged = arrangeNegativityDMRGRenyi(map, n)
     keys = map.keys;
     vals = map.values;
     for i = 1 : length(keys)
@@ -15,8 +15,8 @@ function rn = arrangeNegativityDMRGRenyi(map, n)
             rnalpha = rnalpha + exp(1i * (-qs(i)) .* alphas).* rnq(i);
         end
     end
-    rn.qs = qs;
-    rn.rnq = rnq;
-    rn.alphas = alphas;
-    rn.rnalpha = rnalpha;
+    arranged.qs = qs;
+    arranged.rnq = rnq;
+    arranged.alphas = alphas;
+    arranged.rnalpha = rnalpha;
 end
