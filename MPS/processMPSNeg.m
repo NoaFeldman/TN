@@ -1,4 +1,7 @@
 function processMPSNeg(inDir, outDir, tSteps, l)
+    path(path, [pwd '/MPSPACK_v3.0']);
+    path(path, [pwd '/DMRG']);
+    startup;
     mkdir outDir;
     for i = 1:length(tSteps)
         t = tSteps(i);
