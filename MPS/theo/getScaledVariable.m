@@ -16,6 +16,15 @@ function X = getScaledVariable(var, epsilon, L, option)
         case 4 % After quench, infinite chain
             t = var;
             X = (epsilon^2 + t.^2) / (epsilon / 2);
+        case 5 % After quench, shifted from quench by 5
+            t = var;
+            vF = 2*sin(pi * (L/2 + 1) / (L+1));
+            lShift = 5; 
+            % Half system (finite) after quantum quench in the middle:
+            X = (abs(pi .* sinh(pi/L * 2 * epsilon) ./ ...
+                (2 .* sinh(pi / L .* (epsilon + (lShift + 1i .* vF .* t))) .* ...
+                 sinh(pi / L .* (epsilon - (lShift + 1i.*vF.*t)))))).^(-1);
+             
         otherwise
             disp('Model type nonexistant.');
     end
