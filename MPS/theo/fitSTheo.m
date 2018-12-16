@@ -12,7 +12,7 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     hold off;
     [as, ~, ~, ~, yfit] = fitnonlin(var(cftRegion), var(cftRegion), ...
         real(data.sFull(cftRegion)), 0.01.*var(cftRegion), 0.01.*real(data.sFull(cftRegion)), ...
-        'getEntanglementEntropy', [1 1], [L model pointFunc], []);
+        'getEntanglementEntropy', [0.0001 0.2], [L model pointFunc], []);
     plot(var(cftRegion), real(data.sFull(cftRegion)));
     hold on
     plot(var(cftRegion), yfit);
@@ -28,27 +28,27 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     for i = 1:length(var)
         [fg, gof] = fit(data.alphas(alphaRegion).', real(data.s1Alpha(alphaRegion, i)), ...
             f, 'StartPoint', [0.5 1 1]);
-        fFixed = fittype(strcat('w1* exp(-(x)^2 / (2 * s)) +  ', num2str(fg.w2), ' * (exp(-(x - 2*pi)^2 / (2 * s)) + exp(-(x + 2*pi)^2 / (2 * s)))'), ...
-            'independent', 'x', 'dependent', 'y');
-        [fg2, gof] = fit(data.alphas(alphaRegion).', real(data.s2Alpha(alphaRegion, i)./data.s2Alpha(315, i)), ...
-            fFixed, 'StartPoint', [0.5 1]);
-        [fg3, gof] = fit(data.alphas(alphaRegion).', real(data.s3Alpha(alphaRegion, i)./data.s3Alpha(315, i)), ...
-            fFixed, 'StartPoint', [0.5 1]);
-        [fg4, gof] = fit(data.alphas(alphaRegion).', real(data.s4Alpha(alphaRegion, i)./data.s4Alpha(315, i)), ...
-            fFixed, 'StartPoint', [0.5 1]);
-        [fg5, gof] = fit(data.alphas(alphaRegion).', real(data.s5Alpha(alphaRegion, i)./data.s5Alpha(315, i)), ...
-            fFixed, 'StartPoint', [0.5 1]);
+%         fFixed = fittype(strcat('w1* exp(-(x)^2 / (2 * s)) +  ', num2str(fg.w2), ' * (exp(-(x - 2*pi)^2 / (2 * s)) + exp(-(x + 2*pi)^2 / (2 * s)))'), ...
+%             'independent', 'x', 'dependent', 'y');
+%         [fg2, gof] = fit(data.alphas(alphaRegion).', real(data.s2Alpha(alphaRegion, i)./data.s2Alpha(315, i)), ...
+%             fFixed, 'StartPoint', [0.5 1]);
+%         [fg3, gof] = fit(data.alphas(alphaRegion).', real(data.s3Alpha(alphaRegion, i)./data.s3Alpha(315, i)), ...
+%             fFixed, 'StartPoint', [0.5 1]);
+%         [fg4, gof] = fit(data.alphas(alphaRegion).', real(data.s4Alpha(alphaRegion, i)./data.s4Alpha(315, i)), ...
+%             fFixed, 'StartPoint', [0.5 1]);
+%         [fg5, gof] = fit(data.alphas(alphaRegion).', real(data.s5Alpha(alphaRegion, i)./data.s5Alpha(315, i)), ...
+%             fFixed, 'StartPoint', [0.5 1]);
         if (mod(i, 10) == 0)
-%             plot(fg, data.alphas, real(data.s1Alpha(:, i))); pause(0.1);
-            plot(fg4, data.alphas(alphaRegion), real(data.s4Alpha(alphaRegion, i)./data.s4Alpha(315, i))); pause(0.1);
-            plot(fg5, data.alphas(alphaRegion), real(data.s5Alpha(alphaRegion, i)./data.s5Alpha(315, i))); pause(0.1);
-            hold off
+            plot(fg, data.alphas, real(data.s1Alpha(:, i))); pause(0.1);
+%             plot(fg4, data.alphas(alphaRegion), real(data.s4Alpha(alphaRegion, i)./data.s4Alpha(315, i))); pause(0.1);
+%             plot(fg5, data.alphas(alphaRegion), real(data.s5Alpha(alphaRegion, i)./data.s5Alpha(315, i))); pause(0.1);
+%             hold off
         end
         V(i) = fg.s;
-        V2(i) = fg2.s;
-        V3(i) = fg3.s;
-        V4(i) = fg4.s;
-        V5(i) = fg5.s;
+%         V2(i) = fg2.s;
+%         V3(i) = fg3.s;
+%         V4(i) = fg4.s;
+%         V5(i) = fg5.s;
 %         w1s(i) = fg.w1;
         ws(i) = fg.w2;
 %         w2s(i) = fg2.w2;
@@ -58,7 +58,7 @@ function fitSTheo(data, varName, L, pointFunc, delta, model, cftRegion, figName)
     end
   
     w1 = 1; %mean(w1s(cftRegion));
-%     w2 = mean(w2s(cftRegion));
+    w2 = mean(ws(cftRegion));
     
     [ap, ~, ~, ~, yfit] = fitnonlin(var(cftRegion), var(cftRegion), ...
         V(cftRegion).', 0.01.*var(cftRegion), ...
