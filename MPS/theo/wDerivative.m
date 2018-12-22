@@ -1,7 +1,15 @@
-function der = wDerivative(l, t, epsilon)
+function der = wDerivative(l, t, epsilon, L)
     if l == 0
         der = 1 ./ sqrt(epsilon^2 + t.^2);
     else
         der = abs(1 ./ rho(l, t, epsilon) .* sqrt((l + rhoCosTheta(l, t, epsilon)).^2 + (1i .* t + rhoSinTheta(l, t, epsilon)).^2));
     end
+    vF = 2;
+    theta = 1i .* vF .* t;
+    der = pi.*abs(L.^(-1).*csch(L.^(-1).*pi.*((-1).*epsilon+sqrt(-1).*l+ ...
+        theta)).^2.*sinh(2.*epsilon.*L.^(-1).*pi).*(csch(L.^(-1).*pi.*(( ...
+        -1).*epsilon+sqrt(-1).*l+theta)).*sinh(L.^(-1).*pi.*(epsilon+sqrt( ...
+        -1).*l+theta))).^(-1/2).*((-1)+(csch(L.^(-1).*pi.*((-1).*epsilon+ ...
+        sqrt(-1).*l+theta)).*sinh(L.^(-1).*pi.*(epsilon+sqrt(-1).*l+theta) ...
+        )).^(1/2)).^(-2));
 end

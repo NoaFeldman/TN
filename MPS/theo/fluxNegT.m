@@ -2,37 +2,31 @@ function res = fluxNegT(alpha, a, fixed)
     l = fixed(1);
     n = fixed(2);
     K = fixed(3);
-    t = fixed(4);
+    L = fixed(4);
+    t = fixed(5);
     a = abs(a);
-    epsilon = 30; % a(1);
-    [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l/2, t, epsilon);
-    dw1 = wDerivative(l/2, t, epsilon);    
-    dw2 = wDerivative(0, t, epsilon);    
-    dw3 = wDerivative(-l/2, t, epsilon);
+    epsilon = 1e-4; % a(1);
+    [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l, t, epsilon, L);
+    dw1 = wDerivative(l, t, epsilon, L);    
+    dw2 = wDerivative(0, t, epsilon, L);    
+    dw3 = wDerivative(-l, t, epsilon, L);
     w11t = a(2) * w11t;
     w22t = a(2) * w22t;
     w33t = a(2) * w33t;
-    w12 = a(2) * w12;
+    w12  = a(2) * w12;
     w12t = a(2) * w12t;
-    w23 = a(2) * w23;
+    w23  = a(2) * w23;
     w23t = a(2) * w23t;
-    w13 = a(2) * w13;
+    w13  = a(2) * w13;
     w13t = a(2) * w13t;
-    dw1 = dw1;
-    dw2 = dw2;
-    dw3 = dw3;
+    
     wpm = a(3);
     
     alpha1 = alpha / (2*pi);
     alpha2 = -2 .* alpha / (2*pi);
     alpha3 = alpha / (2*pi);
-%     order1 = (dw1).^(4 * 1/2 * K/n .* alpha1.^2) .* (dw2).^(4 * 1/2 * K/n .* alpha2.^2) .* (dw3).^(4 * 1/2 * K/n .* alpha3.^2) .* ...
-%         (w11t).^(-4/2 * K/n .* alpha1.^2) .* (w22t).^(-4/2 * K/n .* alpha2.^2) .* (w33t).^(-4/2 * K/n .* alpha3.^2) .* ...
-%         (w12).^(4 * K/n .* alpha1 .* alpha2) .* (w12t).^(-4 * K/n .* alpha1 .* alpha2) .* ...
-%         (w23).^(4 * K/n .* alpha2 .* alpha3) .* (w23t).^(-4 * K/n .* alpha2 .* alpha3) .* ...
-%         (w13).^(4 * K/n .* alpha1 .* alpha3) .* (w13t).^(-4 * K/n .* alpha1 .* alpha3);
-    order1 = (dw1).^(2 * 1/2 * K/n .* alpha1.^2) .* (dw2).^(2 * 1/2 * K/n .* alpha2.^2) .* (dw3).^(2 * 1/2 * K/n .* alpha3.^2) .* ...
-        (w11t).^(-2/2 * K/n .* alpha1.^2) .* (w22t).^(-2/2 * K/n .* alpha2.^2) .* (w33t).^(-2/2 * K/n .* alpha3.^2) .* ...
+    order1 = (dw1).^(1 * K/n .* alpha1.^2) .* (dw2).^(1* K/n .* alpha2.^2) .* (dw3).^(1 * K/n .* alpha3.^2) .* ...
+        (w11t).^(-1 * K/n .* alpha1.^2) .* (w22t).^(-1 * K/n .* alpha2.^2) .* (w33t).^(-1 * K/n .* alpha3.^2) .* ...
         (w12).^(2 * K/n .* alpha1 .* alpha2) .* (w12t).^(-2 * K/n .* alpha1 .* alpha2) .* ...
         (w23).^(2 * K/n .* alpha2 .* alpha3) .* (w23t).^(-2 * K/n .* alpha2 .* alpha3) .* ...
         (w13).^(2 * K/n .* alpha1 .* alpha3) .* (w13t).^(-2 * K/n .* alpha1 .* alpha3);
@@ -45,15 +39,9 @@ function res = fluxNegT(alpha, a, fixed)
                     alpha1Curr = alpha1 + order2Shift(i);
                     alpha2Curr = alpha2 + order2Shift(j);
                     alpha3Curr = alpha3 + order2Shift(k);
-%                     order2 = order2 + ...
-%                         (dw1).^(4/2 * K/n .* alpha1Curr.^2) .* (dw2).^(4/2 * K/n .* alpha2Curr.^2) .* (dw3).^(4/2 * K/n .* alpha3Curr.^2) .* ...
-%                         (w11t).^(-4/2 * K/n .* alpha1Curr.^2) .* (w22t).^(-4/2 * K/n .* alpha2Curr.^2) .* (w33t).^(-4/2 * K/n .* alpha3Curr.^2) .* ...
-%                         (w12).^(4 * K/n .* alpha1Curr .* alpha2Curr) .* (w12t).^(-4 * K/n .* alpha1Curr .* alpha2Curr) .* ...
-%                         (w23).^(4 * K/n .* alpha2Curr .* alpha3Curr) .* (w23t).^(-4 * K/n .* alpha2Curr .* alpha3Curr) .* ...
-%                         (w13).^(4 * K/n .* alpha1Curr .* alpha3Curr) .* (w13t).^(-4 * K/n .* alpha1Curr .* alpha3Curr);
                     order2 = order2 + ...
-                        (dw1).^(2/2 * K/n .* alpha1Curr.^2) .* (dw2).^(2/2 * K/n .* alpha2Curr.^2) .* (dw3).^(2/2 * K/n .* alpha3Curr.^2) .* ...
-                        (w11t).^(-2/2 * K/n .* alpha1Curr.^2) .* (w22t).^(-2/2 * K/n .* alpha2Curr.^2) .* (w33t).^(-2/2 * K/n .* alpha3Curr.^2) .* ...
+                        (dw1).^(1 * K/n .* alpha1Curr.^2) .* (dw2).^(1 * K/n .* alpha2Curr.^2) .* (dw3).^(1 * K/n .* alpha3Curr.^2) .* ...
+                        (w11t).^(-1 * K/n .* alpha1Curr.^2) .* (w22t).^(-1 * K/n .* alpha2Curr.^2) .* (w33t).^(-1 * K/n .* alpha3Curr.^2) .* ...
                         (w12).^(2 * K/n .* alpha1Curr .* alpha2Curr) .* (w12t).^(-2 * K/n .* alpha1Curr .* alpha2Curr) .* ...
                         (w23).^(2 * K/n .* alpha2Curr .* alpha3Curr) .* (w23t).^(-2 * K/n .* alpha2Curr .* alpha3Curr) .* ...
                         (w13).^(2 * K/n .* alpha1Curr .* alpha3Curr) .* (w13t).^(-2 * K/n .* alpha1Curr .* alpha3Curr);
@@ -62,8 +50,7 @@ function res = fluxNegT(alpha, a, fixed)
         end
     end    
 %     res = order1;
-%     res = order1 + wpm .* order2;
+    res = order1 + wpm .* order2;
     zeroIndex = length(alpha) / 2 + 1/2;
-    disp((wpm * order2(zeroIndex) + order1(zeroIndex)));
-    res = (order1 + wpm .* order2) / (wpm * order2(zeroIndex) + order1(zeroIndex));
+%     res = (order1 + wpm .* order2) / (wpm * order2(zeroIndex) + order1(zeroIndex));
 end
