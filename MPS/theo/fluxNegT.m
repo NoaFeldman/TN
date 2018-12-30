@@ -5,7 +5,7 @@ function res = fluxNegT(alpha, a, fixed)
     L = fixed(4);
     t = fixed(5);
     a = abs(a);
-    epsilon = 1e-4; % a(1);
+    epsilon = 1e-1; % a(1);
     [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l, t, epsilon, L);
     dw1 = wDerivative(l, t, epsilon, L);    
     dw2 = wDerivative(0, t, epsilon, L);    
@@ -52,5 +52,5 @@ function res = fluxNegT(alpha, a, fixed)
 %     res = order1;
     res = order1 + wpm .* order2;
     zeroIndex = length(alpha) / 2 + 1/2;
-%     res = (order1 + wpm .* order2) / (wpm * order2(zeroIndex) + order1(zeroIndex));
+    res = (order1 + wpm .* order2) / (wpm * order2(zeroIndex) + order1(zeroIndex));
 end
