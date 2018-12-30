@@ -11,7 +11,7 @@ function arranged = arrangeNegativityDMRGRenyi(map, n)
     rnalpha = zeros(1, length(alphas));
     for i = 1:length(qs)
         rnalpha = rnalpha + exp(1i * qs(i) .* alphas).* rnq(i);
-        if qs ~= 0
+        if qs(i) ~= 0
             rnalpha = rnalpha + exp(1i * (-qs(i)) .* alphas).* rnq(i);
         end
     end

@@ -29,9 +29,9 @@ function X = getScaledVariable(var, epsilon, L, option)
                       (cosh(nEpsilon + 1i * vF .* nT) .* sin(nLShift)).^2) .* ...
                  sqrt((sinh(nEpsilon - 1i * vF .* nT) .* cos(nLShift)).^2 + ...
                       (cosh(nEpsilon - 1i * vF .* nT) .* sin(nLShift)).^2))).^(-1);
-            platInds = find(t < lShift / vF);
+            platInds = find(t <= lShift / vF);
             X(platInds) = L .* sin(pi * lShift / L) .* ones(length(platInds), 1); 
-            platInds = find(t > (L - lShift) /vF);
+            platInds = find(t >= round((L - lShift) /vF));
             X(platInds) = L .* sin(pi * lShift / L) .* ones(length(platInds), 1);             
         otherwise
             disp('Model type nonexistant.');
