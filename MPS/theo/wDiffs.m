@@ -1,27 +1,28 @@
 function [w11t, w22t, w33t, w12, w12t, w23, w23t, w13, w13t] = wDiffs(l, t, epsilon, L)
-%     % Analytically continued |omega_i - omega_j|, based on analytical calcs
-%     % and WCR.
-%     w11t = abs(2/epsilon .* (l + rhoCosTheta(l, t, epsilon)));
-%     w22t = 2/epsilon .* sqrt(epsilon^2 + t.^2);
-%     w33t = abs(2/epsilon .* abs(-l + rhoCosTheta(-l, t, epsilon)));
-%     w12  = abs(1/epsilon .* sqrt((l + rhoCosTheta(l, t, epsilon) - sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(l, t, epsilon).^2));
-%     w12t = abs(1/epsilon .* sqrt((l + rhoCosTheta(l, t, epsilon) + sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(l, t, epsilon).^2));
-%     w23  = abs(1/epsilon .* sqrt((-l + rhoCosTheta(-l, t, epsilon) - sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(-l, t, epsilon).^2));
-%     w23t = abs(1/epsilon .* sqrt((-l + rhoCosTheta(-l, t, epsilon) + sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(-l, t, epsilon).^2));
-%     w13  = abs(1/epsilon .* sqrt((2*l + rhoCosTheta(l, t, epsilon) - rhoCosTheta(-l, t, epsilon)).^2 + (rhoSinTheta(l, t, epsilon) - rhoSinTheta(-l, t, epsilon)).^2));
-%     w13t  = abs(1/epsilon .* sqrt((2*l + rhoCosTheta(l, t, epsilon) + rhoCosTheta(-l, t, epsilon)).^2 + (rhoSinTheta(l, t, epsilon) + rhoSinTheta(-l, t, epsilon)).^2));
-    % based on SD eq (38)
     vF = 2;
-    theta = 1i .* vF .* t;
-    w11t = 1; % 2 .* imZ13(-l, theta, epsilon, L);
-    w22t = 1; % 2 .* imZ2(theta, epsilon, L);
-    w33t = 1; % 2 .* imZ13(l, theta, epsilon, L);
-    w12  = abs(rhoZ2i(-l, theta, epsilon, L));
-    w12t = abs(rhoZ2it(-l, theta, epsilon, L));
-    w23  = abs(rhoZ2i(l, theta, epsilon, L));
-    w23t = abs(rhoZ2it(l, theta, epsilon, L));
-    w13  = abs(rhoZ13(l, theta, epsilon, L));
-    w13t = abs(rhoZ13t(l, theta, epsilon, L));
+    % Analytically continued |omega_i - omega_j|, based on analytical calcs
+    % and WCR.
+    t = t * vF;
+    w11t = abs(2/epsilon .* (l + rhoCosTheta(l, t, epsilon)));
+    w22t = 2/epsilon .* sqrt(epsilon^2 + t.^2);
+    w33t = abs(2/epsilon .* abs(-l + rhoCosTheta(-l, t, epsilon)));
+    w12  = abs(1/epsilon .* sqrt((l + rhoCosTheta(l, t, epsilon) - sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(l, t, epsilon).^2));
+    w12t = abs(1/epsilon .* sqrt((l + rhoCosTheta(l, t, epsilon) + sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(l, t, epsilon).^2));
+    w23  = abs(1/epsilon .* sqrt((-l + rhoCosTheta(-l, t, epsilon) - sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(-l, t, epsilon).^2));
+    w23t = abs(1/epsilon .* sqrt((-l + rhoCosTheta(-l, t, epsilon) + sqrt(epsilon^2 + t.^2)).^2 + rhoSinTheta(-l, t, epsilon).^2));
+    w13  = abs(1/epsilon .* sqrt((2*l + rhoCosTheta(l, t, epsilon) - rhoCosTheta(-l, t, epsilon)).^2 + (rhoSinTheta(l, t, epsilon) - rhoSinTheta(-l, t, epsilon)).^2));
+    w13t  = abs(1/epsilon .* sqrt((2*l + rhoCosTheta(l, t, epsilon) + rhoCosTheta(-l, t, epsilon)).^2 + (rhoSinTheta(l, t, epsilon) + rhoSinTheta(-l, t, epsilon)).^2));
+%     % based on SD eq (38)
+%     theta = 1i .* vF .* t;
+%     w11t = 1; % 2 .* imZ13(-l, theta, epsilon, L);
+%     w22t = 1; % 2 .* imZ2(theta, epsilon, L);
+%     w33t = 1; % 2 .* imZ13(l, theta, epsilon, L);
+%     w12  = abs(rhoZ2i(-l, theta, epsilon, L));
+%     w12t = abs(rhoZ2it(-l, theta, epsilon, L));
+%     w23  = abs(rhoZ2i(l, theta, epsilon, L));
+%     w23t = abs(rhoZ2it(l, theta, epsilon, L));
+%     w13  = abs(rhoZ13(l, theta, epsilon, L));
+%     w13t = abs(rhoZ13t(l, theta, epsilon, L));
 end
 
 function w2it =  rhoZ2it(l, theta, epsilon, L)

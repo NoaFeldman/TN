@@ -4,9 +4,11 @@ function arranged = arrangeNegativityDMRGRenyi(map, n)
     for i = 1 : length(keys)
         qs(i) = str2num(keys{i})/2;
         rnq(i) = sum(vals{i}.^n);
+        traceNorm(i) = sum(abs(vals{i}));
     end
     [qs, sortInds] = sort(qs);
     rnq = rnq(sortInds);
+    traceNorm = traceNorm(sortInds);
     alphas = -3.14:0.01:3.14;
     rnalpha = zeros(1, length(alphas));
     for i = 1:length(qs)
@@ -19,4 +21,5 @@ function arranged = arrangeNegativityDMRGRenyi(map, n)
     arranged.rnq = rnq;
     arranged.alphas = alphas;
     arranged.rnalpha = rnalpha;
+    arranged.traceNorm = traceNorm;
 end
