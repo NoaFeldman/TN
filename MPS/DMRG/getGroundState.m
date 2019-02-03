@@ -22,7 +22,6 @@ function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, J2PM, J2Z, m)
                 ', NKeep = ' num2str(opts{2})]);
         end
     end
-    ECurr
 end
 
 function converged = stepConverged(ECurr, EForm, EError)

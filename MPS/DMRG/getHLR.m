@@ -24,8 +24,8 @@ function [HLR, HLR2] = getHLR(H, psi, l, dir, HLR, HLR2)
         if (l == 0)
             HLR.opSum = QSpace;
             HLR.openOp = QSpace;
-            HLR2.opSum = QSpace;
-            HLR2.openOp = QSpace;
+            HLR2.toClose = QSpace;
+            HLR2.toContinue = QSpace;
             return;
         end
         % propagate HLR.opSum by one site, with Identity acting on the new
@@ -51,13 +51,13 @@ function [HLR, HLR2] = getHLR(H, psi, l, dir, HLR, HLR2)
         %  --(___)--
         psiPsi = contract(psi(l), 1, psi(l), '1*');
         HLR.opSum  = HLR.opSum + contract(H.single(l), '21', psiPsi, '13');
+        HLR.opSum = HLR.opSum + contract( ...
+            contract(contract(HLR2.toClose, 2, psi(l), 1), 2, psi(l), '1*'), '124', ...
+            H.r2l2(l), '321');
         HLR.openOp = contract(H.l2r(l), '21', psiPsi, '13');
         if l > 1
-            HLR2.opSum = contract(contract(HLR2.opSum, 1, psi(l), 1), '12', psi(l), '12*');
-            HLR2.opSum  = HLR2.opSum + contract( ...
-                contract(contract(HLR2.openOp, 2, psi(l), 1), 2, psi(l), '1*'), '124', ...
-                H.r2l2(l), '321');
-            HLR2.openOp = contract(H.l2r2(l), '21', psiPsi, '13');
+            HLR2.toClose  = contract(contract(HLR2.toContinue, 2, psi(l), 1), '23', psi(l), '12*');
+            HLR2.toContinue = contract(H.l2r2(l), '21', psiPsi, '13');
         end
     end
     if (strcmp(dir, '<<'))

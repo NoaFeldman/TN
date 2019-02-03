@@ -1,4 +1,4 @@
-function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, dirName, cpuNumber, subsystemA)
+function quenchRDMSpectrum(L, h, JPM, JZ, J2PM, J2Z, dt, tStep, tFirstStep, tStepsNum, dirName, cpuNumber) %, subsystemA)
     % Saves the eigenvalues of the RDM (of half the lattice) for two ground
     % state L/2 lattices suddenly coupled.
     % We first calculate g.s of an L/2 lattice.
@@ -10,19 +10,17 @@ function quenchRDMSpectrum(L, h, JPM, JZ, m, dt, tStep, tFirstStep, tStepsNum, d
     maxNumCompThreads(cpuNumber);
     path(path, ['/home/noa/TN/MPS/MPSPACK_v3.0']);
     path(path, ['/home/noa/TN/MPS/DMRG']);
-    if nargin == 11
-        subsystemA = 'half';
-    end
+    subsystemA = 'half';
     startup;
     tic;
     topts = {'Nkeep', 1024, 'stol', 1e-8};
 %     dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
 %                      'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), '_200');
     if (tFirstStep == 0)
-        [gs, ~, ~, ~] = getGroundState(L / 2, h, JPM, JZ, m);
+        gs = getGroundState(L / 2, h, JPM, JZ, J2PM, J2Z, 0);
         disp('Found ground state for L/2');
         toc;
-        [~, H, ~, ~] = myStartup(L, h, JPM, JZ, m);
+        [~, H, ~, ~] = myStartup(L, h, JPM, JZ, J2PM, J2Z, 0);
         trotterGates = getTrotterGates(H, dt, 0);
         mkdir(dirName);
         save(strcat(dirName, '/trotterGates.mat'), 'trotterGates');

@@ -47,7 +47,7 @@ function H = getH(N, h, JPM, JZ, J2PM, J2Z)
         l2r.info.itags(3) = strcat(int2str(i), l2r.info.itags(3));
         r2l.info.itags(3) = strcat(int2str(i-1), r2l.info.itags(3));
         if ~isempty(r2l2)
-            r2l2.info.itags(3) = strcat(int2str(i-1), r2l2.info.itags(3));
+            r2l2.info.itags(3) = strcat(int2str(i-2), r2l2.info.itags(3));
         end
         l2r2.info.itags(3) = strcat(int2str(i), l2r2.info.itags(3));
         H.single(i) = single * -1 * h;
