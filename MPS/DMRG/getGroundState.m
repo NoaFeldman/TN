@@ -1,5 +1,5 @@
-function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, m)
-    [psi, H, HR, HL] = myStartup(N, h, JPM, JZ, m);
+function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, J2PM, J2Z, m)
+    [psi, H, HR, HL, HR2, HL2] = myStartup(N, h, JPM, JZ, J2PM, J2Z, m);
     % Find ground state
     ECurr = 0;
     EError = 1e-7;
@@ -7,10 +7,10 @@ function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, m)
     opts = {'Nkeep', 4};
     for i=1:1000
         EForm = ECurr;
-        [HL, HR, psi, ~] = dmrgSweep(HL, HR, H, psi, '<<', opts);
-        [HL, HR, psi, ECurr] = dmrgSweep(HL, HR, H, psi, '>>', opts);
+        [HL, HR, HL2, HR2, psi, ~] = dmrgSweep(HL, HR, HL2, HR2, H, psi, '<<', opts);
+        [HL, HR, HL2, HR2, psi, ECurr] = dmrgSweep(HL, HR, HL2, HR2, H, psi, '>>', opts);
         if (stepConverged(ECurr, EForm, EError))
-            [HL, HR, psi, dmrgConverged] = isConverged(HL, HR, H, psi, opts, ECurr, EError);
+            [HL, HR, HL2, HR2, psi, dmrgConverged] = isConverged(HL, HR, HL2, HR2, H, psi, opts, ECurr, EError);
             if (dmrgConverged)
                 break;
             end
@@ -22,17 +22,18 @@ function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, m)
                 ', NKeep = ' num2str(opts{2})]);
         end
     end
+    ECurr
 end
 
 function converged = stepConverged(ECurr, EForm, EError)
     converged = abs(ECurr - EForm)/abs(ECurr) < EError;
 end
 
-function [HL, HR, psi, dmrgConverged] = isConverged(HL, HR, H, psi, opts, ECurr, EError)
+function [HL, HR, HL2, HR2, psi, dmrgConverged] = isConverged(HL, HR, HL2, HR2, H, psi, opts, ECurr, EError)
     EForm = ECurr;
     opts{2} = 2 * opts{2};
-    [HL, HR, psi, ~] = dmrgSweep(HL, HR, H, psi, '<<', opts);
-    [HL, HR, psi, ECurr] = dmrgSweep(HL, HR, H, psi, '>>', opts);
+    [HL, HR, HL2, HR2, psi, ~] = dmrgSweep(HL, HR, HL2, HR2, H, psi, '<<', opts);
+    [HL, HR, HL2, HR2, psi, ECurr] = dmrgSweep(HL, HR, HL2, HR2, H, psi, '>>', opts);
     if (stepConverged(ECurr, EForm, EError))
         dmrgConverged = true;
     else
