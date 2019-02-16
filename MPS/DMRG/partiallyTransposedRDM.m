@@ -6,7 +6,8 @@ function rhoT2 = partiallyTransposedRDM(N1, N2)
     rho = contract(M, '13', M, '13*');
     clear M;
     % For symmetric cases (h = 0), don't save matrices corresponding to negative DeltaN.
-    inds = find(rho.Q{1} - rho.Q{4} >= 0);
+    inds = find(rho.Q{1} - rho.Q{4} == 4);
+    inds = [inds; find(rho.Q{1} - rho.Q{4} == 6)];
     for i = 1:4
         rho.Q{i} = rho.Q{i}(inds);
     end
