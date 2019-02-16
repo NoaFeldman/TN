@@ -3,20 +3,20 @@ function [N1, N2, truncErr] = getNegativityNs(psi, u1, v1, v2, opts)
     % psi is left canonical.
     u2 = v1 + 1;
     k = length(psi);
-    truncErr = 0;
-    while k > 1
-        [psi, k, terr] = shiftWorkingSite(psi, k, '<<', {'Nkeep', 250});
-        if truncErr < terr
-            truncErr = terr;
-        end
-    end
-    while k < length(psi)
-        [psi, k, terr] = shiftWorkingSite(psi, k, '>>', {'Nkeep', 250});
-        if truncErr < terr
-            truncErr = terr;
-        end
-    end
-    
+%     truncErr = 0;
+%     while k > 1
+%         [psi, k, terr] = shiftWorkingSite(psi, k, '<<', {'Nkeep', 250});
+%         if truncErr < terr
+%             truncErr = terr;
+%         end
+%     end
+%     while k < length(psi)
+%         [psi, k, terr] = shiftWorkingSite(psi, k, '>>', {'Nkeep', 250});
+%         if truncErr < terr
+%             truncErr = terr;
+%         end
+%     end
+
     k = length(psi);
     while k > v2
         [psi, k] = shiftWorkingSite(psi, k, '<<');
