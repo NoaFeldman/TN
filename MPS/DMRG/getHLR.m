@@ -61,11 +61,11 @@ function [HLR, HLR2] = getHLR(H, psi, l, dir, HLR, HLR2)
         end
     end
     if (strcmp(dir, '<<'))
-              if (l == length(psi)+1)
+        if (l == length(psi)+1)
             HLR.opSum = QSpace;
             HLR.openOp = QSpace;
-            HLR2.opSum = QSpace;
-            HLR2.openOp = QSpace;
+            HLR2.toClose = QSpace;
+            HLR2.toContinue = QSpace;
             return;
         end
         % propagate HLR.opSum by one site, with Identity acting on the new
@@ -92,28 +92,16 @@ function [HLR, HLR2] = getHLR(H, psi, l, dir, HLR, HLR2)
         psiPsi = contract(psi(l), 3, psi(l), '3*');
         HLR.opSum  = HLR.opSum + contract(H.single(l), '21', psiPsi, '24');
         HLR.openOp = contract(H.r2l(l), '21', psiPsi, '24');
+        
+        HLR.opSum = HLR.opSum + contract( ...
+            contract(contract(HLR2.toClose, 1, psi(l), 3), 1, psi(l), '3*'), '135', ...
+            H.l2r2(l), '321');
+
         if (l < length(psi)-1)
-            HLR2.opSum = contract(contract(HLR2.opSum, 1, psi(l), 3), '13', psi(l), '32*');
-            HLR2.opSum  = HLR2.opSum + contract( ...
-                contract(contract(HLR2.openOp, 2, psi(l), 3), 2, psi(l), '3*'), '135', ...
-                H.l2r2(l), '321');
-            HLR2.openOp = contract(H.r2l2(l), '21', psiPsi, '24');
+            HLR2.toClose  = contract(psi(l), '23*', contract(HLR2.toContinue, 1, psi(l), 3), '41', [3 1 2]);
+            HLR2.toContinue = contract(psiPsi, '24', H.r2l2(l), '21');        
         end
     end
-%     if (strcmp(dir, '^'))
-%         if (l == 1)
-%             HLR.opSum = contract(H.single(l), '21', contract(psi(l), 1, psi(l), '1*'), '13');
-%             HLR.openOp = contract(H.l2r(l), '21', contract(psi(l), 1, psi(l), '1*'), '13');
-%         elseif (l == length(psi))
-%             HLR.opSum = contract(H.single(l), '21', contract(psi(l), 3, psi(l), '3*'), '24');
-%             HLR.openOp = contract(H.r2l(l), '21', contract(psi(l), 3, psi(l), '3*'), '24');
-%         else
-%             HLR.l2r = contract(H.l2r(l), 2, psi(l), 2);
-%             HLR.l2r = contract(HLR.l2r, 1, psi(l), '2*');
-%             HLR.r2l = contract(H.r2l(l), 2, psi(l), 2);
-%             HLR.r2l = contract(HLR.r2l, 1, psi(l), '2*');
-%         end
-%     end
             
     
     
