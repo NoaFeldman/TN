@@ -18,4 +18,5 @@ function [psi, workingSiteIndex, truncErr] = shiftWorkingSite(psi, workingSiteIn
         truncErr = I.svd2tr;
         end
     end
+end
     

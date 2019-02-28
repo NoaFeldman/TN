@@ -1,23 +1,24 @@
-function overlap = getOverlap(psia, psib, k)
+function overlap = getOverlap(psia, psib)
     % Calculates < psia | psib >
     % k is the index of the site in mixed canonical form.
-    if (~isempty(psib(1)))
-        overlapLeft = getIdentity(psib(1), 1, [2 1]);
-    else
-        overlap = 0;
-        return;
+    if length(psia(1).info.itags) == 3
+        curr = contract(psia(1), '12', psib(1), '12*');
+    elseif length(psia(1).info.itags) == 4
+        curr = contract(psia(1), '123', psib(1), '123*');
     end
-    for i = 1:k
-        overlapLeft = contract(contract(overlapLeft, 1, psib(i), 1), '12', psia(i), '12*');
+    for i = 2:length(psia) - 1
+        curr = contract(curr, 1, psia(i), 1);
+        if length(psia(1).info.itags) == 3
+            curr = contract(curr, '12', psib(i), '12*');
+        elseif length(psia(1).info.itags) == 4
+            curr = contract(curr, '123', psib(i), '123*');
+        end
     end
-    if (~isempty(psib(length(psib))))
-        overlapRight = getIdentity(psib(length(psib)), 3, [2 1]);
-    else
-        overlap = 0;
-        return;
+    curr = contract(curr, 1, psia(length(psia)), 1);
+    if length(psia(1).info.itags) == 3
+        curr = contract(curr, '123', psib(length(psia)), '123*');
+    elseif length(psia(1).info.itags) == 4
+        curr = contract(curr, '1234', psib(length(psia)), '1234*');
     end
-    for i = length(psib):-1:k+1
-        overlapRight =  contract(contract(overlapRight, 1, psib(i), 3), '13', psia(i), '32*');
-    end
-    overlap = getscalar(contract(overlapLeft, '12', overlapRight, '12'));
+    overlap = getscalar(curr);
 end

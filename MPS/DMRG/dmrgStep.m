@@ -11,7 +11,7 @@ function [HL, HR, HL2, HR2, psi, E0, k, M] = dmrgStep(HL, HR, HL2, HR2, H, psi, 
         k1 = k -1;
         k2 = k;
     end
-    [M, E0] = lanczos(HL(k1), HR(k2), H, k1, psi);
+    [M, E0] = lanczos(HR(k2), HL(k1), HR2(k2), HL2(k1), H, k1, psi);
     psi = decomposeAndTruncate(M, k1, psi, dir, opts);
     if (strcmp(dir, '>>'))
         [HL(k+1), HL2(k+1)] =  getHLR(H, psi, k, '>>', HL(k), HL2(k));

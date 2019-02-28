@@ -1,5 +1,5 @@
-function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, J2PM, J2Z, m)
-    [psi, H, HR, HL, HR2, HL2] = myStartup(N, h, JPM, JZ, J2PM, J2Z, m);
+function [psi, H, HR, HL, EGS] = getGroundState(N, h, JPM, JZ, J2PM, J2Z, m, bc)
+    [psi, H, HR, HL, HR2, HL2] = myStartup(N, h, JPM, JZ, J2PM, J2Z, m, bc);
     % Find ground state
     ECurr = 0;
     EError = 1e-7;
@@ -22,6 +22,7 @@ function [psi, H, HR, HL] = getGroundState(N, h, JPM, JZ, J2PM, J2Z, m)
                 ', NKeep = ' num2str(opts{2})]);
         end
     end
+    EGS = ECurr;
 end
 
 function converged = stepConverged(ECurr, EForm, EError)

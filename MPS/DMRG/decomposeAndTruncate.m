@@ -1,9 +1,19 @@
 function [psi, truncErr] = decomposeAndTruncate(M, k, psi, dir, opts)
     % perform an SVD decomposition on M.
-    % Assign results to psi(k), psi(k+1). 
-    [psi(k), psi(k+1), I] = myOrthoQS(M, [1, 2], dir, opts);
+    % Assign results to psi(k), psi(k+1).
+    if length(psi(1).info.itags) == 3
+        bc = 'open';
+    else
+        bc = 'periodic';
+    end
+    if strcmp(bc, 'open')
+        [psi(k), psi(k+1), I] = myOrthoQS(M, [1, 2], dir, opts);
+    else
+        [psi(k), psi(k+1), I] = myOrthoQS(M, 1:3, dir, opts);
+    end
     truncErr = I.svd2tr;
-    psi(k).info.itags(3) = strcat(int2str(k), 'a', psi(k).info.itags(3));
+    psi(k).info.itags(length(psi(k).info.itags)) = ...
+        strcat(int2str(k), 'a', psi(k).info.itags(length(psi(k).info.itags)));
     psi(k+1).info.itags(1) = strcat(int2str(k), 'a', psi(k+1).info.itags(1));
 end
 

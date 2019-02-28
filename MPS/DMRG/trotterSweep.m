@@ -68,4 +68,14 @@ function [psi, truncErr] = trotterSweep(trotterGates, psi, opts)
             psi(k+1).info.itags{1} = strcat(int2str(k), 'a', psi(k+1).info.itags{1});
         end
     end
+%     For imaginary time propagation, renormalize state.
+%     psi = normalize(psi);
 end       
+
+function normalized = normalize(psi)
+    c = getOverlap(psi, psi);
+    for i = 1 : length(psi(1).data)
+        psi(1).data{i} = psi(1).data{i} / sqrt(c);
+    end
+    normalized = psi;
+end
