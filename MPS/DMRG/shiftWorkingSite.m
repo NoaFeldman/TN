@@ -6,8 +6,20 @@ function [psi, workingSiteIndex, truncErr] = shiftWorkingSite(psi, workingSiteIn
     if nargin == 3
         opts = {'Nkeep', 1024, 'stol', 1e-16};
     end
+    
+    if length(psi(1).info.itags) == 3
+        bc = 'open';
+    else
+        bc = 'periodic';
+    end
+
     if (strcmp(dir, '>>'))
-        [r, psi(workingSiteIndex), I] = orthoQS(psi(workingSiteIndex), [1, 2], '>>', opts{:});
+        if strcmp(bc, 'open')
+            inds = [1 2];
+        else
+            inds = [1 2 3];
+        end
+        [r, psi(workingSiteIndex), I] = orthoQS(psi(workingSiteIndex), inds, '>>', opts{:});
         workingSiteIndex = workingSiteIndex + 1;
         psi(workingSiteIndex) = contract(QSpace(r), '1', psi(workingSiteIndex), '1');
         truncErr = I.svd2tr;

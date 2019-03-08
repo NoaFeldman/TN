@@ -68,9 +68,9 @@ function Hv = applyHToM(HR, HL, HR2, HL2, H, M, k, bc)
         Hv = Hv + contract(HK2L2R, '67', HR.openOpDown, '12');        
         
         HK2L2R2 = contract(H.l2r2Up(k2), '24', M, '45', [4 5 6 1 2 3 7]);
-        Hv = Hv + contract(HK2L2R2, '67', HR2.toCloseUp, '12');        
+        Hv = Hv + contract(HK2L2R2, '67', HR2.toCloseUp, '31');        
         HK2L2R2 = contract(H.l2r2Down(k2), '24', M, '45', [4 5 6 1 2 3 7]);
-        Hv = Hv + contract(HK2L2R2, '67', HR2.toCloseDown, '12');        
+        Hv = Hv + contract(HK2L2R2, '67', HR2.toCloseDown, '31');        
     end
     % Add I(Left) x h.l2r(k1) x h.r2l(k2) x I(Right)
     if strcmp(bc, 'open')
@@ -90,9 +90,9 @@ function Hv = applyHToM(HR, HL, HR2, HL2, H, M, k, bc)
         Hv = Hv  + contract(temp, '14', H.l2r2(k1), '32', [2 4 3 1]);
     else
         temp = contract(HL2.toContinueUp, 2, M, 1);
-        Hv = Hv  + contract(temp, '156', H.r2l2Up(k2), '524', [1 2 3 4 6 7 5]);
+        Hv = Hv  + contract(temp, '156', H.r2l2Up(k2), '524', [1 2 3 5 6 4]);
         temp = contract(HL2.toContinueDown, 2, M, 1);
-        Hv = Hv  + contract(temp, '156', H.r2l2Down(k2), '524', [1 2 3 4 6 7 5]);
+        Hv = Hv  + contract(temp, '156', H.r2l2Down(k2), '524', [1 2 3 5 6 4]);
         temp = contract(HR2.toContinueUp, 2, M, 6);
         Hv = Hv  + contract(temp, '145', H.l2r2Up(k1), '524', [2 5 6 3 4 1]);
         temp = contract(HR2.toContinueDown, 2, M, 6);

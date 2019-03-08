@@ -17,10 +17,10 @@ function quenchRDMSpectrum(L, h, JPM, JZ, J2PM, J2Z, dt, tStep, tFirstStep, tSte
 %     dirName = strcat('quenchSpecL', int2str(L), 'JPM', num2str(abs(JPM)), ...
 %                      'JZ', num2str(abs(JZ)), 'h', num2str(abs(h)), '_200');
     if (tFirstStep == 0)
-        gs = getGroundState(L / 2, h, JPM, JZ, J2PM, J2Z, 0);
+        gs = getGroundState(L / 2, h, JPM, JZ, J2PM, J2Z, 0, 'open');
         disp('Found ground state for L/2');
         toc;
-        [~, H, ~, ~] = myStartup(L, h, JPM, JZ, J2PM, J2Z, 0);
+        [~, H, ~, ~] = myStartup(L, h, JPM, JZ, J2PM, J2Z, 0, 'open');
         trotterGates = getTrotterGates(H, dt, 0);
         mkdir(dirName);
         save(strcat(dirName, '/trotterGates.mat'), 'trotterGates');

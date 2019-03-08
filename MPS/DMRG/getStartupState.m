@@ -8,54 +8,77 @@ function psi = getStartupState(N, m, bc)
         bc = 'open'
     end
     if strcmp(bc, 'open')
-%         currSpin = 0;
-%         flipRate = N+1;
-%         if (m ~=0)
-%             flipRate = floor((N / 2) / m);
-%         end
-%         for i = 1:N
-%             psi(i) = QSpace;
-%             if (mod(i, 2) ~= 0 | mod(i / 2, flipRate) == 0)
-%                 psi(i).Q = {[currSpin], [-1], [currSpin - 1]};
-%                 currSpin = currSpin - 1;
-%             else
-%                 psi(i).Q = {[currSpin], [1], [currSpin + 1]};
-%                 currSpin = currSpin + 1;
-%             end
-%             psi(i).data = {1};
-%             tag1 = strcat(int2str(i - 1), 'a');
-%             tag2 = strcat(int2str(i), 's');
-%             tag3 = strcat(int2str(i), 'a', '*');
-%             psi(i).info.itags = {tag1, tag2, tag3};
-%             psi(i).info.qtype = '';
-%             psi(i).info.otype = '';
-%         end
-%         % Get the rightmost site to mixed canonical form.
-%         psi(N).Q{3} = -1 * psi(N).Q{3};
-%         psi(N).info.itags{3} = strcat(int2str(N), 'a');
-%         
-        fullState = QSpace();
-        fullState.info.qtype = '';
-        fullState.info.otype = '';
-        fullState.Q{1} = 0;
-        fullState.info.itags{1} = '0a';
+        fullState1 = QSpace();
+        fullState1.info.qtype = '';
+        fullState1.info.otype = '';
+        fullState1.Q{1} = 0;
+        fullState1.info.itags{1} = '0a';
         for i = 2:N+1
             if (mod(i, 2) == 0)
-                fullState.Q{i} = 1;
+                fullState1.Q{i} = 1;
             else
-                fullState.Q{i} = -1;
+                fullState1.Q{i} = -1;
             end
-            fullState.info.itags{i} = strcat(int2str(i-1), 's');
+            fullState1.info.itags{i} = strcat(int2str(i-1), 's');
         end
-        fullState.Q{N+2} = 0;
-        fullState.info.itags{N+2} = strcat(int2str(N), 'a');
-        fullState.data{1} = 1;
+        fullState1.Q{N+2} = 0;
+        fullState1.info.itags{N+2} = strcat(int2str(N), 'a');
+        fullState1.data{1} = 1;
         
-        fullStateFlipped = fullState;
+        fullStateFlipped1 = fullState1;
         for i = 2:N+1
-            fullStateFlipped.Q{i} = -fullState.Q{i};
+            fullStateFlipped1.Q{i} = -fullState1.Q{i};
         end
-        fullState = fullState - fullStateFlipped;
+        fullState1 = fullState1 + fullStateFlipped1;
+
+        fullState2 = QSpace();
+        fullState2.info.qtype = '';
+        fullState2.info.otype = '';
+        fullState2.Q{1} = 0;
+        fullState2.info.itags{1} = '0a';
+        for i = 2:N+1
+            if (mod(i, 4) == 0 || mod(i+1, 4) == 0)
+                fullState2.Q{i} = 1;
+            else
+                fullState2.Q{i} = -1;
+            end
+            fullState2.info.itags{i} = strcat(int2str(i-1), 's');
+        end
+        fullState2.Q{N+2} = 0;
+        fullState2.info.itags{N+2} = strcat(int2str(N), 'a');
+        fullState2.data{1} = 1;
+        
+        fullStateFlipped2 = fullState2;
+        for i = 2:N+1
+            fullStateFlipped2.Q{i} = -fullState2.Q{i};
+        end
+        fullState2 = fullState2 + fullStateFlipped2;
+        
+        fullState3 = QSpace();
+        fullState3.info.qtype = '';
+        fullState3.info.otype = '';
+        fullState3.Q{1} = 0;
+        fullState3.info.itags{1} = '0a';
+        for i = 2:N+1
+            if (mod(i-1, 4) == 0 || mod(i, 4) == 0)
+                fullState3.Q{i} = 1;
+            else
+                fullState3.Q{i} = -1;
+            end
+            fullState3.info.itags{i} = strcat(int2str(i-1), 's');
+        end
+        fullState3.Q{N+2} = 0;
+        fullState3.info.itags{N+2} = strcat(int2str(N), 'a');
+        fullState3.data{1} = 1;
+        
+        fullStateFlipped3 = fullState3;
+        for i = 2:N+1
+            fullStateFlipped3.Q{i} = -fullState3.Q{i};
+        end
+        fullState3 = fullState3 + fullStateFlipped3;
+
+%         fullState = fullState1 + fullState2 + fullState3;
+        fullState = fullState3 - fullState1;
         psi = QSpace(N);
         for i = 1:N-1
             [psi(i), fullState, ~] = orthoQS(fullState, [1 2], '>>', ...
@@ -63,8 +86,8 @@ function psi = getStartupState(N, m, bc)
         end
         psi(N) = fullState;
         norm = getOverlap(psi, psi);
-        for i = 1:length(psi(1).data)
-            psi(1).data{i} = psi(1).data{i}/sqrt(norm);
+        for i = 1:length(psi(N).data)
+            psi(N).data{i} = psi(N).data{i}/sqrt(norm);
         end
         
         if m == -1
@@ -82,22 +105,102 @@ function psi = getStartupState(N, m, bc)
             disp('------------------------Unsupported m! Can be fixed in getStartupState.------------------');
         end
     else
-        Q = 0;
+        
+        fullState1 = QSpace();
+        fullState1.info.qtype = '';
+        fullState1.info.otype = '';
+        fullState1.Q{1} = 0;
+        fullState1.info.itags{1} = '0a';
         for i = 1:N
-            psi(i)= QSpace();
-            if mod(i, 2) == 0
-                psi(i).Q = {Q; 1; -1; Q};
-            else
-                psi(i).Q = {Q; -1; 1; Q};
-            end
-            psi(i).data = {1};
-            psi(i).info.qtype = '';
-            psi(i).info.otype = '';
-            psi(i).info.itags = ...
-                {strcat(int2str(i-1), 'a'), strcat(int2str(i), 'sUp'), ...
-                strcat(int2str(i), 'sDown'), strcat(int2str(i),'a*')};
+            fullState1.Q{2*i} = getQ(i, N, 'u');
+            fullState1.Q{2*i+1} = getQ(i, N, 'd');
+            fullState1.info.itags{2*i} = strcat(int2str(i), 'sUp');
+            fullState1.info.itags{2*i+1} = strcat(int2str(i), 'sDown');
         end
-        psi(N).info.itags{4} = strcat(int2str(N), 'a');
-        psi(N).Q{4} = -psi(N).Q{4};
+        fullState1.Q{2*N+2} = 0;
+        fullState1.info.itags{2*N+2} = strcat(int2str(N), 'a');
+        fullState1.data{1} = 1;
+        
+        fullStateFlipped1 = fullState1;
+        for i = 2:2*N+1
+            fullStateFlipped1.Q{i} = -fullState1.Q{i};
+        end
+%         fullState1 = fullState1 + fullStateFlipped1;
+        
+        fullState2 = fullState1;
+        up1ind = find(strcmp(fullState1.info.itags, '1sUp'));
+        up3ind = find(strcmp(fullState1.info.itags, '3sUp'));
+        fullState2.Q{up1ind} = -fullState2.Q{up1ind};
+        fullState2.Q{up3ind} = -fullState2.Q{up3ind};
+        
+        fullState3 = QSpace();
+        fullState3.info.qtype = '';
+        fullState3.info.otype = '';
+        fullState3.Q{1} = 0;
+        fullState3.info.itags{1} = '0a';
+        for i = 1:N
+            if (mod(i, 2) == 0)
+                fullState3.Q{2*i} = 1;
+                fullState3.Q{2*i+1} = -1;
+            else
+                fullState3.Q{2*i} = -1;
+                fullState3.Q{2*i+1} = 1;
+            end
+            fullState3.info.itags{2*i} = strcat(int2str(i), 'sUp');
+            fullState3.info.itags{2*i+1} = strcat(int2str(i), 'sDown');
+        end
+        fullState3.Q{2*N+2} = 0;
+        fullState3.info.itags{2*N+2} = strcat(int2str(N), 'a');
+        fullState3.data{1} = 1;
+        
+        fullState4 = fullState3;
+        up1ind = find(strcmp(fullState1.info.itags, '1sUp'));
+        up2ind = find(strcmp(fullState1.info.itags, '2sUp'));
+        fullState4.Q{up1ind} = -fullState4.Q{up1ind};
+        fullState4.Q{up2ind} = -fullState4.Q{up2ind};
+        
+%         fullStateFlipped3 = fullState3;
+%         for i = 2:2*N+1
+%             fullStateFlipped3.Q{i} = -fullState3.Q{i};
+%         end
+%         fullState3 = fullState3 + fullStateFlipped3;
+
+        fullState = fullState1 + fullState2 + fullState3 + fullState4;
+        psi = QSpace(N);
+        for i = 1:N-1
+            [psi(i), fullState, ~] = orthoQS(fullState, [1 2 3], '>>', ...
+                            'Nkeep', 1024, 'itag', strcat(int2str(i), 'a'));
+        end
+        psi(N) = fullState;
+        norm = getOverlap(psi, psi);
+        for i = 1:length(psi(N).data)
+            psi(N).data{i} = psi(N).data{i}/sqrt(norm);
+        end
+        
+        if m == -1
+            % for now only working for |m|, if we go to the asymmetric case
+            % fix.
+            [S,IS]=getLocalSpace('Spin',0.5,'-A');
+            S(2).Q{3} = -S(2).Q{3};
+            S(2).info.itags{3} = '';
+            S(2).info.itags = {strcat(int2str(N), 'sDown'), strcat(int2str(N), 'sDown*'), 'temp'};
+            temp = contract(psi(N), 3, S(2), 2);
+            id = getIdentity(temp, 3, temp, 5, psi(N).info.itags{3});
+            psi(N) = contract(temp, '35', id, '12*');
+        end
+        if m ~= 0 && m ~= -1
+            disp('------------------------Unsupported m! Can be fixed in getStartupState.------------------');
+        end
+    end
+end
+
+function q = getQ(ind, N, chainHalf)
+    if strcmp(chainHalf, 'u')
+        ind = N*2 - ind + 1;
+    end
+    if (mod(ind, 4) == 0 || mod(ind+1, 4) == 0)
+        q = 1;
+    else
+        q = -1;
     end
 end

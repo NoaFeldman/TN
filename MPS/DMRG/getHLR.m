@@ -169,10 +169,10 @@ function [HLR, HLR2] = getHLR(H, psi, l, dir, HLR, HLR2)
             HLR.openOpUp = contract(H.r2lUp(l), '2143', psiPsi, '2536');
             HLR.openOpDown = contract(H.r2lDown(l), '2143', psiPsi, '2536');
             HLR.opSum = HLR.opSum + contract( ...
-                contract(contract(HLR2.toCloseUp, 2, psi(l), 4), 1, psi(l), '4*'), '13647', ...
+                contract(contract(HLR2.toCloseUp, 1, psi(l), 4), 1, psi(l), '4*'), '13647', ...
                 H.l2r2Up(l), '52143');
             HLR.opSum = HLR.opSum + contract( ...
-                contract(contract(HLR2.toCloseDown, 2, psi(l), 4), 1, psi(l), '4*'), '13647', ...
+                contract(contract(HLR2.toCloseDown, 1, psi(l), 4), 1, psi(l), '4*'), '13647', ...
                 H.l2r2Down(l), '52143');
         end
 
@@ -182,8 +182,8 @@ function [HLR, HLR2] = getHLR(H, psi, l, dir, HLR, HLR2)
             end
             HLR2.toContinue = contract(psiPsi, '24', H.r2l2(l), '21', [3 1 2]);        
         else
-            HLR2.toCloseUp  = contract(psi(l), '234*', contract(HLR2.toContinueUp, 2, psi(l), 4), '451', [3 1 2]);                
-            HLR2.toCloseDown  = contract(psi(l), '234*', contract(HLR2.toContinueDown, 2, psi(l), 4), '451', [3 1 2]);                
+            HLR2.toCloseUp  = contract(psi(l), '234*', contract(HLR2.toContinueUp, 2, psi(l), 4), '452', [3 1 2]);                
+            HLR2.toCloseDown  = contract(psi(l), '234*', contract(HLR2.toContinueDown, 2, psi(l), 4), '452', [3 1 2]);                
             HLR2.toContinueUp = contract(psiPsi, '2536', H.r2l2Up(l), '2143', [3 1 2]);        
             HLR2.toContinueDown = contract(psiPsi, '2536', H.r2l2Down(l), '2143', [3 1 2]);        
         end
