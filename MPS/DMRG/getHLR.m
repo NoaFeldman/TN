@@ -177,7 +177,7 @@ function [HLR, HLR2] = getHLR(H, psi, l, dir, HLR, HLR2)
         end
 
         if strcmp(bc, 'open')
-            if (l < length(psi)-1)
+            if (l < length(psi))
                 HLR2.toClose  = contract(psi(l), '23*', contract(HLR2.toContinue, 2, psi(l), 3), '42', [2 3 1]);
             end
             HLR2.toContinue = contract(psiPsi, '24', H.r2l2(l), '21', [3 1 2]);        
