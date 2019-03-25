@@ -1,9 +1,9 @@
-function dist = getDistribution(NRGD, AV, dotVOp, dotCOp, leadOp)
+function distr = getDistribution(NRGD, AV, dotVOp, dotCOp, leadOp)
     % For Wilson-local operator op, get its distribution along wilson
     % chain.
     
-    % first site is the QD conductance level - we skip it.
-    chainStart = contract(contract(AV, 1, dotVOp, 2), 2, AV, '1*');
+    chainStart = contract(contract(AV, 2, dotVOp, 2), 2, AV, '2*');
+    chainStart.info.itags = {'*', ''};
     cLink = contract(contract(NRGD(1).AK, 3, dotCOp, 2), '3', NRGD(1).AK, '3*');
     chainStart = contract(chainStart, '12', cLink, '13');
     for i = 2:length(NRGD) - 1
@@ -26,9 +26,9 @@ function dist = getDistribution(NRGD, AV, dotVOp, dotCOp, leadOp)
         end
         currChain = contract(currChain, '12', getIdentity(currChain, 1), '12');
         if (isempty(currChain))
-            dist(i) = 0;
+            distr(i) = 0;
         else
-            dist(i) = currChain.data{1};
+            distr(i) = getscalar(currChain);
         end
     end
 end

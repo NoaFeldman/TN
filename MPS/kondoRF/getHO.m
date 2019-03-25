@@ -1,31 +1,59 @@
 function [AV, A0, H0] = getHO(epsE, Ueh, U, epsH, omegaL, Omega)
     [F, Z, S, IS] = getLocalSpace('FermionS', 'Acharge,Aspin', 'NC', 1);
+    
+    % Get NRG site for the valence level
     AV = IS.E;
-    AV.info.itags = {'sv', 'av*'};
-    AC = getIdentity(AV, 2, IS.E, 1, 'ac');
+    AV.info.itags = {'av*', 'sv'};
+    % Force up spin on valence level to be full (This is a redundent degree
+    % of freedom for this problem)
+    AV = cutQSpaceRows(AV, 3:4);
+    
+    % Get NRG site for conductance level
+    AC = getIdentity(AV, 1, IS.E, 1, 'a0');
     AC.info.itags{2} = 'sc';
-    op = QSpace();
-    % \sum_sigma epsE n_{e, \sigma} on condactance level
+    AC = permute(AC, [1 3 2]);
+    
+    % Define QD Hamiltonian based on Eq. (1) at Sbierski et al
+    HBase = contract(getIdentity(AV, 2, AC, 3), '3', ...
+        getIdentity(AV, 2, AC, 3), '3*');
+
+    H = QSpace();
+    
+    nH = contract(F(1), '13', F(1)', '23', [2 1]);
+    nH.Q{1} = nH.Q{1}(1, :);
+    nH.Q{2} = nH.Q{2}(1, :);
+    nH.data = nH.data(1);
+    nH.info.itags = {'sv', 'sv*'};
+    H = H + (epsH - omegaL) * contract(nH, 2, HBase, 1);
+       
     nUp = contract(F(1)', '23', F(1), '13');
     nDown = contract(F(2)', '23', F(2), '13');
     nE = nUp + nDown;
-    op = op + epsE * nE;
-    % \sum_sigma Ueh n_h n_{e, \sigma} on conductance level
-    nH = contract(F(2), '23', F(2)', '13');
-    op = op + Ueh *  nH;
-    % U n_up N_down
-    intOp = contract(nUp, 2, nDown, 1);
-    op = op + U * intOp;
-    % (epsH - omegaL) nH
-    op = op + (epsH - omegaL) * nH;
-    H0 = contract(op, '12', contract(AC, '1*', AC, 1), '13');
-    % Omega a_v,down a^dagger_c,dowm + HC
-    vOp = contract(contract(AV, 1, F(2), 2), 2, AV, '1*', [3 1 2]);
-    cOp = contract(contract(AC, 2, F(2)', 2), 3, AC, '2*', [4 1 3 5 2]);
-    rabiOp = Omega * contract(vOp, '123', cOp, '123');
-    H0 = H0 + rabiOp + rabiOp';
-%     A0 = permute(getIdentity(H0, 1, IS.E, 1, 'a0'), [1 3 2]);
-%     A0.info.itags{3} = 's0';
-    A0 = permute(AC, [1 3 2]);
-    AV.info.itags = {'sv', 'L00*'};
+    nE.info.itags = {'sc', 'sc*'};
+    H = H - Ueh * contract(contract(nH, 2, HBase, 1), 2, nE, 2, [1 4 2 3]);
+
+    HC = epsE * nE + U * contract(nUp, 2, nDown, 1);
+    H = H + contract(HBase, 4, HC, 1);
+    
+    eDown = F(2);
+    eDown.info.itags = {'sc', 'sc*', 'm*'};
+    hUp = F(2)';
+    hUp.info.itags = {'sv', 'sv*', 'm'};
+    hUpDagger = F(2);
+    hUpDagger.info.itags = {'sv', 'sv*', 'm*'};
+    rabiOp = contract(eDown, 3, hUp, 3, [3 1 4 2]);
+    rabiOpDagger = contract(eDown', 3, hUpDagger, 3, [3 1 4 2]);
+    H = H + Omega * (rabiOp + rabiOpDagger);
+    
+    % H0:
+    %  ____    ____    ____
+    % |_AV_|--|H_QD|--|_AV_|
+    %  __|_   |    |   __|_
+    % |_AC_|--|____|--|_AC_|
+    %    |               |
+    %
+    % A0 = AC
+    H0V = contract(AV, '2*', contract(AV, 2, H, 3), '2');
+    H0 = contract(contract(AC, '13', H0V, '24'), '23', AC, '13*', [2 1]);
+    A0 = AC;   
 end
