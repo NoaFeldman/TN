@@ -1,8 +1,11 @@
-function [NRGD, NRGI, AV] = runNRG(epsE, Ueh, U, epsH, omegaL, Gamma, N)
-    Omega = 0;
+function [NRGD, NRGI, AV, EE, E0] = runNRG(epsE, Ueh, U, epsH, omegaL, Gamma, N, fout)
+    a = pi*(-U/(8*Gamma) + Gamma/(2*U));
+    x = (epsE+U/2)*sqrt(pi/(2*U*Gamma));
+    TK=min(1,sqrt(U*Gamma/2))*exp(a+x^2);
+    Omega = 2e-10;
     % Get A0 and H0 for the Kondo problem with the valence and conduction
     % band as described in Sbierski et al
-    [AV, A0, H0] = getHO(epsE, Ueh, U, epsH, omegaL, Omega);
+    [AV, A0, H0] = getH0(epsE, Ueh, U, epsH, omegaL, Omega);
     
     [F, Z, S, IS] = getLocalSpace('FermionS', 'Acharge,Aspin', 'NC', 1);
     hackF = F;
@@ -13,19 +16,12 @@ function [NRGD, NRGI, AV] = runNRG(epsE, Ueh, U, epsH, omegaL, Gamma, N)
     
     % Calculate t_N values based on Bulla's paper
     Lambda = 2.7;
-    tn = @(n) (1 + Lambda.^(-1)) .* (1 - Lambda.^(-n-1)) ./ ...
-        (2 .* sqrt((1 - Lambda.^(-2.*n - 1)).*(1 - Lambda.^(-2.*n - 3))))...
-        .*Lambda.^(-n/2);
-    hopImpC0 = 0.5;
-    ff = [hopImpC0 tn(0:N)];
+    ff = getNRGcoupling(Gamma, Lambda, N);
     
-    % Etrunc parameters identical to rnrg.m (I get the same problem if I
-    % just don't add these flags)
-    ETRUNC = [400 400 400 400 400 8];
-    Etrunc = 5;
-    [NRGD, NRGI] = NRGWilsonQS(H0, A0, Lambda, ff, hackF, Z, ...
-        'ETRUNC', ETRUNC, 'Etrunc', Etrunc);
+    [NRGD, NRGI] = NRGWilsonQS(H0, A0, Lambda, ff, hackF, Z); %, 'fout', fout);
     NRGD = makeNRGQSpace(NRGD);
+    EE=NRGI.EE;
+    E0=NRGI.E0;
 end
 
 function [NRGD] = makeNRGQSpace(NRGD)

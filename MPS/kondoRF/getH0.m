@@ -1,21 +1,22 @@
-function [AV, A0, H0] = getHO(epsE, Ueh, U, epsH, omegaL, Omega)
+function [AV, A0, H0] = getH0(epsE, Ueh, U, epsH, omegaL, Omega)
     [F, Z, S, IS] = getLocalSpace('FermionS', 'Acharge,Aspin', 'NC', 1);
     
     % Get NRG site for the valence level
-    AV = IS.E;
-    AV.info.itags = {'av*', 'sv'};
+    vac = getVac(IS.E);
+    AV = getIdentity(vac, 1, IS.E, 1);
+    AV.info.itags = {'ad', 'av*', 'sv'};
     % Force up spin on valence level to be full (This is a redundent degree
     % of freedom for this problem)
     AV = cutQSpaceRows(AV, 3:4);
     
     % Get NRG site for conductance level
-    AC = getIdentity(AV, 1, IS.E, 1, 'a0');
+    AC = getIdentity(AV, 2, IS.E, 1, 'a0');
     AC.info.itags{2} = 'sc';
     AC = permute(AC, [1 3 2]);
     
     % Define QD Hamiltonian based on Eq. (1) at Sbierski et al
-    HBase = contract(getIdentity(AV, 2, AC, 3), '3', ...
-        getIdentity(AV, 2, AC, 3), '3*');
+    HBase = contract(getIdentity(AV, 3, AC, 3), '3', ...
+        getIdentity(AV, 3, AC, 3), '3*');
 
     H = QSpace();
     
@@ -53,7 +54,14 @@ function [AV, A0, H0] = getHO(epsE, Ueh, U, epsH, omegaL, Omega)
     %    |               |
     %
     % A0 = AC
-    H0V = contract(AV, '2*', contract(AV, 2, H, 3), '2');
+    H0V = contract(AV, '13*', contract(AV, 3, H, 3), '13');
     H0 = contract(contract(AC, '13', H0V, '24'), '23', AC, '13*', [2 1]);
-    A0 = AC;   
+    A0 = AC;
+end
+
+function vac = getVac(I)
+    vac = I;
+    vac = cutQSpaceRows(vac, 1);
+    vac.Q{1} = [0 0];
+    vac.Q{2} = [0 0];
 end
