@@ -1,15 +1,7 @@
-function distr = getDistribution(NRG, AV, dotVOp, dotCOp, leadOp, option)
+function distr = getDistribution(NRG, AV, dotVOp, dotCOp, leadOp)
     % For Wilson-local operator op, get its distribution along wilson
     % chain.
-    if nargin == 5
-        option = 'distribution';
-    end
-    
-    if strcmp(option, 'distribution')
-        sites = 2:length(NRG) - 1;
-    else
-        sites = length(NRG) - 1;
-    end
+    sites = 2:length(NRG) - 1;
     
     chainStart = contract(contract(AV, 3, dotVOp, 2), '12', AV, '12*');
     chainStart.info.itags = {'*', ''};
@@ -33,13 +25,11 @@ function distr = getDistribution(NRG, AV, dotVOp, dotCOp, leadOp, option)
                 currChain = contract(contract(currChain, 1, NRG(j).AK, 1), '13', NRG(j).AK, '13*');
             end
         end
+        currChain = contract(contract(currChain, 1, NRG(end).AT, 1), '13', NRG(end).AT, '13*');
+        rho0 = getThermalState(NRG(end).HT, 0);             
+        distr(i) = getscalar(contract(currChain, '12', rho0, '12'));
+        
         chainStart = contract(contract(chainStart, 1, NRG(i).AK, 1), '13', NRG(i).AK, '13*');
-        currChain = contract(currChain, '12', getIdentity(currChain, 1), '12');
-        if (isempty(currChain))
-            distr(i) = 0;
-        else
-            distr(i) = getscalar(currChain);
-        end
     end
 end
 
