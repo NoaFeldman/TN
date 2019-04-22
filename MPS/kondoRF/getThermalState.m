@@ -1,9 +1,4 @@
-function [Rho0, EGS] = getThermalState(H, T)
-    % This function was written by Matan for H.data already diag()ed
-    for i = 1:length(H.data)
-        H.data{i} = diag(H.data{i});
-    end
-    
+function [Rho0, EGS] = getThermalState(H, T)    
     Rho0 = H;
     [EGS, bGS] = min(cellfun(@(block) min(diag(block)), H.data)); % find ground state energy and sector
     if T == 0 % ground state

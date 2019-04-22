@@ -1,11 +1,12 @@
-function [NRG, Inrg, AV, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, epsH, omegaL, Gamma, OmegaOverTK, N, fout)
+function [NRG, Inrg, AV, AC, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, omegaDiff, Gamma, OmegaOverTK, N, fout, Nkeep)
     a = pi*(-U/(8*Gamma) + Gamma/(2*U));
     x = (epsE+U/2)*sqrt(pi/(2*U*Gamma));
-    TK=min(1,sqrt(U*Gamma/2))*exp(a+x^2);
+    TK = min(1,sqrt(U*Gamma/2))*exp(a+x^2);
+    TK = 1.5e-4;
     Omega = OmegaOverTK * TK;
     % Get A0 and H0 for the Kondo problem with the valence and conduction
     % band as described in Sbierski et al
-    [AV, A0, H0] = getH0(epsE, Ueh, U, epsH, omegaL, Omega);
+    [AV, A0, H0, rabiOp] = getH0(epsE, Ueh, U, omegaDiff, Omega);
     
     [F, Z, ~, ~] = getLocalSpace('FermionS', 'Acharge,Aspin', 'NC', 1);
     hackF = F;
@@ -18,18 +19,20 @@ function [NRG, Inrg, AV, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, epsH, om
     Lambda = 2.7;
     ff = getNRGcoupling(Gamma, Lambda, N);
     
-    [NRG, Inrg] = NRGWilsonQS(H0, A0, Lambda, ff, hackF, Z, 'fout', fout);
+    [NRG, Inrg] = NRGWilsonQS(H0, A0, Lambda, ff, hackF, Z, 'Nkeep', Nkeep); %, 'fout', fout);
     NRG = makeNRGQSpace(NRG);
     EE=Inrg.EE;
     E0=Inrg.E0;
+    AC = A0;
+    AC.info.itags = {'L00', 'K00*', 's00'};
     
     AK = contract(AV, 2, A0, 1, [1 3 2 4]);
-    id = getIdentity(AK, 3, AK, 4, 'sd');
+    id = getIdentity(AK, 3, AK, 4, 's00');
     AK = contract(AK, '34', id, '12*');
+    AK.info.itags{2} = 'K00*';
     save(strcat(fout, '_00.mat'), 'AK', '-append');
-    base = contract(id, 3, id, '3*');
-    sigmaMinOp = contract(contract(base, 1, F(2)', 2, [4 1 2 3 5]), '25', F(2), '23', [1 4 2 3]);
-    sigmaMinOp = contract(id, '12*', contract(sigmaMinOp, '34', id, '12'), '12');
+    NRG(1).AK = AK;
+    sigmaMinOp = contract(id, '12*', contract(rabiOp, '34', id, '12'), '12');
 end
 
 function [NRGD] = makeNRGQSpace(NRGD)
@@ -37,7 +40,7 @@ function [NRGD] = makeNRGQSpace(NRGD)
     for k = 1:length(NRGD)
         NRGD(k).AK = QSpace(NRGD(k).AK);
         NRGD(k).AT = QSpace(NRGD(k).AT);
-        NRGD(k).HK = QSpace(NRGD(k).HK);
-        NRGD(k).HT = QSpace(NRGD(k).HT);
+        NRGD(k).HK = diag(QSpace(NRGD(k).HK));
+        NRGD(k).HT = diag(QSpace(NRGD(k).HT));
     end
 end

@@ -1,4 +1,4 @@
-function [AV, A0, H0] = getH0(epsE, Ueh, U, epsH, omegaL, Omega)
+function [AV, A0, H0, rabiOp] = getH0(epsE, Ueh, U, omegaDiff, Omega)
     [F, Z, S, IS] = getLocalSpace('FermionS', 'Acharge,Aspin', 'NC', 1);
     
     % Get NRG site for the valence level
@@ -25,7 +25,7 @@ function [AV, A0, H0] = getH0(epsE, Ueh, U, epsH, omegaL, Omega)
     nH.Q{2} = nH.Q{2}(1, :);
     nH.data = nH.data(1);
     nH.info.itags = {'sv', 'sv*'};
-    H = H + (epsH - omegaL) * contract(nH, 2, HBase, 1);
+    H = H + omegaDiff * contract(nH, 2, HBase, 1);
        
     nUp = contract(F(1)', '23', F(1), '13');
     nDown = contract(F(2)', '23', F(2), '13');
@@ -36,15 +36,13 @@ function [AV, A0, H0] = getH0(epsE, Ueh, U, epsH, omegaL, Omega)
     HC = epsE * nE + U * contract(nUp, 2, nDown, 1);
     H = H + contract(HBase, 4, HC, 1);
     
-    eDown = F(2);
-    eDown.info.itags = {'sc', 'sc*', 'm*'};
-    hUp = F(2)';
-    hUp.info.itags = {'sv', 'sv*', 'm'};
-    hUpDagger = F(2);
-    hUpDagger.info.itags = {'sv', 'sv*', 'm*'};
-    rabiOp = contract(eDown, 3, hUp, 3, [3 1 4 2]);
-    rabiOpDagger = contract(eDown', 3, hUpDagger, 3, [3 1 4 2]);
-    H = H + Omega * (rabiOp + rabiOpDagger);
+    cDown = F(2);
+    cDown.info.itags = {'sc', 'sc*', 'm*'};
+    vDownDagger = F(2)';
+    vDownDagger.info.itags = {'sv', 'sv*', 'm'};
+    rabiOp = contract(vDownDagger, '23', ...
+        contract(Z, 2, contract(cDown, 2, HBase, 2, [3 1 4 5 2]), 2, [2 1 3 4 5]), '15');
+    H = H + Omega * (rabiOp + rabiOp');
     
     % H0:
     %  ____    ____    ____
@@ -57,6 +55,7 @@ function [AV, A0, H0] = getH0(epsE, Ueh, U, epsH, omegaL, Omega)
     H0V = contract(AV, '13*', contract(AV, 3, H, 3), '13');
     H0 = contract(contract(AC, '13', H0V, '24'), '23', AC, '13*', [2 1]);
     A0 = AC;
+    H0 = H0 + 1e-99*getIdentity(A0, 2);
 end
 
 function vac = getVac(I)
