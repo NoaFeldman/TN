@@ -30,7 +30,7 @@ function [NRG, Inrg, AV, AC, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, omeg
     id = getIdentity(AK, 3, AK, 4, 's00');
     AK = contract(AK, '34', id, '12*');
     AK.info.itags{2} = 'K00*';
-    save(strcat(fout, '_00.mat'), 'AK', '-append');
+%     save(strcat(fout, '_00.mat'), 'AK', '-append');
     NRG(1).AK = AK;
     sigmaMinOp = contract(id, '12*', contract(rabiOp, '34', id, '12'), '12');
 end
