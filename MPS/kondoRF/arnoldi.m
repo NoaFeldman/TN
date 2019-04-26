@@ -33,8 +33,6 @@ function [L, basis, eVals, eStatesR, eStatesL] = arnoldi(rho0, Liou, K, applyLio
             eStatesL(i) = eStatesL(i) + eVecsL(j, i)*basis{j};
         end
     end
-%     for i = 1:length(eStatesL)
-%         eStatesL = eStatesL / calcOverlap(
 end
 
 % Avoid accumulating error by making sure again that the new vector is
