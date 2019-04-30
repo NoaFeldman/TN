@@ -10,12 +10,8 @@ for k = 7
     tic;
     H = NRG(k).HK;
     Liou = getLiouvillian(H, gamma, Sminus(k), SplusSminus(k));
-    RI.H = H;
-    RI.Sminus = Sminus(k);
-    RI.SplusSminus = SplusSminus(k);
-    rhoSS = RabiKondo.getSteadyState(RI, gamma, 1);
-    rhoSS = rhoSS + 1e-40 * H;
     rhoT = getThermalState(H, 1);
+    calcOverlap = @(rho1, rho2) trace(rho1'*rho2);
     rhoT = rhoT / sqrt(calcOverlap(rhoT, rhoT));
  
     [rAlphas, lAlphas, lambdaAlphas] = diagLiou(rhoSS, Liou, H, rhoT);
