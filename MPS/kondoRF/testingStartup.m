@@ -1,3 +1,4 @@
+load('/home/noa/TN/MPS/kondoRF/params.mat')
 omegaOverTK = 1e-3;
 [NRG, Inrg, AV, AC, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, omegaDiff1024, Gamma, omegaOverTK, 75, '', 1024);
 T = 1e-11;
@@ -20,12 +21,15 @@ rhoT2 = cutQSpaceRows(rhoT, 2);
 [LiouMat, rhoVec] = vecing(Liou2, rhoT2);
 [evecsR, evals, evecsL] = eig(LiouMat);
 evals = diag(evals);
+[~, ind] = min(evals);
+rs = evecsR(:, ind);
 backToMat = @(vec) reshape(vec, [sqrt(length(vec)) sqrt(length(vec))]);
 Sminus2 = cutQSpaceRows(Sminus(k) + 1e-99 * H, 2);
-Splus2 = cutQSpaceRows(Splus2(k) + 1e-99 * H, 2);
+Splus2 = cutQSpaceRows(Splus(k) + 1e-99 * H, 2);
 
-for alpha = length(evals)
-    trRs(alpha) = trace(backToMat(evecsR(:, i)) * Sminus2.data{1});
-%     trLs(alpha) = 
-
+for alpha = 1:length(evals)
+    trRs(alpha) = trace(backToMat(evecsR(:, alpha)) * blkdiag(Sminus2));
+    trLs1(alpha) = trace(backToMat(evecsL(:, alpha))' * ...
+        (backToMat(rs) * blkdiag(Splus2) - blkdiag(Splus2) * backToMat(rs)));
+    oms(alpha) = trRs(alpha) * trLs(alpha);
 end
