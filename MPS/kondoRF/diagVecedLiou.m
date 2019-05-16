@@ -6,7 +6,7 @@ function [rAlphas, lDagAlphas, lambdaAlphas, rhoSS] = diagVecedLiou(vecedLiou, i
     %  |           | 
     %  |_vecedLiou_| 
     %        |     
-    currLiou = contract(vecedLiou, '12', id, '12*')';
+    currLiou = contract(vecedLiou, '12', id, '12*');
     if length(currLiou.data) > 1
         disp('diagVecedLiou: vecedLiou is not a single block???');
     end
