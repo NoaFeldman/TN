@@ -1,29 +1,38 @@
 function [rAlphas, lDagAlphas, lambdaAlphas, rhoSS] = diagVecedLiou(vecedLiou, id)
-    % Add for each block in vecedLiou
+    % get a matrix:
+    %        |
+    %   ____id_____
+    %  |           |
+    %  |           | 
+    %  |_vecedLiou_| 
+    %        |     
     currLiou = contract(vecedLiou, '12', id, '12*')';
+    if length(currLiou.data) > 1
+        disp('diagVecedLiou: vecedLiou is not a single block???');
+    end
     [evecsR, evals, evecsL] = eig(currLiou.data{1});
+    evecsL = normalizeEvecs(evecsR, evecsL);
     lambdaAlphas = diag(evals);
     
-    rAlphas = currLiou;
-    rAlphas.data = {evecsR};
+    % 1 rank tensor is not right for QSpace, so we crate a 2-rank tensor
+    % with one index of the vector and one alpha index (alpha counts the
+    % eigenvectors).
+    rAlphas = newQSpace({[0 0], [0 0]}, {evecsR}, {'rho*', 'alpha*'});
+    rAlphas = contract(id, '3*', rAlphas, 1);
+    lDagAlphas = newQSpace({[0 0], [0 0]}, {evecsL}, {'rho*', 'alpha*'});
+    lDagAlphas = contract(id, '3*', lDagAlphas, 1);
     [~, ind] = min(lambdaAlphas);
-    rhoSS = rAlphas;
-    rhoSS.data = {evecsR(:, ind)};
-    rAlphas.info.itags{2} = 'alpha';
-    rAlphas = contract(rAlphas, '1*', id, '3');
-    rhoSS.info.itags{2} = 'alpha';
-    rhoSS = contract(rhoSS, '1*', id, '3');
-    rhoSS.Q = rhoSS.Q(2:3);
-    rhoSS.info.itags = rhoSS.info.itags(2:3);
-    rhoSS.data{1} = reshape(rhoSS.data{1}, [size(rhoSS.data{1}, 2), size(rhoSS.data{1}, 3)]);
-    
-    n = length(evecsL);
-    evecsLDag = zeros(n);
-    for i = 1:n
-        evecsLDag(:, i) = reshape(reshape(evecsL(:, i), [sqrt(n) sqrt(n)])', [n 1]);
+    rhoSS = newQSpace({[0 0], [0 0]}, {evecsR(:, ind)}, {'rho*', 'alpha*'});
+    rhoSS = contract(id, '3*', rhoSS, 1);
+    % Lose the alpha leg
+    rhoSS.info.itags = rhoSS.info.itags(1:2);
+    rhoSS.Q = rhoSS.Q(1:2);
+end
+
+function evecsL = normalizeEvecs(evecsR, evecsL)
+    for i = 1:length(evecsR)
+        rMat = reshape(evecsR(:, i), [sqrt(length(evecsR)) sqrt(length(evecsR))]);        
+        lDagMat = reshape(evecsL(:, i), [sqrt(length(evecsR)) sqrt(length(evecsR))])';
+        evecsL(:, i) = evecsL(:, i) / trace(rMat * lDagMat);
     end
-    lDagAlphas = currLiou;
-    lDagAlphas.data = {evecsLDag};
-    lDagAlphas.info.itags{2} = 'alpha';
-    lDagAlphas = contract(lDagAlphas, '1*', id, '3');
 end

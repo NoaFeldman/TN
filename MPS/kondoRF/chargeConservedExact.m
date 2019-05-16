@@ -17,16 +17,19 @@ rhoT = rhoT / sqrt(calcOverlap(rhoT, rhoT));
 
 omegas = Inrg.EScale(k) * 1e-2 : Inrg.EScale(k) * 1e-2 : Inrg.EScale(k) * 10;
 As = zeros(1, length(omegas));
-for b = 1:length(Liou.H.data)
+for b = 2:length(Liou.H.data)
     LiouB = Liou;
     LiouB.H = cutQSpaceRows(LiouB.H, b);
     LiouB.L = cutQSpaceRows(LiouB.L, b);
     LiouB.LdagL = cutQSpaceRows(LiouB.LdagL, b);
     rhoTB = cutQSpaceRows(rhoT, b);
+    SminusB = cutQSpaceRows(Sminus(k), b);
+    SplusB = cutQSpaceRows(Splus(k), b);
+    
     
     [vecedLiou, id, idIn] = qspaceVecing(LiouB, rhoTB);
     [rAlphas, lDagAlphas, lambdaAlphas, rhoSS] = diagVecedLiou(vecedLiou, id);
-    omegaAlphas = getOmegaAlphasQV(rAlphas, lDagAlphas, rhoSS, Sminus(k), Splus(k));
+    omegaAlphas = getOmegaAlphasQV(rAlphas, lDagAlphas, rhoSS, SminusB, SplusB);
     As = As + getSpectralFunctionQV(omegas, omegaAlphas, lambdaAlphas);
 end
 

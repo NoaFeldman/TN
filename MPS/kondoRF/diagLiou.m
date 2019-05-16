@@ -1,4 +1,4 @@
-function [rAlphas, lAlphas, lambdaAlphas] = diagLiou(rhoSS, Liou, H, rhoT)
+function [rAlphas, lAlphas, lambdaAlphas] = diagLiou(Liou, rhoT)
     calcOverlap = @(rho1, rho2) trace(rho1'*rho2);
     applyLiou = @(rho, Liou) applyLiouvillian(rho, Liou);
     newStateArr = @(n) QSpace(n);

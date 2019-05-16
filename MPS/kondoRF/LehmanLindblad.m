@@ -14,7 +14,7 @@ for k = 7
     calcOverlap = @(rho1, rho2) trace(rho1'*rho2);
     rhoT = rhoT / sqrt(calcOverlap(rhoT, rhoT));
  
-    [rAlphas, lAlphas, lambdaAlphas] = diagLiou(rhoSS, Liou, H, rhoT);
+    [rAlphas, lAlphas, lambdaAlphas] = diagLiou(Liou, rhoT);
     omegas = Inrg.EScale(k) * 1e-2 : Inrg.EScale(k) * 1e-2 : Inrg.EScale(k) * 10;
     getOmegaAlphas = @(Sminus, rhoSS, rAlphas, lAlphas) getOmegaAlphasQSpace(Sminus, rhoSS, rAlphas, lAlphas);
     AsArnoldi = getSpectralFunction(omegas, Sminus(k), rhoSS, rAlphas, lAlphas, lambdaAlphas, getOmegaAlphas);
