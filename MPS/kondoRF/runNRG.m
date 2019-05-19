@@ -19,7 +19,12 @@ function [NRG, Inrg, AV, AC, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, omeg
     Lambda = 2.7;
     ff = getNRGcoupling(Gamma, Lambda, N);
     
-    [NRG, Inrg] = NRGWilsonQS(H0, A0, Lambda, ff, hackF, Z, 'Nkeep', Nkeep); %, 'fout', fout);
+    [NRG, Inrg] = NRGWilsonQS(H0, A0, Lambda, ff, hackF, Z, 'Nkeep', Nkeep, 'fout', [fout '/NRG']);
+    % Load from disk
+    for i = 1:N
+        NRG(i) = load(sprintf('%s/NRG_%02g.mat', fout, i-1));
+    end
+    % Cast to QSpace object
     NRG = makeNRGQSpace(NRG);
     EE=Inrg.EE;
     E0=Inrg.E0;
@@ -33,6 +38,7 @@ function [NRG, Inrg, AV, AC, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, omeg
 %     save(strcat(fout, '_00.mat'), 'AK', '-append');
     NRG(1).AK = AK;
     sigmaMinOp = contract(id, '12*', contract(rabiOp, '34', id, '12'), '12');
+    sigmaMinOp.info.itags = {'', '*'};
 end
 
 function [NRGD] = makeNRGQSpace(NRGD)
