@@ -1,4 +1,5 @@
 function omegas = testingOmegas(LiouB, rhoTB, SminusB, SplusB)
+    % Compare omegaAphas I got to explicit vecing results
     [LiouMat, rhoVec] = vecing(LiouB, rhoTB);
     [evecsR, evals, evecsL] = eig(LiouMat);
     evals = diag(evals);

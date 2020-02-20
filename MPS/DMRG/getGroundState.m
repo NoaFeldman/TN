@@ -1,8 +1,14 @@
-function [psi, H, HR, HL, EGS, Es] = getGroundState(N, h, JPM, JZ, J2PM, J2Z, m, bc)
-    [psi, H, HR, HL, HR2, HL2] = myStartup(N, h, JPM, JZ, J2PM, J2Z, m, bc);
+function [psi, H, HR, HL, EGS, Es] = getGroundState(N, params, d, m, bc, psiInitial)
+    % Allow for a different startup state (for example for finding first
+    % excited state)
+    if nargin == 9
+        [psi, H, HR, HL, HR2, HL2] = myStartup(N, params, d, psiInitial, m, bc);
+    else
+        [psi, H, HR, HL, HR2, HL2] = myStartup(N, params, d);
+    end
     % Find ground state
     ECurr = 0;
-    EError = 1e-8;
+    EError = 1e-6; %1e-8;
     maxBondDimension = 256;
     opts = {'Nkeep', 32};
     for i=1:500
@@ -10,6 +16,7 @@ function [psi, H, HR, HL, EGS, Es] = getGroundState(N, h, JPM, JZ, J2PM, J2Z, m,
         [HL, HR, HL2, HR2, psi, ~] = dmrgSweep(HL, HR, HL2, HR2, H, psi, '<<', opts);
         [HL, HR, HL2, HR2, psi, ECurr] = dmrgSweep(HL, HR, HL2, HR2, H, psi, '>>', opts);
         Es(i) = ECurr;
+        disp(i)
         if stepConverged(ECurr, EForm, EError)
             break;
         end

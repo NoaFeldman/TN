@@ -1,4 +1,4 @@
-function [rAlphas, lDagAlphas, lambdaAlphas, rhoSS] = diagVecedLiou(vecedLiou, id)
+function [rAlphas, lAlphas, lambdaAlphas, rhoSS] = diagVecedLiou(vecedLiou, id, T)
     % get a matrix:
     %        |
     %   ____id_____
@@ -14,13 +14,15 @@ function [rAlphas, lDagAlphas, lambdaAlphas, rhoSS] = diagVecedLiou(vecedLiou, i
     evecsL = normalizeEvecs(evecsR, evecsL);
     lambdaAlphas = diag(evals);
     
-    % 1 rank tensor is not right for QSpace, so we crate a 2-rank tensor
+    % 1 rank tensor does not work in QSpace, so we crate a 2-rank tensor
     % with one index of the vector and one alpha index (alpha counts the
     % eigenvectors).
     rAlphas = newQSpace({[0 0], [0 0]}, {evecsR}, {'rho*', 'alpha*'});
     rAlphas = contract(id, '3*', rAlphas, 1);
-    lDagAlphas = newQSpace({[0 0], [0 0]}, {evecsL}, {'rho*', 'alpha*'});
-    lDagAlphas = contract(id, '3*', lDagAlphas, 1);
+    lAlphas = newQSpace({[0 0], [0 0]}, {evecsL}, {'rho*', 'alpha*'});
+    lAlphas = contract(id, '3*', lAlphas, 1);
+    
+    
     [~, ind] = min(lambdaAlphas);
     rhoSS = newQSpace({[0 0], [0 0]}, {evecsR(:, ind)}, {'rho*', 'alpha*'});
     rhoSS = contract(id, '3*', rhoSS, 1);
@@ -30,6 +32,8 @@ function [rAlphas, lDagAlphas, lambdaAlphas, rhoSS] = diagVecedLiou(vecedLiou, i
 end
 
 function evecsL = normalizeEvecs(evecsR, evecsL)
+    % Orthogonalize left and right eigenmatrices based on equation 6 in
+    % https://arxiv.org/pdf/1811.03518.pdf.
     for i = 1:length(evecsR)
         rMat = reshape(evecsR(:, i), [sqrt(length(evecsR)) sqrt(length(evecsR))]);        
         lDagMat = reshape(evecsL(:, i), [sqrt(length(evecsR)) sqrt(length(evecsR))])';

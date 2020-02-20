@@ -1,5 +1,4 @@
 function res = fluxNegT(alphas, a, fixed)
-% i = 30, plot(alphas, fluxNegT(alphas, [1 1.55 0.6635 0.9 0.2], [l n K L t(i)]));
     l = fixed(1);
     n = fixed(2);
     K = fixed(3);
@@ -33,8 +32,8 @@ function res = fluxNegT(alphas, a, fixed)
         (w12).^(2 * K/n .* alpha1 .* alpha2) .* (w12t).^(-2 * K/n .* alpha1 .* alpha2) .* ...
         (w23).^(2 * K/n .* alpha2 .* alpha3) .* (w23t).^(-2 * K/n .* alpha2 .* alpha3) .* ...
         (w13).^(2 * K/n .* alpha1 .* alpha3) .* (w13t).^(-2 * K/n .* alpha1 .* alpha3);
-    order2 = 0;
-    for i = 1:6
+    order2_1 = 0;
+    for i = [1 3 4 6]
         alpha1Curr = alpha1 + (i == 1) - (i == 4);
         alpha2Curr = alpha2 + (i == 2) - (i == 5);
         alpha3Curr = alpha3 + (i == 3) - (i == 6);
@@ -48,9 +47,30 @@ function res = fluxNegT(alphas, a, fixed)
         % one of the operators gets the shift, so we get a
         % combinatoric factor of 2.
         if i == 2 || i == 5
-            order2 = order2 + 2 * wpm2 .* curr;
+            order2_1 = order2_1 + 2 * wpm2 .* curr;
         else
-            order2 = order2 + wpm2 .* curr;
+            order2_1 = order2_1 + wpm2 .* curr;
+        end
+    end
+
+    order2_2 = 0;
+    for i = [2 5]
+        alpha1Curr = alpha1 + (i == 1) - (i == 4);
+        alpha2Curr = alpha2 + (i == 2) - (i == 5);
+        alpha3Curr = alpha3 + (i == 3) - (i == 6);
+        curr = ...
+            (dw1).^(1 * K/n .* alpha1Curr.^2) .* (dw2).^(1 * K/n .* alpha2Curr.^2) .* (dw3).^(1 * K/n .* alpha3Curr.^2) .* ...
+            (w11t).^(-1 * K/n .* alpha1Curr.^2) .* (w22t).^(-1 * K/n .* alpha2Curr.^2) .* (w33t).^(-1 * K/n .* alpha3Curr.^2) .* ...
+            (w12).^(2 * K/n .* alpha1Curr .* alpha2Curr) .* (w12t).^(-2 * K/n .* alpha1Curr .* alpha2Curr) .* ...
+            (w23).^(2 * K/n .* alpha2Curr .* alpha3Curr) .* (w23t).^(-2 * K/n .* alpha2Curr .* alpha3Curr) .* ...
+            (w13).^(2 * K/n .* alpha1Curr .* alpha3Curr) .* (w13t).^(-2 * K/n .* alpha1Curr .* alpha3Curr); 
+        % For alpha2, we consider V2 = V(-alpha)^2, and only
+        % one of the operators gets the shift, so we get a
+        % combinatoric factor of 2.
+        if i == 2 || i == 5
+            order2_2 = order2_2 + 2 * wpm2 .* curr;
+        else
+            order2_2 = order2_2 + wpm2 .* curr;
         end
     end
     
@@ -165,6 +185,6 @@ function res = fluxNegT(alphas, a, fixed)
 %     res = order1 + wpm^2 .* order2;
     zeroIndex = length(alphas) / 2 + 1/2;
 %     res = (order1(zeroIndex) + order2(zeroIndex) + order3(zeroIndex) + order4(zeroIndex));
-    res = (order1 + order2 + order3 + order4) / ...
-        (order1(zeroIndex) + order2(zeroIndex) + order3(zeroIndex) + order4(zeroIndex));
+    res = (order1 + order2_1 + order3 + order4) / ...
+        (order1(zeroIndex) + order2_1(zeroIndex) + order3(zeroIndex) + order4(zeroIndex));
 end

@@ -1,4 +1,4 @@
-function omegaAlphas = getOmegaAlphasQV(rAlphas, lDagAlphas, rhoSS, Sminus, Splus)
+function omegaAlphas = getOmegaAlphas(rAlphas, lAlphas, rhoSS, Sminus, Splus)
     % eq. (18) in https://arxiv.org/pdf/1811.03518.pdf.
     
     %  s^- * r_alpha:
@@ -18,9 +18,9 @@ function omegaAlphas = getOmegaAlphasQV(rAlphas, lDagAlphas, rhoSS, Sminus, Splu
     % Same trick for Tr(l^dagger_alpha * [s^+, rho_s])
     rhoSSSplus = rhoSS * Splus;
     SplusRhoSS = Splus * rhoSS;
-    trLdagRhoSSSplus = contract(lDagAlphas, '12', rhoSSSplus, '21');
+    trLdagRhoSSSplus = contract(lAlphas, '12*', rhoSSSplus, '12');
     trLdagRhoSSSplus = trLdagRhoSSSplus.data{1};
-    trLdagSplusRhoSS = contract(lDagAlphas, '12', SplusRhoSS, '21');
+    trLdagSplusRhoSS = contract(lAlphas, '12*', SplusRhoSS, '12');
     trLdagSplusRhoSS = trLdagSplusRhoSS.data{1};
     
     omegaAlphas = trRSminus .* (trLdagSplusRhoSS - trLdagRhoSSSplus);

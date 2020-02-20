@@ -46,7 +46,7 @@ function [AV, A0, H0, rabiOp] = getH0(epsE, Ueh, U, omegaDiff, Omega)
     
     % H0:
     %  ____    ____    ____
-    % |_AV_|--|H_QD|--|_AV_|
+    % |_AV_|--| H  |--|_AV_|
     %  __|_   |    |   __|_
     % |_AC_|--|____|--|_AC_|
     %    |               |

@@ -1,7 +1,7 @@
 clear rQ0 rQ1 rQ2 rQ3 rQ4 rQ5 rQ6 rQ7 rQ8 rQ9 rAlpha
 % dirName = 'negsL256Delta-05';
 % tSteps = 0:2:44;
-dirName = 'quenchNegsl64Delta-05';
+dirName = 'quenchNegsl64Delta-03';
 tSteps = 0:2:128;
 t = tSteps*0.25;
 alphas = -3.14:0.01:3.14;
@@ -22,7 +22,7 @@ for i = 1:length(tSteps)
     rQ6(i) = temp.rnq(7); % ./ temp.rnalpha(zeroIndex);
     rQ7(i) = temp.rnq(8); % ./ temp.rnalpha(zeroIndex);    
     rQ8(i) = temp.rnq(9); % ./ temp.rnalpha(zeroIndex);
-    rQ9(i) = temp.rnq(10); % ./ temp.rnalpha(zeroIndex);
+    rQ9(i) = temp.rnq(10);% ./ temp.rnalpha(zeroIndex);
     rAlpha(i, :) = temp.rnalpha;
     traceNorm(i, :) = temp.traceNorm(1:10);
     truncErrs(i) = res.truncErrs;

@@ -1,4 +1,5 @@
 function LRho = applyLiouvillian(Rho, Liou, dag)
+    % TODO - Matan's code, replace with RabiKondo.applyLiouvillian
     if ~exist('dag','var'), dag=0; end
     LRho = (-1)^dag * -1j * (Liou.H * Rho - Rho * Liou.H);
     for Li = 1:length(Liou.L)

@@ -59,7 +59,7 @@ function exactGroundState(Ls, filename, us, vs, alphas)
                     s5Alpha(:, l, l1, l2)  = getSAlpha(5, alphas, f, 1);
                     sFull(l, l1, l2) = sum(s(:, l, l1, l2));
 
-                    sAlpha = getExactEEForFlux(f, alphas, L);
+                    sAlpha = getExactEEForFlux(f, alphas);
                     sFullAlpha(l2) = sum(sAlpha);
                     
 %                     fg = fit(x.', real(s1(:, l, l1, l2)), gaussian, 'StartPoint', [L * (v - u) / 2 0.1]);

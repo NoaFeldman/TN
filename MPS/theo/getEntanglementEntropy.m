@@ -6,5 +6,6 @@ function SA = getEntanglementEntropy(t, a, fixed)
     model = fixed(2);
     c = 1;
     pointFunc = fixed(3);
-    SA = pointFunc * c / 6 .* log(getScaledVariable(t, a(1), L, model)) + a(2);
+    u = fixed(4);
+    SA = pointFunc * c / 6 .* log(getScaledVariable(t, a(1), L, model, u)) + a(2);
 end 

@@ -4,7 +4,7 @@ function S = luttingerS(N, cici, cicicjcj)
     for i = 1:N
         for j = 1:N
             S = S + 1./N .* exp(1i .* q * (i - j)) * ...
-                (cicicjcj(i, j)  - cici(i)*cici(j));
+                (cicicjcj(i, j)  - cici(i)/2 - cici(j)/2 +1/4);
         end
     end
 end

@@ -1,12 +1,12 @@
-function X = getScaledVariable(var, epsilon, L, option)
+function X = getScaledVariable(var, epsilon, L, option, u)
     switch option
         case 1 % After quench, mid chain
             t = var;
-            vF = 2*sin(pi * (L/2 + 1) / (L+1));
+%             u = 2*sin(pi * (L/2 + 1) / (L+1));
             % Half system (finite) after quantum quench in the middle:
             X = (abs(pi .* sinh(pi/L * 2 * epsilon) ./ ...
-                (2 .* sinh(pi / L .* (epsilon + 1i .* vF .* t)) .* ...
-                 sinh(pi / L .* (epsilon - 1i.*vF.*t))))).^(-1);
+                (2 .* sinh(pi / L .* (epsilon + 1i .* u .* t)) .* ...
+                 sinh(pi / L .* (epsilon - 1i.*u.*t))))).^(-1);
         case 2 % Ground state
             ratio = var;
             X = L.*sin(pi.*ratio);
@@ -18,20 +18,20 @@ function X = getScaledVariable(var, epsilon, L, option)
             X = (epsilon^2 + t.^2) / (epsilon / 2);
         case 5 % After quench, shifted from quench by L/4
             t = var;
-            vF = 2*sin(pi * (L/2 + 1) / (L+1));
+%             u = 2*sin(pi * (L/2 + 1) / (L+1));
             lShift = L/4;
             nT = t * pi / L;
             nLShift = lShift * pi / L;
             nEpsilon = epsilon * pi / L;
             % Half system (finite) after quantum quench in the middle:
             X = (abs(pi/2 .* sinh(pi/L * 2 * epsilon)) ./ ...
-                (sqrt((sinh(nEpsilon + 1i * vF .* nT) .* cos(nLShift)).^2 + ...
-                      (cosh(nEpsilon + 1i * vF .* nT) .* sin(nLShift)).^2) .* ...
-                 sqrt((sinh(nEpsilon - 1i * vF .* nT) .* cos(nLShift)).^2 + ...
-                      (cosh(nEpsilon - 1i * vF .* nT) .* sin(nLShift)).^2))).^(-1);
-            platInds = find(t <= lShift / vF);
+                (sqrt((sinh(nEpsilon + 1i * u .* nT) .* cos(nLShift)).^2 + ...
+                      (cosh(nEpsilon + 1i * u .* nT) .* sin(nLShift)).^2) .* ...
+                 sqrt((sinh(nEpsilon - 1i * u .* nT) .* cos(nLShift)).^2 + ...
+                      (cosh(nEpsilon - 1i * u .* nT) .* sin(nLShift)).^2))).^(-1);
+            platInds = find(mod(u.*t, L)  <= lShift);
             X(platInds) = L .* sin(pi * lShift / L) .* ones(length(platInds), 1); 
-            platInds = find(t >= round((L - lShift) /vF));
+            platInds = find(mod(u.*t, L) >= round((L - lShift)));
             X(platInds) = L .* sin(pi * lShift / L) .* ones(length(platInds), 1);             
         otherwise
             disp('Model type nonexistant.');

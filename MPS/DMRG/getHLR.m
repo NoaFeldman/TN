@@ -20,11 +20,11 @@ function [HLR, HLR2] = getHLR(H, psi, l, dir, HLR, HLR2)
     % HLR.opSum  is H(1).single x I x I ... + I x H(2).single x I ... +
     %   H.l2r(1) x H.r2l(2) x I ...  (two degree tensor)
     % HLR.openOp is I x I x ... x H(l).l2r  (three degree tensor)
-    if length(psi(1).info.itags) == 3
+%     if length(psi(1).info.itags) == 3
         bc = 'open';
-    else
-        bc = 'periodic';
-    end
+%     else
+%         bc = 'periodic';
+%     end
     if (strcmp(dir, '>>'))
         if (l == 0)
             HLR.opSum = QSpace;

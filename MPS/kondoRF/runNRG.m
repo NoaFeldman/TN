@@ -1,4 +1,7 @@
 function [NRG, Inrg, AV, AC, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, omegaDiff, Gamma, OmegaOverTK, N, fout, Nkeep)
+    % First option for TK is from the Bethe ansatz, second option is from
+    % Sbierski et al's paper, they are in the same order of magnitude for
+    % the parameters Sbierski et al (and so we) use.
     a = pi*(-U/(8*Gamma) + Gamma/(2*U));
     x = (epsE+U/2)*sqrt(pi/(2*U*Gamma));
     TK = min(1,sqrt(U*Gamma/2))*exp(a+x^2);
@@ -19,10 +22,10 @@ function [NRG, Inrg, AV, AC, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, omeg
     Lambda = 2.7;
     ff = getNRGcoupling(Gamma, Lambda, N);
     
-    [NRG, Inrg] = NRGWilsonQS(H0, A0, Lambda, ff, hackF, Z, 'Nkeep', Nkeep, 'fout', [fout '/NRG']);
-    % Load from disk
+    [NRG, Inrg] = NRGWilsonQS(H0, A0, Lambda, ff, hackF, Z, 'Nkeep', Nkeep, 'fout', fout);
+    % Load NRG
     for i = 1:N
-        NRG(i) = load(sprintf('%s/NRG_%02g.mat', fout, i-1));
+        NRG(i) = load(sprintf('%s_%02g.mat', fout, i-1));
     end
     % Cast to QSpace object
     NRG = makeNRGQSpace(NRG);
@@ -31,11 +34,12 @@ function [NRG, Inrg, AV, AC, EE, E0, TK, sigmaMinOp] = runNRG(epsE, Ueh, U, omeg
     AC = A0;
     AC.info.itags = {'L00', 'K00*', 's00'};
     
+    % Include the valence level in the first NRG shell
     AK = contract(AV, 2, A0, 1, [1 3 2 4]);
     id = getIdentity(AK, 3, AK, 4, 's00');
     AK = contract(AK, '34', id, '12*');
     AK.info.itags{2} = 'K00*';
-%     save(strcat(fout, '_00.mat'), 'AK', '-append');
+    save(strcat(fout, '_00.mat'), 'AK', '-append');
     NRG(1).AK = AK;
     sigmaMinOp = contract(id, '12*', contract(rabiOp, '34', id, '12'), '12');
     sigmaMinOp.info.itags = {'', '*'};
